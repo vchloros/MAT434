@@ -1,7 +1,16 @@
 ---
-title: "1stDoc"
+title: 1st Doc
+author: 
+  - name: Vinny Chloros
+    email: vinny.chloros@snhu.edu
+    affiliations: 
+      - name: Southern New Hampshire University
 format: html
-editor: visual
+date: 1/8/2025
+date-modified: today
+date-format: long
+theme: cyborg
+toc: true
 ---
 
 ## Quarto
@@ -25,4 +34,37 @@ You can add options to executable code like this
 
 The `echo: false` option disables the printing of code (only output is displayed).
 
-## New Code
+## New Content
+
+###Working with Data
+
+```{r}
+library(tidyverse)
+
+hits <- read_csv("https://raw.githubusercontent.com/agmath/agmath.github.io/refs/heads/master/data/classification/battedballs.csv")
+
+parks <- read.csv("https://raw.githubusercontent.com/agmath/agmath.github.io/refs/heads/master/data/classification/park_dimensions.csv")
+
+```
+
+###Exploring Data
+
+```{r}
+#head(hits)
+
+#better way to write, according to Dr. G
+hits |> 
+  head()
+```
+```{r}
+parks |>
+  head()
+```
+
+###Joining Datasets
+```{r}
+temp <- hits |>
+  left_join(parks, by = c("park" = "park"))
+```
+
+

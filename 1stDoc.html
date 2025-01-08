@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Vinny Chloros">
+<meta name="dcterms.date" content="2025-01-08">
 
-<title>1stDoc</title>
+<title>1st Doc</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -63,31 +65,66 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="1stDoc_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="1stDoc_files/libs/quarto-html/anchor.min.js"></script>
 <link href="1stDoc_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="1stDoc_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="1stDoc_files/libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="1stDoc_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="1stDoc_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="1stDoc_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="1stDoc_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
 
 
 </head>
 
-<body class="fullcontent">
+<body>
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#quarto" id="toc-quarto" class="nav-link active" data-scroll-target="#quarto">Quarto</a></li>
+  <li><a href="#running-code" id="toc-running-code" class="nav-link" data-scroll-target="#running-code">Running Code</a></li>
+  <li><a href="#new-content" id="toc-new-content" class="nav-link" data-scroll-target="#new-content">New Content</a></li>
+  </ul>
+</nav>
+</div>
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">1stDoc</h1>
+<h1 class="title">1st Doc</h1>
 </div>
 
 
+<div class="quarto-title-meta-author">
+  <div class="quarto-title-meta-heading">Author</div>
+  <div class="quarto-title-meta-heading">Affiliation</div>
+  
+    <div class="quarto-title-meta-contents">
+    <p class="author">Vinny Chloros </p>
+  </div>
+    <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            Southern New Hampshire University
+          </p>
+      </div>
+    </div>
 
 <div class="quarto-title-meta">
 
-    
+      
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">January 8, 2025</p>
+    </div>
+  </div>
   
+    <div>
+    <div class="quarto-title-meta-heading">Modified</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">January 8, 2025</p>
+    </div>
+  </div>
     
   </div>
   
@@ -115,8 +152,83 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>The <code>echo: false</code> option disables the printing of code (only output is displayed).</p>
 </section>
-<section id="new-code" class="level2">
-<h2 class="anchored" data-anchor-id="new-code">New Code</h2>
+<section id="new-content" class="level2">
+<h2 class="anchored" data-anchor-id="new-content">New Content</h2>
+<p>###Working with Data</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'ggplot2' was built under R version 4.3.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.2     ✔ readr     2.1.4
+✔ forcats   1.0.0     ✔ stringr   1.5.0
+✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+✔ purrr     1.0.1     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>hits <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://raw.githubusercontent.com/agmath/agmath.github.io/refs/heads/master/data/classification/battedballs.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 13000 Columns: 25
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr   (8): home_team, away_team, batter_team, batter_name, pitcher_name, bb_...
+dbl  (16): bip_id, batter_id, pitcher_id, is_batter_lefty, is_pitcher_lefty,...
+date  (1): game_date
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>parks <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"https://raw.githubusercontent.com/agmath/agmath.github.io/refs/heads/master/data/classification/park_dimensions.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>###Exploring Data</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#head(hits)</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#better way to write, according to Dr. G</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>hits <span class="sc">|&gt;</span> </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 25
+  bip_id game_date  home_team away_team batter_team batter_name     pitcher_name
+   &lt;dbl&gt; &lt;date&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;           &lt;chr&gt;       
+1  61093 2020-09-11 TB        BOS       BOS         bogaerts, xand… snell, blake
+2 117924 2020-08-31 CIN       STL       STL         edman, tommy    lorenzen, m…
+3  84178 2020-09-12 WSH       ATL       WSH         soto, juan      anderson, i…
+4  25265 2020-09-04 CLE       MIL       CLE         lindor, franci… burnes, cor…
+5 117768 2020-08-25 STL       KC        STL         wong, kolten    newberry, j…
+6  54097 2020-08-23 STL       CIN       CIN         ervin, phil     reyes, alex 
+# ℹ 18 more variables: batter_id &lt;dbl&gt;, pitcher_id &lt;dbl&gt;,
+#   is_batter_lefty &lt;dbl&gt;, is_pitcher_lefty &lt;dbl&gt;, bb_type &lt;chr&gt;,
+#   bearing &lt;chr&gt;, pitch_name &lt;chr&gt;, park &lt;dbl&gt;, inning &lt;dbl&gt;,
+#   outs_when_up &lt;dbl&gt;, balls &lt;dbl&gt;, strikes &lt;dbl&gt;, plate_x &lt;dbl&gt;,
+#   plate_z &lt;dbl&gt;, pitch_mph &lt;dbl&gt;, launch_speed &lt;dbl&gt;, launch_angle &lt;dbl&gt;,
+#   is_home_run &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>parks <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  park                        NAME   Cover LF_Dim CF_Dim RF_Dim LF_W CF_W RF_W
+1    0                 Chase Field    Roof    328    407    335    8   25    8
+2    1               SunTrust Park Outdoor    335    400    325    6    8   16
+3    2 Oriole Park at Camden Yards Outdoor    333    400    318    7    7   21
+4    3                 Fenway Park Outdoor    310    390    302   37    9    3
+5    4               Wrigley Field Outdoor    355    400    353   16   11   16
+6    5     Great American Ballpark Outdoor    328    404    325   12    8    8</code></pre>
+</div>
+</div>
+<p>###Joining Datasets</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> hits <span class="sc">|&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(parks, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"park"</span> <span class="ot">=</span> <span class="st">"park"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 
 </main>
