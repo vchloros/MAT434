@@ -13,33 +13,17 @@ theme: cyborg
 toc: true
 ---
 
-## Quarto
+# Working with Data
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+Here's how we add packages to our working library. Before being able to work with them, make sure the packages are installed onto R using `install.packages()` with the name of the packages inside the parentheses using quotations marks (e.g. `install.packages("tidyverse")`). Then we can use `library()` to call those packages for use.
+To import a data set, we create a title, something simple for easy naming, and use an arrow (`<-`) to assign a value to it. In this case, we used `read_csv()` to import one of Dr. G's data sets. When importing, remember to use a text-only version so that the data imports correctly. To do this in GitHub, click the button that says "raw" when you're looking at the data, and use that url within `read_csv`.
 
 ```{r}
-1 + 1
-```
+#| message: false
 
-You can add options to executable code like this
-
-```{r}
-#| echo: false
-2 * 2
-```
-
-The `echo: false` option disables the printing of code (only output is displayed).
-
-## New Content
-
-###Working with Data
-
-```{r}
 library(tidyverse)
+library(tidymodels)
+library(skimr)
 
 hits <- read_csv("https://raw.githubusercontent.com/agmath/agmath.github.io/refs/heads/master/data/classification/battedballs.csv")
 
@@ -47,24 +31,177 @@ parks <- read.csv("https://raw.githubusercontent.com/agmath/agmath.github.io/ref
 
 ```
 
-###Exploring Data
+# Exploring Data
+
+The `head()` function allows us to take a quick look at the first few rows of a data set. There are two ways we can execute this function and others like it. The first is to put the name of our data set inside the parentheses of our function as shown in the first line of the following code block. 
+Another way is to use a pipe. By using a pipe (either `%>%` or `|>`) before a function, you tell the function to use your input as the first operator. Since the first operator often calls for the data that the function will use, we can put our `hits` data followed by the pipe and then our function. As we'll see later, this can be useful when applying different functions to a data set at once.
 
 ```{r}
-#head(hits)
+head(hits)
 
 #better way to write, according to Dr. G
 hits |> 
   head()
 ```
+We can also use the same functions to see our data in `parks`.
+
 ```{r}
 parks |>
   head()
 ```
 
-###Joining Datasets
+## Joining Datasets
+
+Using the function `left_join`, we can combine our two different sets into one. 
+
 ```{r}
 temp <- hits |>
   left_join(parks, by = c("park" = "park"))
 ```
 
+# Code in Text
+
+We joined the `hits` and `parks` data together to obtain a full data set with `r nrow(hits)` rows and `r ncol(hits)` columns.
+
+```{r}
+#| message: false
+
+hits |>
+  glimpse()
+```
+
+```{r}
+hits |>
+  skim()
+```
+
+# Splitting Data (Making Test Sets)
+
+Here, we split the data into two groups, testing and training, for our future model. The first variable in `initial_splits` specifies the data set we're working with, the second is the proportion of training data to testing data, and the third allows us to make sure a particular variable within the data set matches prevalence in both separate sets in the same proportion. In this case, since we're trying to anticipate future home runs, we use `is_home_run` as the strata.
+
+```{r}
+set.seed(434)
+data_splits <- initial_split(temp, 0.85, strata = is_home_run)
+
+train <- training(data_splits)
+test <- testing(data_splits)
+```
+
+# Exploratory Data Analysis
+
+How and why do home runs happen?
+
+## Sometimes Useful Functions
+
+### Filtering Rows
+We can use `filter` to 
+
+```{r}
+train |>
+  filter(is_home_run == 1)
+
+train |>
+  filter(launch_angle > 45)
+
+train |>
+  filter(str_detect(NAME, "Fenway"))
+```
+
+### Selecting just a few columns
+
+This doesn't change our data set, but instead allows us to look at a few specific variables.
+```{r}
+#| message: false
+
+train |>
+  select(launch_speed, launch_angle, is_home_run)
+```
+
+### Building new variables from old one (*Feature Engineering*)
+
+`Mutate` creates a new object based on our current ones. In this case, we used it to check if the speed of a pitch (`pitch_mph`) was above 100, and returned a new variable that answered either "yes" or "no" tacked onto the end of the data set. We can create a new set to either replace our original or make a separate set.
+```{r}
+#| message: false
+
+train |>
+  mutate(fast_pitch = ifelse(pitch_mph > 100, "yes", "no"))
+
+train_mutated <- train |>
+  mutate(fast_pitch = ifelse(pitch_mph > 100, "yes", "no"))
+```
+
+## Summary Statistics
+
+Home runs...
+
+
+```{r}
+train |>
+  count(is_home_run) |>
+  mutate(prop = 100*n/sum(n))
+```
+Using `pct_hr` is another way to find the proportion of home runs. Again, multiply it by 100 to get the percentage.
+
+```{r}
+train |>
+  summarize(pct_hr = 100*mean(is_home_run))
+```
+
+### Summarizing Launch Angle
+
+By using our training data, we can 
+
+```{r}
+train |>
+  summarize(
+    min_angle = min(launch_angle, na.rm = TRUE),
+    mean_angle = mean(launch_angle, na.rm = TRUE),
+    median_angle = median(launch_angle, na.rm = TRUE),
+    max_angle = max(launch_angle, na.rm = TRUE),
+    sd_angle = sd(launch_angle, na.rm = TRUE)
+  )
+```
+
+Here's another way of doing it using the filter function to clean the blank variables out of our data.
+
+```{r}
+train |>
+  filter(!is.na(launch_angle)) |>
+  summarize(
+    min_angle = min(launch_angle),
+    mean_angle = mean(launch_angle),
+    median_angle = median(launch_angle),
+    max_angle = max(launch_angle),
+    sd_angle = sd(launch_angle)
+  )
+```
+
+## Grouped Summaries
+
+This creates two rows of summary separated by if the instance is a home run or not. You can use this function for other variables, like categories, for multiple rows.
+```{r}
+train |>
+  group_by(is_home_run) |>
+  filter(!is.na(launch_angle)) |>
+  summarize(
+    min_angle = min(launch_angle),
+    mean_angle = mean(launch_angle),
+    median_angle = median(launch_angle),
+    max_angle = max(launch_angle),
+    sd_angle = sd(launch_angle)
+  )
+```
+
+```{r}
+train |>
+  group_by(NAME, is_home_run) |>
+  filter(!is.na(launch_angle)) |>
+  summarize(
+    min_angle = min(launch_angle),
+    mean_angle = mean(launch_angle),
+    median_angle = median(launch_angle),
+    max_angle = max(launch_angle),
+    sd_angle = sd(launch_angle)
+  )
+```
 

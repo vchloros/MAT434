@@ -81,9 +81,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#quarto" id="toc-quarto" class="nav-link active" data-scroll-target="#quarto">Quarto</a></li>
-  <li><a href="#running-code" id="toc-running-code" class="nav-link" data-scroll-target="#running-code">Running Code</a></li>
-  <li><a href="#new-content" id="toc-new-content" class="nav-link" data-scroll-target="#new-content">New Content</a></li>
+  <li><a href="#working-with-data" id="toc-working-with-data" class="nav-link active" data-scroll-target="#working-with-data">Working with Data</a></li>
+  <li><a href="#exploring-data" id="toc-exploring-data" class="nav-link" data-scroll-target="#exploring-data">Exploring Data</a>
+  <ul class="collapse">
+  <li><a href="#joining-datasets" id="toc-joining-datasets" class="nav-link" data-scroll-target="#joining-datasets">Joining Datasets</a></li>
+  </ul></li>
+  <li><a href="#code-in-text" id="toc-code-in-text" class="nav-link" data-scroll-target="#code-in-text">Code in Text</a></li>
+  <li><a href="#splitting-data-making-test-sets" id="toc-splitting-data-making-test-sets" class="nav-link" data-scroll-target="#splitting-data-making-test-sets">Splitting Data (Making Test Sets)</a></li>
+  <li><a href="#exploratory-data-analysis" id="toc-exploratory-data-analysis" class="nav-link" data-scroll-target="#exploratory-data-analysis">Exploratory Data Analysis</a>
+  <ul class="collapse">
+  <li><a href="#sometimes-useful-functions" id="toc-sometimes-useful-functions" class="nav-link" data-scroll-target="#sometimes-useful-functions">Sometimes Useful Functions</a>
+  <ul class="collapse">
+  <li><a href="#filtering-rows" id="toc-filtering-rows" class="nav-link" data-scroll-target="#filtering-rows">Filtering Rows</a></li>
+  <li><a href="#selecting-just-a-few-columns" id="toc-selecting-just-a-few-columns" class="nav-link" data-scroll-target="#selecting-just-a-few-columns">Selecting just a few columns</a></li>
+  <li><a href="#building-new-variables-from-old-one-feature-engineering" id="toc-building-new-variables-from-old-one-feature-engineering" class="nav-link" data-scroll-target="#building-new-variables-from-old-one-feature-engineering">Building new variables from old one (<em>Feature Engineering</em>)</a></li>
+  </ul></li>
+  <li><a href="#summary-statistics" id="toc-summary-statistics" class="nav-link" data-scroll-target="#summary-statistics">Summary Statistics</a>
+  <ul class="collapse">
+  <li><a href="#summarizing-launch-angle" id="toc-summarizing-launch-angle" class="nav-link" data-scroll-target="#summarizing-launch-angle">Summarizing Launch Angle</a></li>
+  </ul></li>
+  <li><a href="#grouped-summaries" id="toc-grouped-summaries" class="nav-link" data-scroll-target="#grouped-summaries">Grouped Summaries</a></li>
+  </ul></li>
   </ul>
 </nav>
 </div>
@@ -122,7 +140,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">January 8, 2025</p>
+      <p class="date-modified">January 13, 2025</p>
     </div>
   </div>
     
@@ -131,68 +149,44 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<section id="quarto" class="level2">
-<h2 class="anchored" data-anchor-id="quarto">Quarto</h2>
-<p>Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <a href="https://quarto.org" class="uri">https://quarto.org</a>.</p>
+<section id="working-with-data" class="level1">
+<h1>Working with Data</h1>
+<p>Here’s how we add packages to our working library. Before being able to work with them, make sure the packages are installed onto R using <code>install.packages()</code> with the name of the packages inside the parentheses using quotations marks (e.g.&nbsp;<code>install.packages("tidyverse")</code>). Then we can use <code>library()</code> to call those packages for use. To import a data set, we create a title, something simple for easy naming, and use an arrow (<code>&lt;-</code>) to assign a value to it. In this case, we used <code>read_csv()</code> to import one of Dr.&nbsp;G’s data sets. When importing, remember to use a text-only version so that the data imports correctly. To do this in GitHub, click the button that says “raw” when you’re looking at the data, and use that url within <code>read_csv</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>hits <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://raw.githubusercontent.com/agmath/agmath.github.io/refs/heads/master/data/classification/battedballs.csv"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>parks <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"https://raw.githubusercontent.com/agmath/agmath.github.io/refs/heads/master/data/classification/park_dimensions.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
-<section id="running-code" class="level2">
-<h2 class="anchored" data-anchor-id="running-code">Running Code</h2>
-<p>When you click the <strong>Render</strong> button a document will be generated that includes both content and the output of embedded code. You can embed code like this:</p>
+<section id="exploring-data" class="level1">
+<h1>Exploring Data</h1>
+<p>The <code>head()</code> function allows us to take a quick look at the first few rows of a data set. There are two ways we can execute this function and others like it. The first is to put the name of our data set inside the parentheses of our function as shown in the first line of the following code block. Another way is to use a pipe. By using a pipe (either <code>%&gt;%</code> or <code>|&gt;</code>) before a function, you tell the function to use your input as the first operator. Since the first operator often calls for the data that the function will use, we can put our <code>hits</code> data followed by the pipe and then our function. As we’ll see later, this can be useful when applying different functions to a data set at once.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(hits)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 2</code></pre>
+<pre><code># A tibble: 6 × 25
+  bip_id game_date  home_team away_team batter_team batter_name     pitcher_name
+   &lt;dbl&gt; &lt;date&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;           &lt;chr&gt;       
+1  61093 2020-09-11 TB        BOS       BOS         bogaerts, xand… snell, blake
+2 117924 2020-08-31 CIN       STL       STL         edman, tommy    lorenzen, m…
+3  84178 2020-09-12 WSH       ATL       WSH         soto, juan      anderson, i…
+4  25265 2020-09-04 CLE       MIL       CLE         lindor, franci… burnes, cor…
+5 117768 2020-08-25 STL       KC        STL         wong, kolten    newberry, j…
+6  54097 2020-08-23 STL       CIN       CIN         ervin, phil     reyes, alex 
+# ℹ 18 more variables: batter_id &lt;dbl&gt;, pitcher_id &lt;dbl&gt;,
+#   is_batter_lefty &lt;dbl&gt;, is_pitcher_lefty &lt;dbl&gt;, bb_type &lt;chr&gt;,
+#   bearing &lt;chr&gt;, pitch_name &lt;chr&gt;, park &lt;dbl&gt;, inning &lt;dbl&gt;,
+#   outs_when_up &lt;dbl&gt;, balls &lt;dbl&gt;, strikes &lt;dbl&gt;, plate_x &lt;dbl&gt;,
+#   plate_z &lt;dbl&gt;, pitch_mph &lt;dbl&gt;, launch_speed &lt;dbl&gt;, launch_angle &lt;dbl&gt;,
+#   is_home_run &lt;dbl&gt;</code></pre>
 </div>
-</div>
-<p>You can add options to executable code like this</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 4</code></pre>
-</div>
-</div>
-<p>The <code>echo: false</code> option disables the printing of code (only output is displayed).</p>
-</section>
-<section id="new-content" class="level2">
-<h2 class="anchored" data-anchor-id="new-content">New Content</h2>
-<p>###Working with Data</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: package 'ggplot2' was built under R version 4.3.3</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-✔ dplyr     1.1.2     ✔ readr     2.1.4
-✔ forcats   1.0.0     ✔ stringr   1.5.0
-✔ ggplot2   3.5.1     ✔ tibble    3.2.1
-✔ lubridate 1.9.2     ✔ tidyr     1.3.0
-✔ purrr     1.0.1     
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()
-ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>hits <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://raw.githubusercontent.com/agmath/agmath.github.io/refs/heads/master/data/classification/battedballs.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Rows: 13000 Columns: 25
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: ","
-chr   (8): home_team, away_team, batter_team, batter_name, pitcher_name, bb_...
-dbl  (16): bip_id, batter_id, pitcher_id, is_batter_lefty, is_pitcher_lefty,...
-date  (1): game_date
-
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>parks <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"https://raw.githubusercontent.com/agmath/agmath.github.io/refs/heads/master/data/classification/park_dimensions.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>###Exploring Data</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#head(hits)</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#better way to write, according to Dr. G</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>hits <span class="sc">|&gt;</span> </span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#better way to write, according to Dr. G</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>hits <span class="sc">|&gt;</span> </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 25
   bip_id game_date  home_team away_team batter_team batter_name     pitcher_name
@@ -211,9 +205,10 @@ date  (1): game_date
 #   is_home_run &lt;dbl&gt;</code></pre>
 </div>
 </div>
+<p>We can also use the same functions to see our data in <code>parks</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>parks <span class="sc">|&gt;</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>parks <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  park                        NAME   Cover LF_Dim CF_Dim RF_Dim LF_W CF_W RF_W
 1    0                 Chase Field    Roof    328    407    335    8   25    8
@@ -224,11 +219,757 @@ date  (1): game_date
 6    5     Great American Ballpark Outdoor    328    404    325   12    8    8</code></pre>
 </div>
 </div>
-<p>###Joining Datasets</p>
+<section id="joining-datasets" class="level2">
+<h2 class="anchored" data-anchor-id="joining-datasets">Joining Datasets</h2>
+<p>Using the function <code>left_join</code>, we can combine our two different sets into one.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> hits <span class="sc">|&gt;</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(parks, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"park"</span> <span class="ot">=</span> <span class="st">"park"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> hits <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(parks, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"park"</span> <span class="ot">=</span> <span class="st">"park"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+</section>
+<section id="code-in-text" class="level1">
+<h1>Code in Text</h1>
+<p>We joined the <code>hits</code> and <code>parks</code> data together to obtain a full data set with 13000 rows and 25 columns.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>hits <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 13,000
+Columns: 25
+$ bip_id           &lt;dbl&gt; 61093, 117924, 84178, 25265, 117768, 54097, 58175, 11…
+$ game_date        &lt;date&gt; 2020-09-11, 2020-08-31, 2020-09-12, 2020-09-04, 2020…
+$ home_team        &lt;chr&gt; "TB", "CIN", "WSH", "CLE", "STL", "STL", "CWS", "CWS"…
+$ away_team        &lt;chr&gt; "BOS", "STL", "ATL", "MIL", "KC", "CIN", "CHC", "MIN"…
+$ batter_team      &lt;chr&gt; "BOS", "STL", "WSH", "CLE", "STL", "CIN", "CWS", "MIN…
+$ batter_name      &lt;chr&gt; "bogaerts, xander", "edman, tommy", "soto, juan", "li…
+$ pitcher_name     &lt;chr&gt; "snell, blake", "lorenzen, michael", "anderson, ian",…
+$ batter_id        &lt;dbl&gt; 593428, 669242, 665742, 596019, 543939, 640447, 51873…
+$ pitcher_id       &lt;dbl&gt; 605483, 547179, 666120, 669203, 623470, 621052, 50643…
+$ is_batter_lefty  &lt;dbl&gt; 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0,…
+$ is_pitcher_lefty &lt;dbl&gt; 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0,…
+$ bb_type          &lt;chr&gt; "ground_ball", "ground_ball", "ground_ball", "ground_…
+$ bearing          &lt;chr&gt; "center", "center", "center", "left", "center", "left…
+$ pitch_name       &lt;chr&gt; "Changeup", "Changeup", "Changeup", "Changeup", "Slid…
+$ park             &lt;dbl&gt; 26, 5, 29, 6, 25, 25, 8, 8, 26, 26, 23, 19, 17, 8, 22…
+$ inning           &lt;dbl&gt; 3, 8, 3, 4, 4, 9, 6, 2, 5, 4, 5, 5, 5, 3, 1, 4, 8, 6,…
+$ outs_when_up     &lt;dbl&gt; 2, 1, 2, 1, 2, 0, 1, 1, 2, 2, 1, 0, 2, 1, 1, 2, 2, 2,…
+$ balls            &lt;dbl&gt; 2, 0, 1, 2, 0, 0, 0, 2, 0, 2, 2, 0, 2, 1, 1, 0, 2, 0,…
+$ strikes          &lt;dbl&gt; 2, 1, 1, 2, 2, 1, 1, 0, 0, 2, 0, 2, 2, 1, 2, 1, 2, 1,…
+$ plate_x          &lt;dbl&gt; 1.65, -0.97, -0.74, -0.72, -0.12, -0.35, -0.23, 0.15,…
+$ plate_z          &lt;dbl&gt; 2.83, 1.82, 2.35, 1.65, 2.16, 3.46, 2.69, 3.05, 2.36,…
+$ pitch_mph        &lt;dbl&gt; 89.5, 86.4, 89.7, 89.7, 82.2, 97.4, 94.6, 90.7, 91.6,…
+$ launch_speed     &lt;dbl&gt; 58.5, NA, 71.9, 71.5, 97.2, NA, 86.5, 92.7, 83.4, 105…
+$ launch_angle     &lt;dbl&gt; -47, -8, NA, 10, 23, 54, NA, 17, 14, 18, -11, 15, 60,…
+$ is_home_run      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>hits <span class="sc">|&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">skim</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">hits</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">13000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Date</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 13%">
+<col style="width: 19%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 12%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">home_team</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">away_team</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">batter_team</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">batter_name</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">561</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">pitcher_name</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">709</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">bb_type</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">bearing</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">pitch_name</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: Date</strong></p>
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 12%">
+<col style="width: 17%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: left;">min</th>
+<th style="text-align: left;">max</th>
+<th style="text-align: left;">median</th>
+<th style="text-align: right;">n_unique</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">game_date</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">2020-07-23</td>
+<td style="text-align: left;">2020-10-27</td>
+<td style="text-align: left;">2020-08-29</td>
+<td style="text-align: right;">90</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 8%">
+<col style="width: 12%">
+<col style="width: 8%">
+<col style="width: 7%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">bip_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">61810.38</td>
+<td style="text-align: right;">37071.39</td>
+<td style="text-align: right;">11.00</td>
+<td style="text-align: right;">27645.25</td>
+<td style="text-align: right;">64242.50</td>
+<td style="text-align: right;">94613.75</td>
+<td style="text-align: right;">119517.00</td>
+<td style="text-align: left;">▇▆▆▆▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">batter_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">586622.68</td>
+<td style="text-align: right;">65484.91</td>
+<td style="text-align: right;">405395.00</td>
+<td style="text-align: right;">543685.00</td>
+<td style="text-align: right;">596146.00</td>
+<td style="text-align: right;">642086.00</td>
+<td style="text-align: right;">680777.00</td>
+<td style="text-align: left;">▂▂▃▇▆</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">pitcher_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">591536.36</td>
+<td style="text-align: right;">65748.18</td>
+<td style="text-align: right;">424144.00</td>
+<td style="text-align: right;">543901.00</td>
+<td style="text-align: right;">605513.00</td>
+<td style="text-align: right;">643256.00</td>
+<td style="text-align: right;">685493.00</td>
+<td style="text-align: left;">▂▂▃▇▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">is_batter_lefty</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.42</td>
+<td style="text-align: right;">0.49</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">▇▁▁▁▆</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">is_pitcher_lefty</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.27</td>
+<td style="text-align: right;">0.45</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">▇▁▁▁▃</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">park</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">14.45</td>
+<td style="text-align: right;">8.69</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">7.00</td>
+<td style="text-align: right;">14.00</td>
+<td style="text-align: right;">22.00</td>
+<td style="text-align: right;">29.00</td>
+<td style="text-align: left;">▇▇▇▇▇</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">inning</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">4.81</td>
+<td style="text-align: right;">2.52</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">3.00</td>
+<td style="text-align: right;">5.00</td>
+<td style="text-align: right;">7.00</td>
+<td style="text-align: right;">13.00</td>
+<td style="text-align: left;">▇▆▇▂▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">outs_when_up</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.95</td>
+<td style="text-align: right;">0.82</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: left;">▇▁▇▁▇</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">balls</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.12</td>
+<td style="text-align: right;">1.02</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">3.00</td>
+<td style="text-align: left;">▇▇▁▅▃</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">strikes</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1.11</td>
+<td style="text-align: right;">0.81</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: left;">▆▁▇▁▇</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">plate_x</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">-0.01</td>
+<td style="text-align: right;">0.55</td>
+<td style="text-align: right;">-2.06</td>
+<td style="text-align: right;">-0.40</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.38</td>
+<td style="text-align: right;">1.95</td>
+<td style="text-align: left;">▁▃▇▅▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">plate_z</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.32</td>
+<td style="text-align: right;">0.57</td>
+<td style="text-align: right;">0.42</td>
+<td style="text-align: right;">1.93</td>
+<td style="text-align: right;">2.32</td>
+<td style="text-align: right;">2.72</td>
+<td style="text-align: right;">4.74</td>
+<td style="text-align: left;">▁▆▇▂▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">pitch_mph</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">88.88</td>
+<td style="text-align: right;">5.90</td>
+<td style="text-align: right;">70.00</td>
+<td style="text-align: right;">84.70</td>
+<td style="text-align: right;">89.80</td>
+<td style="text-align: right;">93.60</td>
+<td style="text-align: right;">102.80</td>
+<td style="text-align: left;">▁▃▆▇▂</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">launch_speed</td>
+<td style="text-align: right;">3364</td>
+<td style="text-align: right;">0.74</td>
+<td style="text-align: right;">88.03</td>
+<td style="text-align: right;">14.57</td>
+<td style="text-align: right;">7.50</td>
+<td style="text-align: right;">79.80</td>
+<td style="text-align: right;">90.70</td>
+<td style="text-align: right;">98.90</td>
+<td style="text-align: right;">117.30</td>
+<td style="text-align: left;">▁▁▂▇▆</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">launch_angle</td>
+<td style="text-align: right;">3312</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">12.49</td>
+<td style="text-align: right;">28.85</td>
+<td style="text-align: right;">-87.00</td>
+<td style="text-align: right;">-6.00</td>
+<td style="text-align: right;">14.00</td>
+<td style="text-align: right;">31.00</td>
+<td style="text-align: right;">89.00</td>
+<td style="text-align: left;">▁▂▇▆▂</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">is_home_run</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">0.23</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="splitting-data-making-test-sets" class="level1">
+<h1>Splitting Data (Making Test Sets)</h1>
+<p>Here, we split the data into two groups, testing and training, for our future model. The first variable in <code>initial_splits</code> specifies the data set we’re working with, the second is the proportion of training data to testing data, and the third allows us to make sure a particular variable within the data set matches prevalence in both separate sets in the same proportion. In this case, since we’re trying to anticipate future home runs, we use <code>is_home_run</code> as the strata.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">434</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>data_splits <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(temp, <span class="fl">0.85</span>, <span class="at">strata =</span> is_home_run)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> <span class="fu">training</span>(data_splits)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> <span class="fu">testing</span>(data_splits)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="exploratory-data-analysis" class="level1">
+<h1>Exploratory Data Analysis</h1>
+<p>How and why do home runs happen?</p>
+<section id="sometimes-useful-functions" class="level2">
+<h2 class="anchored" data-anchor-id="sometimes-useful-functions">Sometimes Useful Functions</h2>
+<section id="filtering-rows" class="level3">
+<h3 class="anchored" data-anchor-id="filtering-rows">Filtering Rows</h3>
+<p>We can use <code>filter</code> to</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>train <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_home_run <span class="sc">==</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 613 × 33
+   bip_id game_date  home_team away_team batter_team batter_name    pitcher_name
+    &lt;dbl&gt; &lt;date&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;          &lt;chr&gt;       
+ 1  63561 2020-09-17 TB        BAL       BAL         alberto, hans… richards, t…
+ 2 115167 2020-09-11 NYY       BAL       NYY         voit, luke     wojciechows…
+ 3  51861 2020-09-13 TOR       NYM       TOR         gurriel, lour… peterson, d…
+ 4  53127 2020-08-31 NYM       MIA       NYM         cano, robinson vesia, alex 
+ 5  61906 2020-08-15 CHC       MIL       CHC         souza, steven  knebel, cor…
+ 6 111834 2020-08-23 PIT       MIL       MIL         smoak, justin  hartlieb, g…
+ 7  41559 2020-10-15 ATL       LAD       LAD         rios, edwin    wilson, bry…
+ 8  26757 2020-10-07 ATL       MIA       ATL         swanson, dans… lopez, pablo
+ 9  57940 2020-10-02 CHC       MIA       MIA         cooper, garre… darvish, yu 
+10  48391 2020-08-23 SF        ARI       SF          dickerson, al… rondon, hec…
+# ℹ 603 more rows
+# ℹ 26 more variables: batter_id &lt;dbl&gt;, pitcher_id &lt;dbl&gt;,
+#   is_batter_lefty &lt;dbl&gt;, is_pitcher_lefty &lt;dbl&gt;, bb_type &lt;chr&gt;,
+#   bearing &lt;chr&gt;, pitch_name &lt;chr&gt;, park &lt;dbl&gt;, inning &lt;dbl&gt;,
+#   outs_when_up &lt;dbl&gt;, balls &lt;dbl&gt;, strikes &lt;dbl&gt;, plate_x &lt;dbl&gt;,
+#   plate_z &lt;dbl&gt;, pitch_mph &lt;dbl&gt;, launch_speed &lt;dbl&gt;, launch_angle &lt;dbl&gt;,
+#   is_home_run &lt;dbl&gt;, NAME &lt;chr&gt;, Cover &lt;chr&gt;, LF_Dim &lt;int&gt;, CF_Dim &lt;int&gt;, …</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>train <span class="sc">|&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(launch_angle <span class="sc">&gt;</span> <span class="dv">45</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 970 × 33
+   bip_id game_date  home_team away_team batter_team batter_name    pitcher_name
+    &lt;dbl&gt; &lt;date&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;          &lt;chr&gt;       
+ 1  54097 2020-08-23 STL       CIN       CIN         ervin, phil    reyes, alex 
+ 2 117224 2020-09-20 NYM       ATL       ATL         swanson, dans… porcello, r…
+ 3  96888 2020-09-25 TEX       HOU       HOU         maldonado, ma… cody, kyle  
+ 4  43175 2020-09-19 BAL       TB        BAL         mountcastle, … morton, cha…
+ 5  51557 2020-08-26 NYM       MIA       MIA         diaz, lewin    degrom, jac…
+ 6  88166 2020-08-14 PHI       NYM       NYM         ramos, wilson  howard, spe…
+ 7  55356 2020-08-19 OAK       ARI       OAK         olson, matt    kelly, merr…
+ 8  91031 2020-09-18 CHC       MIN       CHC         heyward, jason hill, rich  
+ 9  45871 2020-09-07 SD        COL       SD          machado, manny freeland, k…
+10  86005 2020-08-08 TB        NYY       NYY         judge, aaron   glasnow, ty…
+# ℹ 960 more rows
+# ℹ 26 more variables: batter_id &lt;dbl&gt;, pitcher_id &lt;dbl&gt;,
+#   is_batter_lefty &lt;dbl&gt;, is_pitcher_lefty &lt;dbl&gt;, bb_type &lt;chr&gt;,
+#   bearing &lt;chr&gt;, pitch_name &lt;chr&gt;, park &lt;dbl&gt;, inning &lt;dbl&gt;,
+#   outs_when_up &lt;dbl&gt;, balls &lt;dbl&gt;, strikes &lt;dbl&gt;, plate_x &lt;dbl&gt;,
+#   plate_z &lt;dbl&gt;, pitch_mph &lt;dbl&gt;, launch_speed &lt;dbl&gt;, launch_angle &lt;dbl&gt;,
+#   is_home_run &lt;dbl&gt;, NAME &lt;chr&gt;, Cover &lt;chr&gt;, LF_Dim &lt;int&gt;, CF_Dim &lt;int&gt;, …</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>train <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(NAME, <span class="st">"Fenway"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 386 × 33
+   bip_id game_date  home_team away_team batter_team batter_name    pitcher_name
+    &lt;dbl&gt; &lt;date&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;          &lt;chr&gt;       
+ 1  72059 2020-07-25 BOS       BAL       BOS         peraza, jose   cobb, alex  
+ 2  89693 2020-07-25 BOS       BAL       BAL         hays, austin   perez, mart…
+ 3 116705 2020-09-01 BOS       ATL       ATL         freeman, fred… hart, kyle  
+ 4  81855 2020-07-26 BOS       BAL       BAL         davis, chris   weber, ryan 
+ 5 106913 2020-09-22 BOS       BAL       BOS         chavis, micha… akin, keegan
+ 6 111113 2020-08-29 BOS       WSH       WSH         eaton, adam    brice, aust…
+ 7 101052 2020-09-20 BOS       NYY       BOS         lin, tzu-wei   cessa, luis 
+ 8  99863 2020-09-18 BOS       NYY       BOS         bogaerts, xan… montgomery,…
+ 9 110912 2020-08-30 BOS       WSH       WSH         garcia, luis   osich, josh 
+10  61092 2020-08-12 BOS       TB        BOS         vazquez, chri… snell, blake
+# ℹ 376 more rows
+# ℹ 26 more variables: batter_id &lt;dbl&gt;, pitcher_id &lt;dbl&gt;,
+#   is_batter_lefty &lt;dbl&gt;, is_pitcher_lefty &lt;dbl&gt;, bb_type &lt;chr&gt;,
+#   bearing &lt;chr&gt;, pitch_name &lt;chr&gt;, park &lt;dbl&gt;, inning &lt;dbl&gt;,
+#   outs_when_up &lt;dbl&gt;, balls &lt;dbl&gt;, strikes &lt;dbl&gt;, plate_x &lt;dbl&gt;,
+#   plate_z &lt;dbl&gt;, pitch_mph &lt;dbl&gt;, launch_speed &lt;dbl&gt;, launch_angle &lt;dbl&gt;,
+#   is_home_run &lt;dbl&gt;, NAME &lt;chr&gt;, Cover &lt;chr&gt;, LF_Dim &lt;int&gt;, CF_Dim &lt;int&gt;, …</code></pre>
+</div>
+</div>
+</section>
+<section id="selecting-just-a-few-columns" class="level3">
+<h3 class="anchored" data-anchor-id="selecting-just-a-few-columns">Selecting just a few columns</h3>
+<p>This doesn’t change our data set, but instead allows us to look at a few specific variables.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>train <span class="sc">|&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(launch_speed, launch_angle, is_home_run)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 11,050 × 3
+   launch_speed launch_angle is_home_run
+          &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt;
+ 1         NA             -8           0
+ 2         71.9           NA           0
+ 3         97.2           23           0
+ 4         NA             54           0
+ 5         86.5           NA           0
+ 6         92.7           17           0
+ 7         83.4           14           0
+ 8        106.            18           0
+ 9         86.9          -11           0
+10        104.            15           0
+# ℹ 11,040 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="building-new-variables-from-old-one-feature-engineering" class="level3">
+<h3 class="anchored" data-anchor-id="building-new-variables-from-old-one-feature-engineering">Building new variables from old one (<em>Feature Engineering</em>)</h3>
+<p><code>Mutate</code> creates a new object based on our current ones. In this case, we used it to check if the speed of a pitch (<code>pitch_mph</code>) was above 100, and returned a new variable that answered either “yes” or “no” tacked onto the end of the data set. We can create a new set to either replace our original or make a separate set.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>train <span class="sc">|&gt;</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fast_pitch =</span> <span class="fu">ifelse</span>(pitch_mph <span class="sc">&gt;</span> <span class="dv">100</span>, <span class="st">"yes"</span>, <span class="st">"no"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 11,050 × 34
+   bip_id game_date  home_team away_team batter_team batter_name    pitcher_name
+    &lt;dbl&gt; &lt;date&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;          &lt;chr&gt;       
+ 1 117924 2020-08-31 CIN       STL       STL         edman, tommy   lorenzen, m…
+ 2  84178 2020-09-12 WSH       ATL       WSH         soto, juan     anderson, i…
+ 3 117768 2020-08-25 STL       KC        STL         wong, kolten   newberry, j…
+ 4  54097 2020-08-23 STL       CIN       CIN         ervin, phil    reyes, alex 
+ 5  58175 2020-09-25 CWS       CHC       CWS         grandal, yasm… darvish, yu 
+ 6 118766 2020-07-26 CWS       MIN       MIN         cruz, nelson   gonzalez, g…
+ 7  11349 2020-10-11 TB        HOU       TB          zunino, mike   valdez, fra…
+ 8  61080 2020-09-11 TB        BOS       BOS         bradley, jack… snell, blake
+ 9   2652 2020-08-23 SEA       TEX       SEA         bishop, braden minor, mike 
+10  46583 2020-07-28 OAK       COL       OAK         laureano, ram… senzatela, …
+# ℹ 11,040 more rows
+# ℹ 27 more variables: batter_id &lt;dbl&gt;, pitcher_id &lt;dbl&gt;,
+#   is_batter_lefty &lt;dbl&gt;, is_pitcher_lefty &lt;dbl&gt;, bb_type &lt;chr&gt;,
+#   bearing &lt;chr&gt;, pitch_name &lt;chr&gt;, park &lt;dbl&gt;, inning &lt;dbl&gt;,
+#   outs_when_up &lt;dbl&gt;, balls &lt;dbl&gt;, strikes &lt;dbl&gt;, plate_x &lt;dbl&gt;,
+#   plate_z &lt;dbl&gt;, pitch_mph &lt;dbl&gt;, launch_speed &lt;dbl&gt;, launch_angle &lt;dbl&gt;,
+#   is_home_run &lt;dbl&gt;, NAME &lt;chr&gt;, Cover &lt;chr&gt;, LF_Dim &lt;int&gt;, CF_Dim &lt;int&gt;, …</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>train_mutated <span class="ot">&lt;-</span> train <span class="sc">|&gt;</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fast_pitch =</span> <span class="fu">ifelse</span>(pitch_mph <span class="sc">&gt;</span> <span class="dv">100</span>, <span class="st">"yes"</span>, <span class="st">"no"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="summary-statistics" class="level2">
+<h2 class="anchored" data-anchor-id="summary-statistics">Summary Statistics</h2>
+<p>Home runs…</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>train <span class="sc">|&gt;</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(is_home_run) <span class="sc">|&gt;</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prop =</span> <span class="dv">100</span><span class="sc">*</span>n<span class="sc">/</span><span class="fu">sum</span>(n))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 3
+  is_home_run     n  prop
+        &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;
+1           0 10437 94.5 
+2           1   613  5.55</code></pre>
+</div>
+</div>
+<p>Using <code>pct_hr</code> is another way to find the proportion of home runs. Again, multiply it by 100 to get the percentage.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>train <span class="sc">|&gt;</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">pct_hr =</span> <span class="dv">100</span><span class="sc">*</span><span class="fu">mean</span>(is_home_run))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  pct_hr
+   &lt;dbl&gt;
+1   5.55</code></pre>
+</div>
+</div>
+<section id="summarizing-launch-angle" class="level3">
+<h3 class="anchored" data-anchor-id="summarizing-launch-angle">Summarizing Launch Angle</h3>
+<p>By using our training data, we can</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>train <span class="sc">|&gt;</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_angle =</span> <span class="fu">min</span>(launch_angle, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_angle =</span> <span class="fu">mean</span>(launch_angle, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_angle =</span> <span class="fu">median</span>(launch_angle, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_angle =</span> <span class="fu">max</span>(launch_angle, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_angle =</span> <span class="fu">sd</span>(launch_angle, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 5
+  min_angle mean_angle median_angle max_angle sd_angle
+      &lt;dbl&gt;      &lt;dbl&gt;        &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1       -86       12.7           14        89     28.6</code></pre>
+</div>
+</div>
+<p>Here’s another way of doing it using the filter function to clean the blank variables out of our data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>train <span class="sc">|&gt;</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(launch_angle)) <span class="sc">|&gt;</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_angle =</span> <span class="fu">min</span>(launch_angle),</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_angle =</span> <span class="fu">mean</span>(launch_angle),</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_angle =</span> <span class="fu">median</span>(launch_angle),</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_angle =</span> <span class="fu">max</span>(launch_angle),</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_angle =</span> <span class="fu">sd</span>(launch_angle)</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 5
+  min_angle mean_angle median_angle max_angle sd_angle
+      &lt;dbl&gt;      &lt;dbl&gt;        &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1       -86       12.7           14        89     28.6</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="grouped-summaries" class="level2">
+<h2 class="anchored" data-anchor-id="grouped-summaries">Grouped Summaries</h2>
+<p>This creates two rows of summary separated by if the instance is a home run or not. You can use this function for other variables, like categories, for multiple rows.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>train <span class="sc">|&gt;</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(is_home_run) <span class="sc">|&gt;</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(launch_angle)) <span class="sc">|&gt;</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_angle =</span> <span class="fu">min</span>(launch_angle),</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_angle =</span> <span class="fu">mean</span>(launch_angle),</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_angle =</span> <span class="fu">median</span>(launch_angle),</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_angle =</span> <span class="fu">max</span>(launch_angle),</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_angle =</span> <span class="fu">sd</span>(launch_angle)</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 6
+  is_home_run min_angle mean_angle median_angle max_angle sd_angle
+        &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;        &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1           0       -86       11.7           12        89    29.1 
+2           1        11       29.0           28        47     5.37</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>train <span class="sc">|&gt;</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(NAME, is_home_run) <span class="sc">|&gt;</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(launch_angle)) <span class="sc">|&gt;</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_angle =</span> <span class="fu">min</span>(launch_angle),</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_angle =</span> <span class="fu">mean</span>(launch_angle),</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_angle =</span> <span class="fu">median</span>(launch_angle),</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_angle =</span> <span class="fu">max</span>(launch_angle),</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_angle =</span> <span class="fu">sd</span>(launch_angle)</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'NAME'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 60 × 7
+# Groups:   NAME [30]
+   NAME         is_home_run min_angle mean_angle median_angle max_angle sd_angle
+   &lt;chr&gt;              &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;        &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+ 1 Angel Stadi…           0       -66       13           11          86    29.0 
+ 2 Angel Stadi…           1        22       29.0         29          37     4.85
+ 3 Busch Stadi…           0       -77       12.0         14          81    29.5 
+ 4 Busch Stadi…           1        23       31.9         30.5        41     5.91
+ 5 Chase Field            0       -86       12.9         13.5        74    26.7 
+ 6 Chase Field            1        22       29.3         29          38     4.24
+ 7 Citi Field             0       -79       11.7         11          79    28.9 
+ 8 Citi Field             1        20       28.8         27          42     6.46
+ 9 Citizens Ba…           0       -70       11.9         13.5        83    29.3 
+10 Citizens Ba…           1        11       29.3         28          44     7.32
+# ℹ 50 more rows</code></pre>
+</div>
+</div>
+</section>
 </section>
 
 </main>
