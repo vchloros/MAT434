@@ -205,3 +205,41 @@ train |>
   )
 ```
 
+## Data Vizualization
+
+```{r}
+
+theme_set(theme_minimal(base_size = 14))
+
+train |>
+  ggplot() +
+  geom_bar(aes(x = is_home_run))
+
+train |>
+  ggplot() +
+  geom_boxplot(aes(x = pitch_mph))
+
+train |>
+  ggplot() +
+  geom_density(aes(x = launch_angle), alpha = 0.7)
+```
+
+```{r}
+
+train |>
+  ggplot() +
+  geom_histogram(aes(x = launch_speed, fill = is_home_run), alpha = 0.8) +
+  labs(
+    title = "Launch Speed",
+    x = "Launch Speed (mph)",
+    y = "Frequency",
+    caption = "Data Source: MLB Dataset"
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none"
+  ) +
+  facet_wrap(vars(is_home_run), labeller = label_value)
+
+```
+
