@@ -224,23 +224,59 @@ train |>
   geom_density(aes(x = launch_angle), alpha = 0.7)
 ```
 
-```{r}
+```{r practice histo 1}
+mean_launch_speed <- train |>
+  filter(!is.na(launch_speed)) |>
+  summarize(mean(launch_speed))
+
 
 train |>
   ggplot() +
-  geom_histogram(aes(x = launch_speed, fill = is_home_run), alpha = 0.8) +
+  geom_histogram(aes(x = launch_speed, fill = ..count.., color = "#000001"), binwidth = 1.5, alpha = 0.7) +
   labs(
     title = "Launch Speed",
     x = "Launch Speed (mph)",
     y = "Frequency",
     caption = "Data Source: MLB Dataset"
-  ) +
+  ) + 
   theme(
     plot.title = element_text(hjust = 0.5),
     legend.position = "none"
   ) +
-  facet_wrap(vars(is_home_run), labeller = label_value) +
-  scale_fill_distiller(palette = "Spectral")
+  scale_fill_gradientn(colors = rev(RColorBrewer::brewer.pal(9, "Spectral"))) +
+  scale_color_grey()
+
+
+```
+
+```{r}
+
+train |>
+  ggplot() +
+  geom_histogram(
+    aes(
+      x = launch_speed, 
+      fill = as.factor(is_home_run), 
+      color = "black"
+      ), 
+    binwidth = 1.5, alpha = 0.9
+    ) +
+  labs(
+    title = "Launch Speed",
+    x = "Launch Speed (mph)",
+    y = "Frequency",
+    fill = "Home Runs",
+    caption = "Data Source: MLB Dataset"
+  ) + 
+  theme(
+    plot.title = element_text(hjust = 0.5)
+  ) +
+  scale_fill_manual(
+    values = c("1" = "#A4193D", "0" = "#1AAFBC"),
+    labels = c("1" = "Home Run", "0" = "Not a Home Run")
+    ) +
+  scale_color_grey() +
+  guides(color = "none")
 
 ```
 
