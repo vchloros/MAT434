@@ -14,11 +14,11 @@ library(tidymodels)
 library(kableExtra)
 library(patchwork)
 
-zillow <- read_csv("data.csv")
+zillow_data <- read_csv("data.csv")
 ```
 
 ```{r}
-zillow |>
+zillow_data |>
   head()
 ```
 
