@@ -22,3 +22,23 @@ zillow_data |>
   head()
 ```
 
+## Statement of Purpose
+
+For this challenge, my classmates and I are using data from zillow to predict the price ranges of different houses based on various attributes of the listings. The goal for our work is to 
+
+## Setup
+
+```{r}
+set.seed(0409)
+zillow_splits <- initial_split(zillow_data, 0.85, strata = hasSpa)
+
+train <- training(zillow_splits)
+test <- testing(zillow_splits)
+```
+
+## Exploratory Data Analysis (EDA)
+
+```{r}
+
+```
+

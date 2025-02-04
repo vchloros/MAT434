@@ -280,3 +280,94 @@ train |>
 
 ```
 
+## Model Construction, Evaluation, and Tuning
+
+Data Prep
+
+```{r}
+hits_for_model <- temp |>
+  mutate(is_home_run = ifelse(is_home_run == 1, "yes", "no")) |>
+  mutate(is_home_run = factor(is_home_run, levels = c("no", "yes")))
+
+set.seed(434)
+data_splits <- initial_split(hits_for_model, 0.85, strata = is_home_run)
+
+train <- training(data_splits)
+test <- testing(data_splits)
+```
+
+Fitting a Model
+
+```{r}
+dt_spec <- decision_tree() |>
+  set_engine("rpart") |>
+  set_mode("classification")
+
+dt_rec <- recipe(is_home_run ~ launch_speed + launch_angle + pitch_name + Cover, data = train) |>
+  step_impute_median(all_numeric_predictors()) |>
+  step_impute_mode(all_nominal_predictors()) |>
+  step_dummy(all_nominal_predictors())
+
+dt_wf <- workflow() |>
+  add_model(dt_spec) |>
+  add_recipe(dt_rec)
+
+dt_fit <- dt_wf |>
+  fit(train)
+```
+
+Visualizing the Model
+
+```{r}
+dt_fit |>
+  extract_fit_engine() |>
+  rpart.plot::rpart.plot()
+```
+
+Assessing Performance
+
+```{r}
+dt_fit |>
+  augment(train) |>
+  accuracy(is_home_run, .pred_class)
+```
+
+```{r}
+dt_fit |>
+  augment(test) |>
+  accuracy(is_home_run, .pred_class)
+```
+
+Cross-Validation
+
+```{r}
+train_folds <- vfold_cv(train, v = 10, strata = is_home_run)
+
+dt_cv_results <- dt_wf |>
+  fit_resamples(train_folds)
+
+dt_cv_results |>
+  collect_metrics()
+```
+
+Model Tuning
+
+```{r}
+dt_spec <- decision_tree(tree_depth = tune()) |>
+  set_engine("rpart") |>
+  set_mode("classification")
+
+dt_wf <- workflow() |>
+  add_model(dt_spec) |>
+  add_recipe(dt_rec)
+
+dt_tune_results <- dt_wf |>
+  tune_grid(
+    resamples = train_folds,
+    grid = 10
+  )
+
+dt_tune_results |>
+  show_best(n = 10, metric = "accuracy")
+```
+
