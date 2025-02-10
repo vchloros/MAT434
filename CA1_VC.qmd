@@ -66,6 +66,26 @@ train |>
   kbl() |>
   kable_styling(bootstrap_options = "striped")
 ```
+```{r}
+pct_lowest_price <- train %>%
+  count(priceRange) %>%
+  ungroup() %>%
+  mutate(pct = 100*n/sum(n)) %>%
+  filter(priceRange == "0-250000") %>%
+  pull(pct)
+
+pct_highest_price <- train %>%
+  count(priceRange) %>%
+  ungroup() %>%
+  mutate(pct = 100*n/sum(n)) %>%
+  filter(priceRange == "650000+") %>%
+  pull(pct)
+
+pct_lowest_price
+pct_highest_price
+```
+
+The given ranges are largely even, only varied by <100 observations, apart from the first group of 0-250,000 (12.48% of the data) and the final 650,000+ (18.19%). 
 
 ### Categorical Variables
 
@@ -85,7 +105,7 @@ type_plot <- train |>
   labs(
     title = "Home Type",
     x = "",
-    y = "Count"
+    y = ""
   )
 
 spa_plot <- train |>
@@ -112,7 +132,7 @@ patio_plot <- train |>
   labs(
     title = "Number of Patio and Porch Features",
     x = "",
-    y = "Count"
+    y = ""
   )
 
 bathroom_plot <- train |>
@@ -121,7 +141,7 @@ bathroom_plot <- train |>
   labs(
     title = "Number of Bathrooms",
     x = "",
-    y = "Count"
+    y = ""
   )
 
 bedroom_plot <- train |>
@@ -141,16 +161,66 @@ student_plot <- train |>
     x = "",
     y = "Count"
   )
+```
 
+```{r}
 (city_plot +
 type_plot)
-spa_plot 
-(garage_plot +
+
+train |>
+  count(city) |>
+  kbl() |>
+  kable_styling(bootstrap_options = "striped")
+```
+
+By a wide margin, homes in Austin, TX and Single Family homes are the most common throughout the dataset to the point that other some other instances are barely visible at this scale. For the runner-ups, the second most common city is Del Valle (verified by taking a peek at the count), and the second most common home type is a condo.
+
+```{r}
+(bedroom_plot +
+bathroom_plot)
+```
+
+I looked at bedrooms and bathrooms next since those are common figures used when briefly describing homes (e.g. a 2 bed, 1 bath)
+
+For bedrooms, the most common number is 3 followed by 4 in a normal-looking distribution. Bathrooms are similarly distributed but also have the quirk of including half-baths i.e. bathrooms with just a toilet and sink, lacking a shower and/or bath. The most common configurations are 2 and 3 bathrooms with half baths being far less common.
+
+```{r}
+spa_plot
+
+train |>
+  count(hasSpa)
+
+pct_nospa <- train %>%
+  count(hasSpa) %>%
+  ungroup() %>%
+  mutate(pct = 100*n/sum(n)) %>%
+  filter(hasSpa == "FALSE") %>%
+  pull(pct)
+```
+
+Most houses do not have Spas (`r pct_nospa`%).
+
+```{r}
+(garage_plot /
 patio_plot) 
-(bathroom_plot +
-bedroom_plot) 
+
+train |>
+  count(garageSpaces) |>
+  kbl() |>
+  kable_styling(bootstrap_options = "striped")
+```
+
+Garage and patio/porch features seem to have a bit more variety through their plots: the most common amount for both is 0. However, over 2000 houses within the sample have 2 garage spaces, much more common than 1 space. 1 and 3 garage setups are less common, but appear as the next most common counts.
+
+The second most common number of patio/porch features is 1, and more features are increasingly less common i.e. 2 features are more common than 3 features which is less common than 4. 
+
+
+
+```{r}
 student_plot
 ```
+
+
 
 ### Numerical Variables
 
