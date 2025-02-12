@@ -1,0 +1,449 @@
+---
+title: "Zillow Competition Assignment"
+author: 
+  - name: Vinny Chloros
+    email: vinny.chloros@snhu.edu
+    affiliations: 
+      - name: Southern New Hampshire University
+format: html
+editor: visual
+date: 2/4/2025
+date-modified: today
+date-format: long
+theme: superhero
+code-fold: true
+---
+
+```{r setup}
+#| message: false
+
+library(tidyverse)
+library(tidymodels)
+library(kableExtra)
+library(patchwork)
+
+zillow_data <- read_csv("data.csv")
+
+```
+
+## Statement of Purpose
+
+With the ongoing housing crisis within the United States, identifying homes that land within the budget of families looking to buy can be a small help in the larger economic problem. Here, I'll aim to identify the features of homes that best predicts where they land on a range of prices. I'll be using a data set derived from zillow centered on Austin, TX and a few nearby cities as a microcosm of the larger housing market.
+
+## Setup
+
+```{r split}
+set.seed(0409)
+zillow_splits <- initial_split(zillow_data, 0.85, strata = priceRange)
+
+train <- training(zillow_splits)
+test <- testing(zillow_splits)
+
+train |>
+  head() |>
+  kbl() |>
+  kable_styling(bootstrap_options = "striped") |>
+  scroll_box(height = "300px")
+  
+```
+
+The initial data set featured 7498 observations with 16 total variables. It was split in two sections: 6371 observations for training data and 1127 observations for testing the eventual model with a strata created to ensure that different price ranges were proportionally represented between the two sets.
+
+## Exploratory Data Analysis (EDA)
+
+Since the value of focus is the price range of each observation, let's take a look at how prices are distributed across the data set:
+
+```{r price}
+train |>
+  ggplot() +
+  geom_bar(aes(x = priceRange, fill = priceRange, color = I("#000001"))) +
+  labs(title = "Distribution of Price Range",
+       x = "Price Range",
+       y = "Count") +
+  guides(fill = "none")
+
+train |>
+  count(priceRange) |>
+  kbl() |>
+  kable_styling(bootstrap_options = "striped")
+```
+```{r}
+#| echo: false
+#| output: false
+## hiding for later reference; realized I could just calculate with the console
+
+pct_lowest_price <- train %>%
+  count(priceRange) %>%
+  ungroup() %>%
+  mutate(pct = 100*n/sum(n)) %>%
+  filter(priceRange == "0-250000") %>%
+  pull(pct)
+
+pct_highest_price <- train %>%
+  count(priceRange) %>%
+  ungroup() %>%
+  mutate(pct = 100*n/sum(n)) %>%
+  filter(priceRange == "650000+") %>%
+  pull(pct)
+
+pct_lowest_price
+pct_highest_price
+```
+
+The given ranges are largely even, only varied by <100 observations, apart from the first group of 0-250,000 (12.48% of the data) and the final 650,000+ (18.19%). 
+
+### Categorical Variables
+
+```{r categories}
+city_plot <- train |>
+  ggplot() +
+  geom_bar(aes(y = city)) +
+  labs(
+    title = "City",
+    x = "",
+    y = "Count"
+  )
+
+type_plot <- train |>
+  ggplot() +
+  geom_bar(aes(y = homeType)) +
+  labs(
+    title = "Home Type",
+    x = "",
+    y = ""
+  )
+
+spa_plot <- train |>
+  ggplot() +
+  geom_bar(aes(x = hasSpa)) +
+  labs(
+    title = "House Has Spa?",
+    x = "",
+    y = "Count"
+  )
+
+garage_plot <- train |>
+  ggplot() +
+  geom_bar(aes(x = garageSpaces)) +
+  labs(
+    title = "Number of Garage Spaces",
+    x = "",
+    y = "Count"
+  )
+
+patio_plot <- train |>
+  ggplot() +
+  geom_bar(aes(x = numOfPatioAndPorchFeatures)) +
+  labs(
+    title = "Number of Patio and Porch Features",
+    x = "",
+    y = ""
+  )
+
+bathroom_plot <- train |>
+  ggplot() +
+  geom_bar(aes(x = numOfBathrooms)) +
+  labs(
+    title = "Number of Bathrooms",
+    x = "",
+    y = ""
+  )
+
+bedroom_plot <- train |>
+  ggplot() +
+  geom_bar(aes(x = numOfBedrooms)) +
+  labs(
+    title = "Number of Bedrooms",
+    x = "",
+    y = "Count"
+  )
+
+students_plot <- train |>
+  ggplot() +
+  geom_bar(aes(x = MedianStudentsPerTeacher)) +
+  labs(
+    title = "Median Students Per Teacher",
+    x = "",
+    y = "Count"
+  )
+```
+
+```{r}
+(city_plot +
+type_plot)
+```
+
+```{r}
+#| echo: false
+#| output: false
+## hiding this; was useful for my reference but bogs up the page
+
+train |>
+  count(city) |>
+  kbl(caption = "Cities") |>
+  kable_styling(bootstrap_options = "striped", full_width = FALSE, position = "left")
+
+train |>
+  count(homeType) |>
+  kbl(caption = "Home Types") |>
+  kable_styling(bootstrap_options = "striped", full_width = FALSE, position = "right")
+```
+
+
+By a wide margin, homes in Austin, TX and Single Family homes are the most common throughout the dataset to the point that other some other instances are barely visible at this scale. For the runner-ups, the second most common city is Del Valle (verified by taking a peek at the count), and the second most common home type is a condo.
+
+```{r}
+(bedroom_plot +
+bathroom_plot)
+```
+
+I looked at bedrooms and bathrooms next since those are common figures used when briefly describing homes (e.g. a 2 bed, 1 bath)
+
+For bedrooms, the most common number is 3 followed by 4 in a normal-looking distribution. Bathrooms are similarly distributed but also have the quirk of including half-baths i.e. bathrooms with just a toilet and sink, lacking a shower and/or bath. The most common configurations are 2 and 3 bathrooms with half baths being far less common.
+
+```{r}
+spa_plot
+
+## train |>
+##   count(hasSpa)
+```
+
+Out of all observations, the vast majority (~92%) lack spas. As a luxury addition to a home, it's not surprising that these are relatively rare within the data. 
+
+```{r}
+(garage_plot /
+patio_plot) 
+
+##train |>
+##  count(garageSpaces) |>
+##  kbl() |>
+##  kable_styling(bootstrap_options = "striped")
+```
+
+The most common amount for both garage spaces and patio/porch features is 0. However, over 2000 houses within the sample have 2 garage spaces, much more common than 1 space or 3 spaces. It makes sense that this is a common construction decision since many families have at least two drivers (e.g. two parents, parent and child, roommates, etc.). One space may not provide enough room to be worth the garage, and three spaces might require too much space that could be allocated to different parts of the house.
+
+The second most common number of patio/porch features is 1, and more features are increasingly less common i.e. 2 features are more common than 3 features which is less common than 4. Patio and porch features are likely also a luxury addition that could signify an increase to the house's price.
+
+
+```{r}
+students_plot
+
+##train |>
+##  count(MedianStudentsPerTeacher) |>
+##  kbl() |>
+##  kable_styling(bootstrap_options = "striped")
+```
+
+In terms of median students per teacher in the area, 16 is the most common number (~1/4 of the data). More of the observation lie below this most common value (~58%) rather than being above it (~17%).
+
+### Numerical Variables
+
+```{r nums}
+#| message: false
+
+year_plot <- train |>
+  ggplot() +
+  geom_histogram(aes(x = yearBuilt)) +
+  geom_boxplot(aes(x = yearBuilt, y = -40), width = 40) +
+  labs(
+    title = "Year Built",
+    x = "",
+    y = "Count"
+  )
+
+school_plot <- train |>
+  ggplot() +
+  geom_histogram(aes(x = avgSchoolRating)) +
+  geom_boxplot(aes(x = avgSchoolRating, y = -40), width = 40) +
+  labs(
+    title = "Average School Rating",
+    x = "",
+    y = "Count"
+  )
+
+lot_plot <- train |>
+  ggplot() +
+  geom_histogram(aes(x = lotSizeSqFt)) +
+  geom_boxplot(aes(x = lotSizeSqFt, y = -40), width = 40) +
+  scale_x_log10() +
+  labs(
+    title = "Lot Size (sq ft)",
+    x = "",
+    y = "Count"
+  )
+```
+
+```{r}
+year_plot
+```
+
+```{r}
+school_plot 
+```
+
+```{r}
+lot_plot
+```
+
+### Multiple Variables
+
+```{r}
+city_price <- train |>
+  ggplot() +
+  geom_bar(aes(y = city, fill = priceRange, color = I("#000001")), position = "fill") +
+  labs(title = "City and Price Range",
+       y = "City",
+       x = "Count") +
+  theme(legend.position = "none")
+
+type_price <- train |>
+  ggplot() +
+  geom_bar(aes(y = homeType, fill = priceRange, color = I("#000001")), position = "fill") +
+  labs(title = "Home Type and Price Range",
+       y = "Home Type",
+       x = "Count") 
+
+spa_price <- train |>
+  ggplot() +
+  geom_bar(aes(x = hasSpa, fill = priceRange, color = I("#000001")), position = "fill") +
+  labs(title = "Spa Prescence and Price Range",
+       x = "Has Spa?",
+       y = "Count")
+
+garage_price <- train |>
+  ggplot() +
+  geom_bar(aes(x = garageSpaces, fill = priceRange, color = I("#000001")), position = "fill") +
+  labs(title = "Garage Spaces and Price Range",
+       x = "Number of Garage Spaces",
+       y = "Count") +
+  theme(legend.position = "none")
+
+patio_price <- train |>
+  ggplot() +
+  geom_bar(aes(x = numOfPatioAndPorchFeatures, fill = priceRange, color = I("#000001")), position = "fill") +
+  labs(title = "Patio & Porch Features and Price Range",
+       x = "# of Patio & Porch Features",
+       y = "Count")
+
+bath_price <- train |>
+  ggplot() +
+  geom_bar(aes(x = numOfBathrooms, fill = priceRange, color = I("#000001")), position = "fill") +
+  labs(title = "Bathrooms and Price Range",
+       x = "Number of Bathrooms",
+       y = "Count") 
+
+bed_price <- train |>
+  ggplot() +
+  geom_bar(aes(x = numOfBedrooms, fill = priceRange, color = I("#000001")), position = "fill") +
+  labs(title = "Bedrooms and Price Range",
+       x = "Number of Bedrooms",
+       y = "Count") +
+  theme(legend.position = "none")
+
+students_price <- train |>
+  ggplot() +
+  geom_bar(aes(x = MedianStudentsPerTeacher, fill = priceRange, color = I("#000001")), position = "fill") +
+  labs(title = "Median Students per Teacher and Price Range",
+       x = "Number of Students",
+       y = "Count")
+```
+
+
+
+```{r}
+(city_price +
+type_price)
+```
+
+Here, I've formatted the bars to allow a closer look at the distribution of price ranges within the variables with less observations. 
+
+For a few, like West Lake Hills, Manchaca, and Dripping Springs, are entirely within one price range. Others, like Pflungerville and Driftwood, are almost entirely made up of one price range, but contain a smaller proportion from another group. At first, this seems like a solid indicator that being in a certain city can strongly influence the price of a house, but we have to keep in mind that these were very small amounts of observations, with most having less than 10 houses. Because of that, city is probably not a reliable predictor of price on its own. To support this, Austin, with the largest amount of distributions by far, has a distribution of prices that closely resembles the overall proportion of prices throughout the data set. 
+
+The different home types have a similar but less pronounced problem. Single family homes were by far the most common, and these also have a largely proportional distribution. There are two home types, vacant land and multifamily, that have only two price ranges within them. Residential and apartment home types have 4 out of the 5 groups present, and all the rest have all 5 represented. Like with cities, caution should be exercised when incorporating this variable into our predictions because of the small amount of observations, but the wider variation between signals to me that they are marginally more reliable.
+
+```{r}
+spa_price
+
+##train |> 
+##  filter(hasSpa == F) |>
+##  count(hasSpa, priceRange)
+
+##train |> 
+##  filter(hasSpa == T) |>
+##  count(hasSpa, priceRange)
+```
+
+In terms of spas, it seems like there is a clear increase in the higher price ranges for houses with spas compared to those without. In houses without spas, the highest ranges, 450000-650000 and 650000+, make up 22% and 16% of all houses with spas, but for houses with spas, they make up 28% and 39%. Having a spa is likely a good indicator for a house being in a higher price range.
+
+```{r}
+(garage_price +
+patio_price)
+
+train |>
+  count(priceRange, numOfPatioAndPorchFeatures)
+```
+
+Price range does increase as the number of porch and patio features increase. 
+
+```{r}
+(bed_price +
+bath_price)
+```
+
+
+
+```{r}
+students_price
+```
+
+
+
+```{r}
+year_price <- train |>
+  ggplot() +
+  geom_boxplot(aes(x = yearBuilt, y = priceRange, fill = priceRange)) +
+  labs(
+    title = "Price Range by Year Built",
+    x = "Year Built",
+    y = "Price Range"
+  )
+
+school_price <- train |>
+  ggplot() +
+  geom_boxplot(aes(x = avgSchoolRating, y = priceRange, fill = priceRange)) +
+  labs(
+    title = "Price Range by Average School Rating",
+    x = "Average School Rating",
+    y = "Price Range"
+  )
+
+lot_price <- train |>
+  ggplot() +
+  scale_x_log10() +
+  geom_boxplot(aes(x = lotSizeSqFt, y = priceRange, fill = priceRange)) +
+  labs(
+    title = "Price Range by Lot Size (sq ft)",
+    x = "Lot Size (sq ft)",
+    y = "Price Range"
+  )
+```
+
+
+
+```{r}
+year_price
+```
+
+
+
+```{r}
+school_price
+```
+
+
+
+```{r}
+lot_price
+```
+
+
