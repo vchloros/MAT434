@@ -28,7 +28,7 @@ zillow_data <- read_csv("data.csv")
 
 ## Statement of Purpose
 
-With the ongoing housing crisis within the United States, identifying homes that land within the budget of families looking to buy can be a small help in the larger economic problem. Here, I'll aim to identify the features of homes that best predicts where they land on a range of prices. I'll be using a data set derived from zillow centered on Austin, TX and a few nearby cities as a microcosm of the larger housing market.
+<p>With the ongoing housing crisis within the United States, identifying homes that land within the budget of families looking to buy can be a small help in the larger economic problem. Here, I'll aim to identify the features of homes that best predicts where they land on a range of prices. I'll be using a data set derived from zillow centered on Austin, TX and a few nearby cities as a microcosm of the larger housing market.</p>
 
 ## Setup
 
@@ -47,7 +47,7 @@ train |>
   
 ```
 
-The initial data set featured 7498 observations with 16 total variables. It was split in two sections: 6371 observations for training data and 1127 observations for testing the eventual model with a strata created to ensure that different price ranges were proportionally represented between the two sets.
+</br> The initial data set featured 7498 observations with 16 total variables. It was split in two sections: 6371 observations for training data and 1127 observations for testing the eventual model with a strata created to ensure that different price ranges were proportionally represented between the two sets.
 
 ## Exploratory Data Analysis (EDA)
 
@@ -67,6 +67,7 @@ train |>
   kbl() |>
   kable_styling(bootstrap_options = "striped")
 ```
+
 ```{r}
 #| echo: false
 #| output: false
@@ -90,7 +91,7 @@ pct_lowest_price
 pct_highest_price
 ```
 
-The given ranges are largely even, only varied by <100 observations, apart from the first group of 0-250,000 (12.48% of the data) and the final 650,000+ (18.19%). 
+The given ranges are largely even, only varied by \<100 observations, apart from the first group of 0-250,000 (12.48% of the data) and the final 650,000+ (18.19%).
 
 ### Categorical Variables
 
@@ -174,23 +175,18 @@ type_plot)
 ```
 
 ```{r}
-#| echo: false
-#| output: false
-## hiding this; was useful for my reference but bogs up the page
-
 train |>
   count(city) |>
   kbl(caption = "Cities") |>
-  kable_styling(bootstrap_options = "striped", full_width = FALSE, position = "left")
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "float_left")
 
 train |>
   count(homeType) |>
   kbl(caption = "Home Types") |>
-  kable_styling(bootstrap_options = "striped", full_width = FALSE, position = "right")
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "float_right")
 ```
 
-
-By a wide margin, homes in Austin, TX and Single Family homes are the most common throughout the dataset to the point that other some other instances are barely visible at this scale. For the runner-ups, the second most common city is Del Valle (verified by taking a peek at the count), and the second most common home type is a condo.
+By a wide margin, homes in Austin, TX and Single Family homes are the most common throughout the dataset to the point that some of the other instances are barely visible at this scale. For the runner-ups, the second most common city is Del Valle (verified by taking a peek at the count), and the second most common home type is a condo.
 
 ```{r}
 (bedroom_plot +
@@ -199,42 +195,44 @@ bathroom_plot)
 
 I looked at bedrooms and bathrooms next since those are common figures used when briefly describing homes (e.g. a 2 bed, 1 bath)
 
-For bedrooms, the most common number is 3 followed by 4 in a normal-looking distribution. Bathrooms are similarly distributed but also have the quirk of including half-baths i.e. bathrooms with just a toilet and sink, lacking a shower and/or bath. The most common configurations are 2 and 3 bathrooms with half baths being far less common.
+For bedrooms, the most common number is 3 followed by 4 in a normal-looking distribution. Bathrooms have more of a right-tailed distribution but also have the quirk of including half-baths i.e. bathrooms with just a toilet and sink, lacking a shower and/or bath. The most common configurations are 2 and 3 bathrooms with the inclusion of half baths being far less common.
 
 ```{r}
 spa_plot
 
-## train |>
-##   count(hasSpa)
+train |>
+  count(hasSpa) |>
+  kbl() |>
+  kable_styling(full_width = F, bootstrap_options = "striped")
 ```
 
-Out of all observations, the vast majority (~92%) lack spas. As a luxury addition to a home, it's not surprising that these are relatively rare within the data. 
+Out of all observations, the vast majority (\~92%) lack spas. As a luxury addition to a home, it's not surprising that these are relatively rare within the data.
 
 ```{r}
 (garage_plot /
 patio_plot) 
 
-##train |>
-##  count(garageSpaces) |>
-##  kbl() |>
-##  kable_styling(bootstrap_options = "striped")
+train |>
+  count(garageSpaces) |>
+  kbl() |>
+  kable_styling(bootstrap_options = "striped", full_width = F) |>
+  scroll_box(height = "200px")
 ```
 
-The most common amount for both garage spaces and patio/porch features is 0. However, over 2000 houses within the sample have 2 garage spaces, much more common than 1 space or 3 spaces. It makes sense that this is a common construction decision since many families have at least two drivers (e.g. two parents, parent and child, roommates, etc.). One space may not provide enough room to be worth the garage, and three spaces might require too much space that could be allocated to different parts of the house.
+</br> The most common amount for both garage spaces and patio/porch features is 0. However, over 2000 houses within the sample have 2 garage spaces, much more common than 1 space or 3 spaces. It makes sense that this is a common construction decision since many households have at least two drivers (e.g. two parents, parent and child, roommates, etc.). One space may not provide enough room to be worth the garage, and three spaces might require too much space that could be allocated to different parts of the house.
 
 The second most common number of patio/porch features is 1, and more features are increasingly less common i.e. 2 features are more common than 3 features which is less common than 4. Patio and porch features are likely also a luxury addition that could signify an increase to the house's price.
-
 
 ```{r}
 students_plot
 
-##train |>
-##  count(MedianStudentsPerTeacher) |>
-##  kbl() |>
-##  kable_styling(bootstrap_options = "striped")
+train |>
+  count(MedianStudentsPerTeacher) |>
+  kbl() |>
+  kable_styling(bootstrap_options = "striped")
 ```
 
-In terms of median students per teacher in the area, 16 is the most common number (~1/4 of the data). More of the observation lie below this most common value (~58%) rather than being above it (~17%).
+In terms of median students per teacher in the area, 16 is the most common number (\~1/4 of the data). Most of the data lies below this most common value (\~58%) rather than being above it (\~17%).
 
 ### Numerical Variables
 
@@ -261,6 +259,16 @@ school_plot <- train |>
     y = "Count"
   )
 
+funkylot_plot <- train |>
+  ggplot() +
+  geom_histogram(aes(x = lotSizeSqFt)) +
+  geom_boxplot(aes(x = lotSizeSqFt, y = -40), width = 40) +
+  labs(
+    title = "Lot Size (sq ft)",
+    x = "",
+    y = "Count"
+  )
+
 lot_plot <- train |>
   ggplot() +
   geom_histogram(aes(x = lotSizeSqFt)) +
@@ -274,16 +282,44 @@ lot_plot <- train |>
 ```
 
 ```{r}
+#| message: false
 year_plot
+
+train |>
+  select(yearBuilt) |>
+  quantile(na.rm = TRUE) |>
+  kbl(caption = "Year Built Stats") |>
+  kable_styling(bootstrap_options = "striped", full_width = F)
 ```
 
+All observations in the data set were built between the years 1907 and 2020. The median year was 1993 with an interquartile range of 31, so half the homes were built between 1975 and 2006. The data is left-skewed as a whole, with a long range of older dates past the median.
+
 ```{r}
+#| message: false
 school_plot 
+
+train |>
+  select(avgSchoolRating) |>
+  quantile(na.rm = TRUE) |>
+  kbl(caption = "School Rating Stats") |>
+  kable_styling(bootstrap_options = "striped", full_width = F)
 ```
 
+Schools seemed to be rated on a scale, likely from 1 to 10 since these observations start at 2.3 and end at 9.5. The median of the data is 5.6, with half the observations falling between 4 and 7.
+
 ```{r}
-lot_plot
+#| message: false
+(funkylot_plot +
+lot_plot)
+
+train |>
+  select(lotSizeSqFt) |>
+  quantile(na.rm = TRUE) |>
+  kbl(caption = "Lot Size Stats") |>
+  kable_styling(bootstrap_options = "striped", full_width = F)
 ```
+
+When first trying to observe the data, it was clear that the few largest instances were obscuring the rest of the data, so I applied scaling to get a better picture of the lot size distribution. The smallest lot size is 100 sq ft and the largest is over 30 million. The data is in an even-looking distribution with a median of 8215 sq ft, the majority of instances resting between 6534 sq ft and 10,890 sq ft.
 
 ### Multiple Variables
 
@@ -315,8 +351,7 @@ garage_price <- train |>
   geom_bar(aes(x = garageSpaces, fill = priceRange, color = I("#000001")), position = "fill") +
   labs(title = "Garage Spaces and Price Range",
        x = "Number of Garage Spaces",
-       y = "Count") +
-  theme(legend.position = "none")
+       y = "Count")
 
 patio_price <- train |>
   ggplot() +
@@ -348,18 +383,25 @@ students_price <- train |>
        y = "Count")
 ```
 
-
-
 ```{r}
 (city_price +
 type_price)
 ```
 
-Here, I've formatted the bars to allow a closer look at the distribution of price ranges within the variables with less observations. 
+Here, I've formatted the bars to allow a closer look at the distribution of price ranges within the variables with less observations.
 
-For a few, like West Lake Hills, Manchaca, and Dripping Springs, are entirely within one price range. Others, like Pflungerville and Driftwood, are almost entirely made up of one price range, but contain a smaller proportion from another group. At first, this seems like a solid indicator that being in a certain city can strongly influence the price of a house, but we have to keep in mind that these were very small amounts of observations, with most having less than 10 houses. Because of that, city is probably not a reliable predictor of price on its own. To support this, Austin, with the largest amount of distributions by far, has a distribution of prices that closely resembles the overall proportion of prices throughout the data set. 
+For a few, like West Lake Hills, Manchaca, and Dripping Springs, the data are entirely within one price range. Others, like Pflungerville and Driftwood, are almost entirely made up of one price range, but contain a smaller proportion from another group. At first, this seems like a solid indicator that being in a certain city can strongly influence the price of a house, but we have to keep in mind that these were very small amounts of observations, with most having less than 10 houses. Because of that, city is probably not a reliable predictor of price on its own. To support this, Austin, with the largest amount of observations by far, has a distribution of prices that closely resembles the overall proportion of prices throughout the data set.
 
 The different home types have a similar but less pronounced problem. Single family homes were by far the most common, and these also have a largely proportional distribution. There are two home types, vacant land and multifamily, that have only two price ranges within them. Residential and apartment home types have 4 out of the 5 groups present, and all the rest have all 5 represented. Like with cities, caution should be exercised when incorporating this variable into our predictions because of the small amount of observations, but the wider variation between signals to me that they are marginally more reliable.
+
+```{r}
+(bed_price +
+bath_price)
+```
+
+Both bedrooms and bathrooms seem to show an increase in price as they increase. At the lower end, there are more 1 and 2 bedroom houses within the lowest price range. At 4 bedrooms, there is a sharp increase in price range that's carried up to 7 bedrooms. At the 8 bedroom mark, there is a comeback of the lower price ranges, although they take up a smaller portion of the total, and the 10 bedroom mark is entirely comprised of the 450,000-650,000 price range. Similar to the city and home type plots, this may be because of a smaller number of observations.
+
+Bathrooms have a similar trend where a larger proportion of higher price ranges are present when there are a larger amount of bathrooms. Two instances, 5.5 and 6.5 baths, are entirely comprised of the 650,000+ price range, but again this might be due to them only representing a handful of observations.
 
 ```{r}
 spa_price
@@ -373,30 +415,22 @@ spa_price
 ##  count(hasSpa, priceRange)
 ```
 
-In terms of spas, it seems like there is a clear increase in the higher price ranges for houses with spas compared to those without. In houses without spas, the highest ranges, 450000-650000 and 650000+, make up 22% and 16% of all houses with spas, but for houses with spas, they make up 28% and 39%. Having a spa is likely a good indicator for a house being in a higher price range.
+In terms of spas, it seems like there is a clear increase in the higher price ranges for houses with spas compared to those without. In houses without spas, the highest ranges, 450000-650000 and 650000+, make up 22% and 16% of all houses without spas, but for houses with spas, they make up 28% and 39%. Having a spa is likely a good indicator for a house being in a higher price range.
 
 ```{r}
-(garage_price +
+(garage_price /
 patio_price)
-
-train |>
-  count(priceRange, numOfPatioAndPorchFeatures)
 ```
 
-Price range does increase as the number of porch and patio features increase. 
+Garage spaces have similar price range proportions for 0, 1, and 2 spaces, but there is an increase in higher price ranges for houses with between 4 and 8 spaces. Beyond that, there are combinations of low and high ranges that might be influenced by the smaller samples sizes, since there are less houses with higher numbers of garge spaces.
 
-```{r}
-(bed_price +
-bath_price)
-```
-
-
+Price range does increase as the number of porch and patio features increase. The proportion of higher price ranges increase with an increase of features, and that trend is present throughout the data. Because of this, porch and patio features might be a good indicator of higher price ranges.
 
 ```{r}
 students_price
 ```
 
-
+Between 11 and 15 students per teacher, the price ranges of 0-250,000 and 250,000-350,000 are the most prevalent, but higher price ranges become the majority in when the median number of students is above 15. One end of the plot, where the median number of students is 19, only features the two highest price ranges.
 
 ```{r}
 year_price <- train |>
@@ -406,7 +440,8 @@ year_price <- train |>
     title = "Price Range by Year Built",
     x = "Year Built",
     y = "Price Range"
-  )
+  ) +
+  theme(legend.position = "none")
 
 school_price <- train |>
   ggplot() +
@@ -415,7 +450,8 @@ school_price <- train |>
     title = "Price Range by Average School Rating",
     x = "Average School Rating",
     y = "Price Range"
-  )
+  ) +
+  theme(legend.position = "none")
 
 lot_price <- train |>
   ggplot() +
@@ -425,25 +461,26 @@ lot_price <- train |>
     title = "Price Range by Lot Size (sq ft)",
     x = "Lot Size (sq ft)",
     y = "Price Range"
-  )
+  ) +
+  theme(legend.position = "none")
 ```
-
-
 
 ```{r}
 year_price
 ```
 
-
+The different boxplots of the price ranges have similar IQRs throughout scale of years (with the major difference being smaller IQRs as price goes down) but their medians differ more distinctly. From the top, there seems to be a trend of newer homes being more expensive with median years being older for lower price ranges. However, the lowest range of 0-250,000 has a median that lies between that of the two highest ranges.
 
 ```{r}
 school_price
 ```
 
-
+Surprisingly, the distribution of price ranges between school rating is very distinct. The lowest average school ratings coincide with the lowest price ranges, and the same can be said for the highest ratings and ranges. Both the 650,000+ range and the 450,000-650,000 ranges have the same medians, but they vary more widely in the other ranges.
 
 ```{r}
 lot_price
 ```
 
+Similarly to school rating, lot size does correlate to price range. The higher price ranges have higher median lot sizes, and the lower price ranges have the lowest median lot sizes. However, the extent of the range of lot sizes makes the difference harder to visualize than the school rating since the IQRs for all ranges are smaller. In addition, there are a large number of outliers in the boxplots, such as some of the largest house sizes being in the 0-250,000.
 
+Concluding the EDA, the majority of variables present will be useful in predicting price range, especially those with very distinct variation like presence of a spa, average school rating, and lot size. Some variables, particularly city and home type, are poorly represented in the data apart from one major category, so I would hesitate to include them within the later model. 
