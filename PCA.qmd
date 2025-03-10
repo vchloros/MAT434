@@ -77,4 +77,3 @@ train_baked |>
     scale_color_brewer(palette = "Dark2") + 
     scale_fill_brewer(palette = "Dark2")
 ```
-

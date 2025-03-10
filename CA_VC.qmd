@@ -21,6 +21,7 @@ library(tidyverse)
 library(tidymodels)
 library(kableExtra)
 library(patchwork)
+library(parsnip)
 
 zillow_data <- read_csv("data.csv")
 
@@ -484,3 +485,169 @@ lot_price
 Similarly to school rating, lot size does correlate to price range. The higher price ranges have higher median lot sizes, and the lower price ranges have the lowest median lot sizes. However, the extent of the range of lot sizes makes the difference harder to visualize than the school rating since the IQRs for all ranges are smaller. In addition, there are a large number of outliers in the boxplots, such as some of the largest house sizes being in the 0-250,000.
 
 Concluding the EDA, the majority of variables present will be useful in predicting price range, especially those with very distinct variation like presence of a spa, average school rating, and lot size. Some variables, particularly city and home type, are poorly represented in the data apart from one major category, so I would hesitate to include them within the later model.
+
+
+## Model Construction
+
+```{r folds}
+train_folds <- vfold_cv(train, v = 10, strata = priceRange)
+```
+
+### KNN
+
+```{r knn setup}
+knn_spec <- nearest_neighbor() |>
+  set_engine("kknn") |>
+  set_mode("classification")
+
+knn_rec <- recipe(priceRange ~ ., data = train) |>
+  step_normalize(all_numeric_predictors()) |>
+  step_rm(id) |>
+  step_rm(description) |>
+  step_rm(latitude) |>
+  step_rm(longitude) |>
+  step_impute_median(all_numeric_predictors())
+
+knn_wf <- workflow() |>
+  add_model(knn_spec) |>
+  add_recipe(knn_rec)
+```
+
+```{r initial metrics}
+n_cores <- parallel::detectCores()
+cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
+doParallel::registerDoParallel(cl)
+
+tictoc::tic()
+
+knn_cv_results <- knn_wf |>
+  fit_resamples(
+    resamples = train_folds,
+    metrics = metric_set(accuracy, mn_log_loss)
+  )
+
+tictoc::toc()
+
+doParallel::stopImplicitCluster()
+unregister()
+
+knn_cv_results |>
+  collect_metrics()
+```
+
+#### KNN Hyperparameter Tuning
+```{r}
+n_cores <- parallel::detectCores()
+cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
+doParallel::registerDoParallel(cl)
+
+tictoc::tic()
+
+knn_tune_results <- knn_tune_wf %>%
+  tune_bayes(
+    resamples = train_folds,
+    metrics = metric_set(mn_log_loss),
+    control = control_bayes(parallel_over = "everything")
+  )
+
+tictoc::toc()
+
+doParallel::stopImplicitCluster()
+unregister()
+
+knn_cv_results %>%
+  collect_metrics()
+```
+
+#### Fitting
+
+```{r knn fitting}
+knn_best_params <- knn_tune_results %>%
+  select_best(metric = "mn_log_loss")
+
+knn_best_wf <- knn_tune_wf %>%
+  finalize_workflow(knn_best_params)
+
+knn_best_fit <- knn_best_wf %>%
+  fit(train)
+```
+
+
+
+### Decision Tree
+
+```{r dt setup}
+dt_spec <- decision_tree(min_n = tune(), tree_depth = tune()) |>
+  set_engine("rpart") |>
+  set_mode("classification")
+
+dt_rec <- recipe(priceRange ~ ., data = train) |>
+  step_rm(id) |>
+  step_rm(description) |>
+  step_impute_median(all_numeric_predictors()) |>
+  step_impute_mode(all_nominal_predictors()) |>
+  step_dummy(all_nominal_predictors())
+
+dt_wf <- workflow() |>
+  add_model(dt_spec) |>
+  add_recipe(dt_rec)
+```
+
+#### Decision Tree Tuning
+
+```{r metrics}
+unregister <- function() {
+  env <- foreach:::.foreachGlobals
+  rm(list=ls(name=env), pos=env)
+}
+
+n_cores <- parallel::detectCores()
+cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
+doParallel::registerDoParallel(cl)
+
+tictoc::tic()
+
+dt_tune_results <- dt_wf %>%
+  tune_bayes(
+    resamples = train_folds,
+    metrics = metric_set(mn_log_loss),
+    initial = 5,
+    control = control_bayes(parallel_over = "everything")
+  )
+
+tictoc::toc()
+
+doParallel::stopImplicitCluster()
+unregister()
+
+dt_tune_results %>%
+  collect_metrics()
+```
+
+```{r model fitting}
+dt_best_params <- dt_tune_results %>%
+  select_best(metric = "mn_log_loss")
+
+dt_best_wf <- dt_wf %>%
+  finalize_workflow(dt_best_params)
+
+dt_best_fit <- dt_best_wf %>%
+  fit(train)
+```
+
+
+```{r training performance}
+log_loss <- dt_tune_results |>
+  augment(train) |>
+  mutate(priceRange = as.factor(priceRange)) |>
+  mn_log_loss(priceRange, starts_with(".pred"), - .pred_class)
+
+accuracy_metric <- dt_tune_results |>
+  augment(train) |>
+  mutate(priceRange = as.factor(priceRange)) |>
+  mn_log_loss(priceRange, .pred_class)
+
+log_loss |>
+  bind_rows(accuracy_metric)
+```
+
