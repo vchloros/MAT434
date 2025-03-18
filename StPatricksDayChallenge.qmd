@@ -1,0 +1,159 @@
+---
+title: "StPatricksDayChallenge"
+format: html
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(tidymodels)
+library(patchwork)
+library(parsnip)
+
+data <- read_csv("https://raw.githubusercontent.com/agmath/agmath.github.io/refs/heads/master/data/classification/blarney_data.csv")
+comp <- read_csv("https://raw.githubusercontent.com/agmath/agmath.github.io/refs/heads/master/data/classification/blarney_comp.csv")
+
+set.seed(22)
+
+data_split <- initial_split(data)
+train <- training(data_split)
+test <- testing(data_split)
+
+train_folds <- vfold_cv(train, v = 10, strata = kissed)
+```
+
+```{r}
+dt_spec <- decision_tree(tree_depth = tune(), min_n = tune(), cost_complexity = tune()) |>
+  set_engine("rpart") |>
+  set_mode("classification")
+
+dt_rec <- recipe(kissed ~ ., data = train) |>
+  step_rm(id) |>
+  step_dummy(all_nominal_predictors())
+  
+dt_wf <- workflow() |>
+  add_model(dt_spec) |>
+  add_recipe(dt_rec)
+```
+
+```{r}
+unregister <- function() {
+  env <- foreach:::.foreachGlobals
+  rm(list=ls(name=env), pos=env)
+}
+
+n_cores <- parallel::detectCores()
+cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
+doParallel::registerDoParallel(cl)
+
+tictoc::tic()
+
+dt_tune_results <- dt_wf %>%
+  tune_grid(
+    resamples = train_folds,
+    metrics = metric_set(mn_log_loss),
+    initial = 5,
+    control = control_bayes(parallel_over = "everything")
+  )
+
+tictoc::toc()
+
+doParallel::stopImplicitCluster()
+unregister()
+
+dt_tune_results %>%
+  collect_metrics()
+```
+
+```{r}
+dt_best_params <- dt_tune_results %>%
+  select_best(metric = "mn_log_loss")
+
+dt_best_wf <- dt_wf %>%
+  finalize_workflow(dt_best_params)
+
+dt_best_fit <- dt_best_wf %>%
+  fit(train)
+```
+
+```{r}
+dt_best_fit |>
+  extract_fit_engine() |>
+  rpart.plot::rpart.plot()
+```
+
+
+```{r}
+my_submission <- dt_best_fit %>%
+  augment(comp) %>%
+  rename(kissed = .pred_yes) %>%
+  select(id, kissed)
+
+write.csv(my_submission, "dtStPatrickSubmit.csv", row.names = FALSE)
+```
+
+
+```{r}
+xg_spec <- boost_tree(tree_depth = tune(), min_n = tune()) |>
+  set_engine("xgboost") |>
+  set_mode("classification")
+
+xg_rec <- recipe(kissed ~ ., data = train) |>
+  step_rm(id) |>
+  step_dummy(all_nominal_predictors())
+  
+xg_wf <- workflow() |>
+  add_model(dt_spec) |>
+  add_recipe(dt_rec)
+```
+
+```{r}
+n_cores <- parallel::detectCores()
+cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
+doParallel::registerDoParallel(cl)
+
+tictoc::tic()
+
+xg_tune_results <- xg_wf %>%
+  tune_bayes(
+    resamples = train_folds,
+    metrics = metric_set(mn_log_loss),
+    initial = 5,
+    control = control_bayes(parallel_over = "everything")
+  )
+
+tictoc::toc()
+
+doParallel::stopImplicitCluster()
+unregister()
+
+xg_tune_results %>%
+  collect_metrics()
+```
+
+```{r}
+xg_best_params <- xg_tune_results %>%
+  select_best(metric = "mn_log_loss")
+
+xg_best_wf <- xg_wf %>%
+  finalize_workflow(dt_best_params)
+
+xg_best_fit <- xg_best_wf %>%
+  fit(train)
+```
+
+```{r}
+my_submission <- xg_best_fit %>%
+  augment(comp) %>%
+  rename(kissed = .pred_yes) %>%
+  select(id, kissed)
+
+write.csv(my_submission, "xgStPatrickSubmit.csv", row.names = FALSE)
+```
+
+```{r}
+train |> 
+  ggplot() +
+  geom_bar(aes(x = kissed))
+```
+
