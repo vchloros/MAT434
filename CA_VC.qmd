@@ -22,9 +22,15 @@ library(tidymodels)
 library(kableExtra)
 library(patchwork)
 library(parsnip)
+library(ranger)
 
 zillow_data <- read_csv("data.csv")
+comp <- read.csv("comp.csv")
 
+unregister <- function() {
+  env <- foreach:::.foreachGlobals
+  rm(list=ls(name=env), pos=env)
+}
 ```
 
 ## Statement of Purpose
@@ -487,13 +493,13 @@ Similarly to school rating, lot size does correlate to price range. The higher p
 Concluding the EDA, the majority of variables present will be useful in predicting price range, especially those with very distinct variation like presence of a spa, average school rating, and lot size. Some variables, particularly city and home type, are poorly represented in the data apart from one major category, so I would hesitate to include them within the later model.
 
 
-## Model Construction
+## Model Construction and Interpretation
 
 ```{r folds}
 train_folds <- vfold_cv(train, v = 10, strata = priceRange)
 ```
 
-### KNN
+### KNN Model
 
 ```{r knn setup}
 knn_spec <- nearest_neighbor() |>
@@ -514,7 +520,6 @@ knn_wf <- workflow() |>
 ```
 
 ```{r initial metrics}
-#| eval: false
 
 n_cores <- parallel::detectCores()
 cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
@@ -522,7 +527,7 @@ doParallel::registerDoParallel(cl)
 
 tictoc::tic()
 
-knn_cv_results <- knn_wf |>
+knn_results <- knn_wf |>
   fit_resamples(
     resamples = train_folds,
     metrics = metric_set(accuracy, mn_log_loss)
@@ -533,23 +538,23 @@ tictoc::toc()
 doParallel::stopImplicitCluster()
 unregister()
 
-knn_cv_results |>
+knn_results |>
   collect_metrics()
 ```
 
 #### KNN Hyperparameter Tuning
 ```{r}
-#| eval: false
 n_cores <- parallel::detectCores()
 cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
 doParallel::registerDoParallel(cl)
 
 tictoc::tic()
 
-knn_tune_results <- knn_tune_wf %>%
-  tune_bayes(
+knn_tune_results <- knn_wf %>%
+  tune_grid(
     resamples = train_folds,
     metrics = metric_set(mn_log_loss),
+    initial = 5,
     control = control_bayes(parallel_over = "everything")
   )
 
@@ -558,30 +563,46 @@ tictoc::toc()
 doParallel::stopImplicitCluster()
 unregister()
 
-knn_cv_results %>%
+knn_tune_results %>%
   collect_metrics()
 ```
 
-#### Fitting
+#### KNN Fitting
 
 ```{r knn fitting}
 #| eval: false
 knn_best_params <- knn_tune_results %>%
   select_best(metric = "mn_log_loss")
 
-knn_best_wf <- knn_tune_wf %>%
+knn_best_wf <- knn_wf %>%
   finalize_workflow(knn_best_params)
 
 knn_best_fit <- knn_best_wf %>%
   fit(train)
 ```
 
+#### Exporting KNN Predictions
+
+```{r}
+knnsub <- knn_best_fit %>%
+  augment(comp) %>%
+  rename(
+    prob_A = ".pred_0-250000",
+    prob_B = ".pred_250000-350000",
+    prob_C = ".pred_350000-450000",
+    prob_D = ".pred_450000-650000",
+    prob_E = ".pred_650000+"
+  ) %>%
+  select(id, starts_with ("prob"))
+
+write.csv(knnsub, "knnSubInitial.csv", row.names = FALSE)
+```
 
 
-### Decision Tree
+### Decision Tree Model
 
 ```{r dt setup}
-dt_spec <- decision_tree(min_n = tune(), tree_depth = tune()) |>
+dt_spec <- decision_tree(min_n = tune(), tree_depth = tune(), cost_complexity = tune()) |>
   set_engine("rpart") |>
   set_mode("classification")
 
@@ -597,16 +618,9 @@ dt_wf <- workflow() |>
   add_recipe(dt_rec)
 ```
 
-#### Decision Tree Tuning
+#### DT Tuning
 
 ```{r metrics}
-#| eval: false
-
-unregister <- function() {
-  env <- foreach:::.foreachGlobals
-  rm(list=ls(name=env), pos=env)
-}
-
 n_cores <- parallel::detectCores()
 cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
 doParallel::registerDoParallel(cl)
@@ -630,8 +644,9 @@ dt_tune_results %>%
   collect_metrics()
 ```
 
+#### DT Fitting
+
 ```{r model fitting}
-#| eval: false
 dt_best_params <- dt_tune_results %>%
   select_best(metric = "mn_log_loss")
 
@@ -659,14 +674,39 @@ log_loss |>
   bind_rows(accuracy_metric)
 ```
 
+#### DT Plot
+
+```{r}
+dt_best_fit |>
+  extract_fit_engine() |>
+  rpart.plot::rpart.plot()
+```
+#### Exporting DT Predictions
+
+```{r}
+dtsub <- dt_best_fit %>%
+  augment(comp) %>%
+  rename(
+    prob_A = ".pred_0-250000",
+    prob_B = ".pred_250000-350000",
+    prob_C = ".pred_350000-450000",
+    prob_D = ".pred_450000-650000",
+    prob_E = ".pred_650000+"
+  ) %>%
+  select(id, starts_with ("prob"))
+
+write.csv(dtsub, "DTSubInitial.csv", row.names = FALSE)
+```
+
+
 ### Random Forest
 
 ```{r}
-rf_tune_spec <- rand_forest() |>
+rf_spec <- rand_forest() |>
   set_engine("ranger") |>
   set_mode("classification")
   
-rf_tune_rec <- recipe(priceRange ~ ., data = train) |>
+rf_rec <- recipe(priceRange ~ ., data = train) |>
   step_rm(id) |>
   step_rm(description) |>
   step_unknown(all_nominal_predictors()) |>
@@ -675,13 +715,13 @@ rf_tune_rec <- recipe(priceRange ~ ., data = train) |>
   step_dummy(all_nominal_predictors()) |>
   step_impute_median(all_numerical_predictors())
 
-rf_tune_wf <- workflow() |>
+rf_wf <- workflow() |>
   add_model(rf_spec) |>
   add_recipe(rf_rec)
   
 ```
 
-#### Tuning
+#### RF Tuning
 
 ```{r}
 n_cores <- parallel::detectCores()
@@ -690,7 +730,7 @@ doParallel::registerDoParallel(cl)
 
 tictoc::tic()
 
-rf_tune_results <- rf_tune_wf |>
+rf_tune_results <- rf_wf |>
   tune_grid(
     resamples = train_folds,
     grid = 12,
@@ -713,12 +753,12 @@ rf_final_wf <- rf_tune_wf |>
   finalize_workflow(best_params)
 
 ## compare two results
-rf_tune_wf
+rf_wf
 
 rf_final_wf
 ```
 
-#### Fit Model
+#### RF Fit Model
 
 ```{r}
 rf_fit <- rf_final_wf
