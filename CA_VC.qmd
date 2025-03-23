@@ -33,6 +33,11 @@ unregister <- function() {
 }
 ```
 
+```{r train folds}
+train_folds <- vfold_cv(train, v = 10, strata = priceRange)
+```
+
+
 ## Statement of Purpose
 
 <p>With the ongoing housing crisis within the United States, identifying homes that land within the budget of families looking to buy can be a small help in the larger economic problem. Here, I'll aim to identify the features of homes that best predicts where they land on a range of prices. I'll be using a data set derived from zillow centered on Austin, TX and a few nearby cities as a microcosm of the larger housing market.</p>
@@ -495,10 +500,6 @@ Concluding the EDA, the majority of variables present will be useful in predicti
 
 ## Model Construction and Interpretation
 
-```{r folds}
-train_folds <- vfold_cv(train, v = 10, strata = priceRange)
-```
-
 ### KNN Model
 
 ```{r knn setup}
@@ -609,8 +610,11 @@ dt_spec <- decision_tree(min_n = tune(), tree_depth = tune(), cost_complexity = 
 dt_rec <- recipe(priceRange ~ ., data = train) |>
   step_rm(id) |>
   step_rm(description) |>
+  step_rm(latitude) |>
+  step_rm(longitude) |>
   step_impute_median(all_numeric_predictors()) |>
   step_impute_mode(all_nominal_predictors()) |>
+  step_novel(all_nominal_predictors()) |>
   step_dummy(all_nominal_predictors())
 
 dt_wf <- workflow() |>
@@ -695,7 +699,7 @@ dtsub <- dt_best_fit %>%
   ) %>%
   select(id, starts_with ("prob"))
 
-write.csv(dtsub, "DTSubInitial.csv", row.names = FALSE)
+write.csv(dtsub, "DTSub1.csv", row.names = FALSE)
 ```
 
 
