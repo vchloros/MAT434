@@ -503,17 +503,21 @@ Concluding the EDA, the majority of variables present will be useful in predicti
 ### KNN Model
 
 ```{r knn setup}
-knn_spec <- nearest_neighbor() |>
+knn_spec <- nearest_neighbor(neighbors = tune(), weight_func = tune()) |>
   set_engine("kknn") |>
   set_mode("classification")
 
 knn_rec <- recipe(priceRange ~ ., data = train) |>
-  step_normalize(all_numeric_predictors()) |>
   step_rm(id) |>
   step_rm(description) |>
   step_rm(latitude) |>
   step_rm(longitude) |>
-  step_impute_median(all_numeric_predictors())
+  step_rm(city) |>
+  step_rm(homeType) |>
+  step_impute_median(all_numeric_predictors()) |>
+  step_impute_mode(all_nominal_predictors()) |>
+  step_novel(all_nominal_predictors()) |>
+  step_dummy(all_nominal_predictors())
 
 knn_wf <- workflow() |>
   add_model(knn_spec) |>
@@ -596,7 +600,7 @@ knnsub <- knn_best_fit %>%
   ) %>%
   select(id, starts_with ("prob"))
 
-write.csv(knnsub, "knnSubInitial.csv", row.names = FALSE)
+write.csv(knnsub, "knnSub1.csv", row.names = FALSE)
 ```
 
 
@@ -706,19 +710,19 @@ write.csv(dtsub, "DTSub1.csv", row.names = FALSE)
 ### Random Forest
 
 ```{r}
-rf_spec <- rand_forest() |>
+rf_spec <- rand_forest(min_n = tune(), mtry = tune(), trees = tune()) |>
   set_engine("ranger") |>
   set_mode("classification")
   
 rf_rec <- recipe(priceRange ~ ., data = train) |>
   step_rm(id) |>
   step_rm(description) |>
-  step_unknown(all_nominal_predictors()) |>
+  step_impute_median(all_numeric_predictors()) |>
+  step_impute_mode(all_nominal_predictors()) |>
   step_novel(all_nominal_predictors()) |>
   step_other(all_nominal_predictors()) |>
-  step_dummy(all_nominal_predictors()) |>
-  step_impute_median(all_numerical_predictors())
-
+  step_dummy(all_nominal_predictors())
+  
 rf_wf <- workflow() |>
   add_model(rf_spec) |>
   add_recipe(rf_rec)
@@ -738,7 +742,7 @@ rf_tune_results <- rf_wf |>
   tune_grid(
     resamples = train_folds,
     grid = 12,
-    metrics = metric_set(accuracy, precision, recall),
+    metrics = metric_set(mn_log_loss),
     control = control_grid(parallel_over = "everything")
   )
 
@@ -746,26 +750,43 @@ tictoc::toc()
 
 doParallel::stopImplicitCluster()
 unregister()
+```
 
-rf_tune_results |>
-  show_best(metrics = "recall")
 
-best_params <- rf_tune_results |>
-  select_best(metrics = "recall")
+```{r}
+rf_best_params <- rf_tune_results %>%
+  select_best(metric = "mn_log_loss")
 
-rf_final_wf <- rf_tune_wf |>
-  finalize_workflow(best_params)
+rf_best_wf <- rf_wf %>%
+  finalize_workflow(dt_best_params)
 
 ## compare two results
 rf_wf
 
-rf_final_wf
+rf_best_wf
 ```
 
 #### RF Fit Model
 
 ```{r}
-rf_fit <- rf_final_wf
+rf_fit <- rf_best_wf
   fit(train)
+```
+
+#### Exporting RF Predictions
+
+```{r}
+rfsub <- rf_fit %>%
+  augment(comp) %>%
+  rename(
+    prob_A = ".pred_0-250000",
+    prob_B = ".pred_250000-350000",
+    prob_C = ".pred_350000-450000",
+    prob_D = ".pred_450000-650000",
+    prob_E = ".pred_650000+"
+  ) %>%
+  select(id, starts_with ("prob"))
+
+write.csv(dtsub, "RFSubInitial.csv", row.names = FALSE)
 ```
 
