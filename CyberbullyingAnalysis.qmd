@@ -10,6 +10,7 @@ editor: visual
 library(tidyverse)
 library(tidymodels)
 library(tidytext)
+library(plotly)
 
 data <- read.csv("https://raw.githubusercontent.com/agmath/agmath.github.io/refs/heads/master/data/classification/cyberbullying_tweets.csv")
 
@@ -25,8 +26,6 @@ data_split <- initial_split(data, prop = 0.9)
 train <- training(data_split)
 test <- testing(data_split)
 ```
-
-
 
 ```{r head}
 data |>
@@ -79,10 +78,46 @@ train |>
   top_n(15, n) |>
   ungroup() |>
   ggplot() +
-  geom_bar(aes(x = word, y = n, fill = cyberbullying_type),
+  geom_bar(aes(x = reorder_within(word, n, cyberbullying_type), y = n, fill = cyberbullying_type),
            stat = "identity", color = "black",
            show.legend = FALSE) +
-  facet_wrap(~cyberbullying_type, scales = "free") +
+  scale_x_reordered() +
+  facet_wrap(~cyberbullying_type, scales = "free_y") +
   coord_flip()
+```
+
+## Comparing Word Frequency Between Categories, Gender and Ethnicity
+
+```{r}
+p <- train |>
+  filter((cyberbullying_type == "gender") | (cyberbullying_type == "ethnicity")) |>
+  unnest_tokens(word, tweet_text) |>
+  anti_join(stop_words) |>
+  filter(!(word %in% c("http", "https", "t.co", "bully", "bullies", "bullied", "bullying"))) |>
+  filter(!str_starts(word, "\\d+")) |>
+  group_by(cyberbullying_type) |>
+  count(word) |>
+  filter(n > 25) |>
+  pivot_wider(names_from = cyberbullying_type, values_from = n) |>
+  ggplot() +
+  geom_text(aes(x = ethnicity, y = gender, label = word)) +
+  geom_abline(linetype = "dashed")
+
+plotly::ggplotly(p)
+```
+
+## Regular Expressions
+
+```{r}
+train |>
+  mutate(
+    hashtags = str_extract_all(tweet_text, "#([A-z]|\\d|-|_)+")
+  ) |>
+  filter(lengths(hashtags) > 0) |>
+  unnest(hashtags) |>
+  mutate(
+    mentions = str_extract(tweet_text, "@([A-z]|\\d|-|_)+")
+  ) |>
+  filter(!is.na(mentions))
 ```
 

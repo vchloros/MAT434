@@ -503,7 +503,7 @@ Concluding the EDA, the majority of variables present will be useful in predicti
 ### KNN Model
 
 ```{r knn setup}
-knn_spec <- nearest_neighbor(neighbors = tune(), weight_func = tune()) |>
+knn_spec <- nearest_neighbor() |>
   set_engine("kknn") |>
   set_mode("classification")
 
@@ -525,6 +525,7 @@ knn_wf <- workflow() |>
 ```
 
 ```{r initial metrics}
+# Elapsed time: 24 secs
 
 n_cores <- parallel::detectCores()
 cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
@@ -548,7 +549,21 @@ knn_results |>
 ```
 
 #### KNN Hyperparameter Tuning
+
+```{r prep for tuning}
+knn_spec <- nearest_neighbor(neighbors = tune(), weight_func = tune()) |>
+  set_engine("kknn") |>
+  set_mode("classification")
+
+knn_wf <- workflow() |>
+  add_model(knn_spec) |>
+  add_recipe(knn_rec)
+```
+
+
 ```{r}
+#Elapsed time: 38 secs
+
 n_cores <- parallel::detectCores()
 cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
 doParallel::registerDoParallel(cl)
@@ -575,7 +590,6 @@ knn_tune_results %>%
 #### KNN Fitting
 
 ```{r knn fitting}
-#| eval: false
 knn_best_params <- knn_tune_results %>%
   select_best(metric = "mn_log_loss")
 
@@ -667,16 +681,15 @@ dt_best_fit <- dt_best_wf %>%
 
 
 ```{r training performance}
-#| eval: false
-log_loss <- dt_tune_results |>
+log_loss <- dt_best_fit |>
   augment(train) |>
   mutate(priceRange = as.factor(priceRange)) |>
   mn_log_loss(priceRange, starts_with(".pred"), - .pred_class)
 
-accuracy_metric <- dt_tune_results |>
+accuracy_metric <- dt_best_fit |>
   augment(train) |>
   mutate(priceRange = as.factor(priceRange)) |>
-  mn_log_loss(priceRange, .pred_class)
+  accuracy(priceRange, .pred_class)
 
 log_loss |>
   bind_rows(accuracy_metric)
@@ -710,7 +723,7 @@ write.csv(dtsub, "DTSub1.csv", row.names = FALSE)
 ### Random Forest
 
 ```{r}
-rf_spec <- rand_forest(min_n = tune(), mtry = tune(), trees = tune()) |>
+rf_spec <- rand_forest(min_n = tune()) |>
   set_engine("ranger") |>
   set_mode("classification")
   
@@ -761,15 +774,15 @@ rf_best_wf <- rf_wf %>%
   finalize_workflow(dt_best_params)
 
 ## compare two results
-rf_wf
+#rf_wf
 
-rf_best_wf
+#rf_best_wf
 ```
 
 #### RF Fit Model
 
 ```{r}
-rf_fit <- rf_best_wf
+rf_fit <- rf_best_wf |>
   fit(train)
 ```
 
