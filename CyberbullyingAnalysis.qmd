@@ -7,6 +7,8 @@ editor: visual
 ## Setup
 
 ```{r setup}
+#| message: false
+
 library(tidyverse)
 library(tidymodels)
 library(tidytext)
@@ -15,7 +17,8 @@ library(plotly)
 data <- read.csv("https://raw.githubusercontent.com/agmath/agmath.github.io/refs/heads/master/data/classification/cyberbullying_tweets.csv")
 
 data |>
-  count(cyberbullying_type)
+  count(cyberbullying_type) |>
+  kbl()
 
 data <- data |>
   distinct()
