@@ -503,6 +503,8 @@ The next segment of this workbook focuses on constructing models and identifying
 ### KNN Model
 
 ```{r knn setup}
+#| code-fold: show
+
 knn_spec <- nearest_neighbor() |>
   set_engine("kknn") |>
   set_mode("classification")
@@ -523,7 +525,10 @@ knn_wf <- workflow() |>
 ```
 
 ```{r knn metrics}
-# Elapsed time: 25 secs
+#| code-fold: show
+#| warning: false
+
+# Elapsed time in RStudio: 25 secs
 
 n_cores <- parallel::detectCores()
 cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
@@ -543,12 +548,15 @@ doParallel::stopImplicitCluster()
 unregister()
 
 knn_results |>
-  collect_metrics()
+  collect_metrics() |>
+  kbl()
 ```
 
 #### KNN Hyperparameter Tuning
 
 ```{r prep for tuning}
+#| code-fold: show
+
 knn_spec <- nearest_neighbor(neighbors = tune(), weight_func = tune()) |>
   set_engine("kknn") |>
   set_mode("classification")
@@ -560,7 +568,10 @@ knn_wf <- workflow() |>
 
 
 ```{r knn tune}
-#Elapsed time: 40 secs
+#| code-fold: show
+#| warning: false
+
+#Elapsed time in RStudio: 40 secs
 
 n_cores <- parallel::detectCores()
 cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
@@ -582,12 +593,15 @@ doParallel::stopImplicitCluster()
 unregister()
 
 knn_tune_results %>%
-  collect_metrics()
+  collect_metrics() |>
+  kbl()
 ```
 
 #### KNN Fitting
 
 ```{r knn fitting}
+#| code-fold: show
+
 knn_best_params <- knn_tune_results %>%
   select_best(metric = "mn_log_loss")
 
@@ -601,6 +615,8 @@ knn_best_fit <- knn_best_wf %>%
 #### Exporting KNN Predictions
 
 ```{r knn export}
+#| code-fold: show
+
 knnsub <- knn_best_fit %>%
   augment(comp) %>%
   rename(
@@ -619,6 +635,8 @@ write.csv(knnsub, "knnSub2.csv", row.names = FALSE)
 ### Decision Tree Model
 
 ```{r dt setup}
+#| code-fold: show
+
 dt_spec <- decision_tree() |>
   set_engine("rpart") |>
   set_mode("classification")
@@ -639,7 +657,10 @@ dt_wf <- workflow() |>
 ```
 
 ```{r dt metrics}
-# Elapsed time: 20 secs
+#| code-fold: show
+#| warning: false
+
+# Elapsed time in RStudio: 20 secs
 
 n_cores <- parallel::detectCores()
 cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
@@ -659,12 +680,15 @@ doParallel::stopImplicitCluster()
 unregister()
 
 dt_results |>
-  collect_metrics()
+  collect_metrics() |>
+  kbl()
 ```
 
 #### DT Tuning
 
 ```{r}
+#| code-fold: show
+
 dt_spec <- decision_tree(min_n = tune(), tree_depth = tune(), cost_complexity = tune()) |>
   set_engine("rpart") |>
   set_mode("classification")
@@ -676,7 +700,9 @@ dt_wf <- workflow() |>
 
 
 ```{r dt tune}
-#Elapsed time: 2 mins
+#| code-fold: show
+#| warning: false
+#Elapsed time in RStudio: 2 mins
 
 n_cores <- parallel::detectCores()
 cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
@@ -698,12 +724,15 @@ doParallel::stopImplicitCluster()
 unregister()
 
 dt_tune_results %>%
-  collect_metrics()
+  collect_metrics() |>
+  kbl()
 ```
 
 #### DT Fitting
 
 ```{r model fitting}
+#| code-fold: show
+
 dt_best_params <- dt_tune_results %>%
   select_best(metric = "mn_log_loss")
 
@@ -716,6 +745,8 @@ dt_best_fit <- dt_best_wf %>%
 
 
 ```{r training performance}
+#| code-fold: show
+
 log_loss <- dt_best_fit |>
   augment(train) |>
   mutate(priceRange = as.factor(priceRange)) |>
@@ -727,7 +758,8 @@ accuracy_metric <- dt_best_fit |>
   accuracy(priceRange, .pred_class)
 
 log_loss |>
-  bind_rows(accuracy_metric)
+  bind_rows(accuracy_metric) |>
+  kbl()
 ```
 
 #### DT Plot
@@ -735,12 +767,13 @@ log_loss |>
 ```{r}
 dt_best_fit |>
   extract_fit_engine() |>
-  rpart.plot::rpart.plot()
+  rpart.plot::rpart.plot(roundint = FALSE)
 ```
 
 #### Exporting DT Predictions
 
 ```{r}
+#| code-fold: show
 
 dtsub <- dt_best_fit %>%
   augment(comp) %>%
@@ -760,6 +793,8 @@ write.csv(dtsub, "DTSub2.csv", row.names = FALSE)
 ### Random Forest
 
 ```{r}
+#| code-fold: show
+
 rf_spec <- rand_forest() |>
   set_engine("ranger") |>
   set_mode("classification")
@@ -781,7 +816,10 @@ rf_wf <- workflow() |>
 ```
 
 ```{r}
-#Elapsed time: 25 secs
+#| code-fold: show
+#| warning: false
+
+#Elapsed time in RStudio: 25 secs
 
 n_cores <- parallel::detectCores()
 cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
@@ -801,13 +839,16 @@ doParallel::stopImplicitCluster()
 unregister()
 
 rf_results |>
-  collect_metrics()
+  collect_metrics() |>
+  kbl()
 ```
 
 
 #### RF Tuning
 
 ```{r}
+#| code-fold: show
+
 rf_spec <- rand_forest(min_n = tune(), mtry = tune(), trees = tune()) |>
   set_engine("ranger") |>
   set_mode("classification")
@@ -819,7 +860,10 @@ rf_wf <- workflow() |>
 
 
 ```{r}
-#Elapsed time: 2 mins
+#| code-fold: show
+#| warning: false
+
+#Elapsed time in RStudio: 2 mins
 
 n_cores <- parallel::detectCores()
 cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
@@ -841,11 +885,14 @@ doParallel::stopImplicitCluster()
 unregister()
 
 rf_tune_results |>
-  collect_metrics()
+  collect_metrics() |>
+  kbl()
 ```
 
 
 ```{r}
+#| code-fold: show
+
 rf_best_params <- rf_tune_results %>%
   select_best(metric = "mn_log_loss")
 
@@ -859,6 +906,8 @@ rf_fit <- rf_best_wf |>
 #### Exporting RF Predictions
 
 ```{r}
+#| code-fold: show
+
 rfsub <- rf_fit %>%
   augment(comp) %>%
   rename(
