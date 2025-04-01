@@ -33,10 +33,6 @@ unregister <- function() {
 }
 ```
 
-```{r train folds}
-train_folds <- vfold_cv(train, v = 10, strata = priceRange)
-```
-
 
 ## Statement of Purpose
 
@@ -50,6 +46,8 @@ zillow_splits <- initial_split(zillow_data, 0.85, strata = priceRange)
 
 train <- training(zillow_splits)
 test <- testing(zillow_splits)
+
+train_folds <- vfold_cv(train, v = 10, strata = priceRange)
 
 train |>
   head() |>
@@ -500,6 +498,8 @@ Concluding the EDA, the majority of variables present will be useful in predicti
 
 ## Model Construction and Interpretation
 
+The next segment of this workbook focuses on constructing models and identifying the best for prediction price range. 
+
 ### KNN Model
 
 ```{r knn setup}
@@ -512,8 +512,6 @@ knn_rec <- recipe(priceRange ~ ., data = train) |>
   step_rm(description) |>
   step_rm(latitude) |>
   step_rm(longitude) |>
-  step_rm(city) |>
-  step_rm(homeType) |>
   step_impute_median(all_numeric_predictors()) |>
   step_impute_mode(all_nominal_predictors()) |>
   step_novel(all_nominal_predictors()) |>
@@ -525,7 +523,7 @@ knn_wf <- workflow() |>
 ```
 
 ```{r initial metrics}
-# Elapsed time: 24 secs
+# Elapsed time: 25 secs
 
 n_cores <- parallel::detectCores()
 cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
@@ -562,7 +560,7 @@ knn_wf <- workflow() |>
 
 
 ```{r}
-#Elapsed time: 38 secs
+#Elapsed time: 40 secs
 
 n_cores <- parallel::detectCores()
 cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
@@ -614,14 +612,14 @@ knnsub <- knn_best_fit %>%
   ) %>%
   select(id, starts_with ("prob"))
 
-write.csv(knnsub, "knnSub1.csv", row.names = FALSE)
+write.csv(knnsub, "knnSub2.csv", row.names = FALSE)
 ```
 
 
 ### Decision Tree Model
 
 ```{r dt setup}
-dt_spec <- decision_tree(min_n = tune(), tree_depth = tune(), cost_complexity = tune()) |>
+dt_spec <- decision_tree() |>
   set_engine("rpart") |>
   set_mode("classification")
 
@@ -640,9 +638,46 @@ dt_wf <- workflow() |>
   add_recipe(dt_rec)
 ```
 
+```{r initial metrics}
+# Elapsed time: 20 secs
+
+n_cores <- parallel::detectCores()
+cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
+doParallel::registerDoParallel(cl)
+
+tictoc::tic()
+
+dt_results <- dt_wf |>
+  fit_resamples(
+    resamples = train_folds,
+    metrics = metric_set(accuracy, mn_log_loss)
+  )
+
+tictoc::toc()
+
+doParallel::stopImplicitCluster()
+unregister()
+
+dt_results |>
+  collect_metrics()
+```
+
 #### DT Tuning
 
+```{r}
+dt_spec <- decision_tree(min_n = tune(), tree_depth = tune(), cost_complexity = tune()) |>
+  set_engine("rpart") |>
+  set_mode("classification")
+
+dt_wf <- workflow() |>
+  add_model(dt_spec) |>
+  add_recipe(dt_rec)
+```
+
+
 ```{r metrics}
+#Elapsed time: 2 mins
+
 n_cores <- parallel::detectCores()
 cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
 doParallel::registerDoParallel(cl)
@@ -702,9 +737,11 @@ dt_best_fit |>
   extract_fit_engine() |>
   rpart.plot::rpart.plot()
 ```
+
 #### Exporting DT Predictions
 
 ```{r}
+
 dtsub <- dt_best_fit %>%
   augment(comp) %>%
   rename(
@@ -716,24 +753,25 @@ dtsub <- dt_best_fit %>%
   ) %>%
   select(id, starts_with ("prob"))
 
-write.csv(dtsub, "DTSub1.csv", row.names = FALSE)
+write.csv(dtsub, "DTSub2.csv", row.names = FALSE)
 ```
 
 
 ### Random Forest
 
 ```{r}
-rf_spec <- rand_forest(min_n = tune()) |>
+rf_spec <- rand_forest() |>
   set_engine("ranger") |>
   set_mode("classification")
   
 rf_rec <- recipe(priceRange ~ ., data = train) |>
   step_rm(id) |>
-  step_rm(description) |>
+  step_rm(description) |>  
+  step_rm(latitude) |>
+  step_rm(longitude) |>
   step_impute_median(all_numeric_predictors()) |>
   step_impute_mode(all_nominal_predictors()) |>
   step_novel(all_nominal_predictors()) |>
-  step_other(all_nominal_predictors()) |>
   step_dummy(all_nominal_predictors())
   
 rf_wf <- workflow() |>
@@ -742,9 +780,47 @@ rf_wf <- workflow() |>
   
 ```
 
+```{r}
+#Elapsed time: 25 secs
+
+n_cores <- parallel::detectCores()
+cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
+doParallel::registerDoParallel(cl)
+
+tictoc::tic()
+
+rf_results <- rf_wf |>
+  fit_resamples(
+    resamples = train_folds,
+    metrics = metric_set(accuracy, mn_log_loss)
+  )
+
+tictoc::toc()
+
+doParallel::stopImplicitCluster()
+unregister()
+
+rf_results |>
+  collect_metrics()
+```
+
+
 #### RF Tuning
 
 ```{r}
+rf_spec <- rand_forest(min_n = tune()) |>
+  set_engine("ranger") |>
+  set_mode("classification")
+
+rf_wf <- workflow() |>
+  add_model(rf_spec) |>
+  add_recipe(rf_rec)
+```
+
+
+```{r}
+#Elapsed time: 
+
 n_cores <- parallel::detectCores()
 cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
 doParallel::registerDoParallel(cl)
@@ -763,25 +839,19 @@ tictoc::toc()
 
 doParallel::stopImplicitCluster()
 unregister()
+
+rf_tune_results |>
+  collect_metrics()
 ```
 
 
 ```{r}
-rf_best_params <- rf_tune_results %>%
+rf_best_params <- dt_tune_results %>%
   select_best(metric = "mn_log_loss")
 
 rf_best_wf <- rf_wf %>%
   finalize_workflow(dt_best_params)
 
-## compare two results
-#rf_wf
-
-#rf_best_wf
-```
-
-#### RF Fit Model
-
-```{r}
 rf_fit <- rf_best_wf |>
   fit(train)
 ```
@@ -800,6 +870,6 @@ rfsub <- rf_fit %>%
   ) %>%
   select(id, starts_with ("prob"))
 
-write.csv(dtsub, "RFSubInitial.csv", row.names = FALSE)
+write.csv(rfsub, "RFSub1.csv", row.names = FALSE)
 ```
 
