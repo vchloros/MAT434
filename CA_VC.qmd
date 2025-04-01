@@ -522,7 +522,7 @@ knn_wf <- workflow() |>
   add_recipe(knn_rec)
 ```
 
-```{r initial metrics}
+```{r knn metrics}
 # Elapsed time: 25 secs
 
 n_cores <- parallel::detectCores()
@@ -559,7 +559,7 @@ knn_wf <- workflow() |>
 ```
 
 
-```{r}
+```{r knn tune}
 #Elapsed time: 40 secs
 
 n_cores <- parallel::detectCores()
@@ -600,7 +600,7 @@ knn_best_fit <- knn_best_wf %>%
 
 #### Exporting KNN Predictions
 
-```{r}
+```{r knn export}
 knnsub <- knn_best_fit %>%
   augment(comp) %>%
   rename(
@@ -638,7 +638,7 @@ dt_wf <- workflow() |>
   add_recipe(dt_rec)
 ```
 
-```{r initial metrics}
+```{r dt metrics}
 # Elapsed time: 20 secs
 
 n_cores <- parallel::detectCores()
@@ -675,7 +675,7 @@ dt_wf <- workflow() |>
 ```
 
 
-```{r metrics}
+```{r dt tune}
 #Elapsed time: 2 mins
 
 n_cores <- parallel::detectCores()
@@ -808,7 +808,7 @@ rf_results |>
 #### RF Tuning
 
 ```{r}
-rf_spec <- rand_forest(min_n = tune()) |>
+rf_spec <- rand_forest(min_n = tune(), mtry = tune(), trees = tune()) |>
   set_engine("ranger") |>
   set_mode("classification")
 
@@ -819,7 +819,7 @@ rf_wf <- workflow() |>
 
 
 ```{r}
-#Elapsed time: 
+#Elapsed time: 2 mins
 
 n_cores <- parallel::detectCores()
 cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
@@ -846,11 +846,11 @@ rf_tune_results |>
 
 
 ```{r}
-rf_best_params <- dt_tune_results %>%
+rf_best_params <- rf_tune_results %>%
   select_best(metric = "mn_log_loss")
 
 rf_best_wf <- rf_wf %>%
-  finalize_workflow(dt_best_params)
+  finalize_workflow(rf_best_params)
 
 rf_fit <- rf_best_wf |>
   fit(train)
