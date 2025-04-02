@@ -1,0 +1,73 @@
+---
+title: "FinalProject"
+author: "Vinny Chloros"
+format: html
+editor: visual
+---
+## Statement of Purpose
+
+
+
+```{r}
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(tidymodels)
+library(kableExtra)
+library(patchwork)
+library(parsnip)
+library(ranger)
+
+data <- read_csv("codon_usage.csv")
+
+unregister <- function() {
+  env <- foreach:::.foreachGlobals
+  rm(list=ls(name=env), pos=env)
+}
+
+set.seed(20250402)
+```
+
+```{r}
+# figure out how to rename DNAtype values
+```
+
+
+```{r}
+split <- initial_split(data, strata = Kingdom)
+
+train <- training(split)
+test <- testing(split)
+```
+
+## EDA
+
+```{r}
+train |>
+  ggplot() +
+  geom_bar(aes(x = Kingdom))
+```
+
+```{r}
+train |>
+  ggplot() +
+  geom_bar(aes(x = DNAtype))
+```
+
+```{r}
+train |>
+  ggplot() +
+  geom_histogram(aes(x = Ncodons)) +
+  scale_x_log10()
+```
+
+```{r}
+#how to facet wrap with different rows here
+
+train |>
+  ggplot() +
+  geom_histogram(aes(x = UUU)) +
+  facet_wrap(~ Kingdom, scales = "free")
+```
+
