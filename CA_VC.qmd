@@ -500,7 +500,11 @@ Concluding the EDA, the majority of variables present will be useful in predicti
 
 The next segment of this workbook focuses on constructing models and identifying the best for prediction price range. 
 
+In R, a model needs 3 elements to start functioning: a specification to choose the type of model your using, a recipe to apply rules to how your model handles the data you input, and a workflow that combines the recipe and specification. For this project, I compared the performance of 3 different models, k-nearest neighbors, decision trees, and random forests. 
+
 ### KNN Model
+
+A K-nearest neighbors model, or KNN for short, 
 
 ```{r knn setup}
 #| code-fold: show
@@ -523,6 +527,8 @@ knn_wf <- workflow() |>
   add_model(knn_spec) |>
   add_recipe(knn_rec)
 ```
+
+This next step takes our workflow and applies it to training folds created earlier. These folds are equally-sized samples of the data used for cross-validation. 
 
 ```{r knn metrics}
 #| code-fold: show
