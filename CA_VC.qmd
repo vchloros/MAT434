@@ -518,17 +518,24 @@ knn_rec <- recipe(priceRange ~ ., data = train) |>
   step_rm(description) |>
   step_rm(latitude) |>
   step_rm(longitude) |>
+  step_log(lotSizeSqFt, base = exp(10)) |>
   step_impute_median(all_numeric_predictors()) |>
   step_impute_mode(all_nominal_predictors()) |>
+  step_other(city) |>
+  step_other(homeType) |>
   step_novel(all_nominal_predictors()) |>
-  step_dummy(all_nominal_predictors())
+  step_unknown(all_nominal_predictors())
 
 knn_wf <- workflow() |>
   add_model(knn_spec) |>
   add_recipe(knn_rec)
 ```
 
-This next step takes our workflow and applies it to training folds created earlier. These folds are equally-sized samples of the data used for cross-validation. 
+In the recipe, I added some steps for our data before running the model. `step_rm` removes variables from being used in the model. I excluded `id` and `description` at this point since they are each specific to one observation. Having them used to predict price range would cause egregious overfitting. I also removed latitude and longitude from the model since I wasn't sure how to process the two. 
+
+From that base recipe, I added some more steps after iterating. I added a step to transform the variable for lot size logarithmically since that aided in its visualization in the EDA. `step_other` was added for both city and homeType variables since they largely comprised one value with a handful of others. This step allows the model to sort the rest of the values into "other" to compare to the majority.
+
+This next step takes our workflow and applies it to training folds created earlier. These folds are equally-sized samples of the data used for cross-validation. Additionally, parallel processing is implemented here to make these functions finish faster by splitting the workload between multiple cores.
 
 ```{r knn metrics}
 #| code-fold: show
@@ -557,6 +564,8 @@ knn_results |>
   collect_metrics() |>
   kbl()
 ```
+
+The results show the accuracy and the log loss of this first iteration of the model. 
 
 #### KNN Hyperparameter Tuning
 
@@ -652,10 +661,13 @@ dt_rec <- recipe(priceRange ~ ., data = train) |>
   step_rm(description) |>
   step_rm(latitude) |>
   step_rm(longitude) |>
+  step_log(lotSizeSqFt, base = exp(10)) |>
   step_impute_median(all_numeric_predictors()) |>
   step_impute_mode(all_nominal_predictors()) |>
+  step_other(city) |>
+  step_other(homeType) |>
   step_novel(all_nominal_predictors()) |>
-  step_dummy(all_nominal_predictors())
+  step_unknown(all_nominal_predictors())
 
 dt_wf <- workflow() |>
   add_model(dt_spec) |>
@@ -689,6 +701,8 @@ dt_results |>
   collect_metrics() |>
   kbl()
 ```
+
+
 
 #### DT Tuning
 
