@@ -115,7 +115,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">April 1, 2025</p>
+      <p class="date-modified">April 5, 2025</p>
     </div>
   </div>
     
@@ -1187,8 +1187,10 @@ With the ongoing housing crisis within the United States, identifying homes that
 <section id="model-construction-and-interpretation" class="level2">
 <h2 class="anchored" data-anchor-id="model-construction-and-interpretation">Model Construction and Interpretation</h2>
 <p>The next segment of this workbook focuses on constructing models and identifying the best for prediction price range.</p>
+<p>In R, a model needs 3 elements to start functioning: a specification to choose the type of model your using, a recipe to apply rules to how your model handles the data you input, and a workflow that combines the recipe and specification. For this project, I compared the performance of 3 different models, k-nearest neighbors, decision trees, and random forests.</p>
 <section id="knn-model" class="level3">
 <h3 class="anchored" data-anchor-id="knn-model">KNN Model</h3>
+<p>A K-nearest neighbors model, or KNN for short, estimates new predictions based on the status of other observations nearest to it.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
@@ -1203,14 +1205,19 @@ With the ongoing housing crisis within the United States, identifying homes that
 <span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(longitude) <span class="sc">|&gt;</span></span>
 <span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_impute_median</span>(<span class="fu">all_numeric_predictors</span>()) <span class="sc">|&gt;</span></span>
 <span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_impute_mode</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">|&gt;</span></span>
-<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_novel</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">|&gt;</span></span>
-<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_nominal_predictors</span>())</span>
-<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>knn_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
-<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(knn_spec) <span class="sc">|&gt;</span></span>
-<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(knn_rec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_log</span>(lotSizeSqFt, <span class="at">base =</span> <span class="fu">exp</span>(<span class="dv">10</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_other</span>(city, <span class="at">threshold =</span>  <span class="fl">0.05</span>)<span class="sc">|&gt;</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_other</span>(homeType, <span class="at">threshold =</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_novel</span>(<span class="fu">all_nominal_predictors</span>())</span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>knn_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(knn_spec) <span class="sc">|&gt;</span></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(knn_rec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+<p>In the recipe, I added some steps for our data before running the model. <code>step_rm()</code> removes variables from being used in the model. I excluded <code>id</code> and <code>description</code> at this point since they are each specific to one observation. Having them used to predict price range would cause egregious overfitting. I also removed latitude and longitude from the model as well since they’ve been excluded from analysis thus far. The impute steps for both nominal (categorical) and numerical data will replace any missing values in an observation with either the mode or median of the data, respectively.</p>
+<p>From that base recipe, I added some more steps after iterating. I added a step to transform the variable for lot size logarithmically since that aided in its visualization in the EDA. <code>step_other()</code> was added for both city and homeType variables since they largely comprised one value and a handful of others created a small minority. This step allows the model to sort the rest of the values into “other” to compare to the majority. Lastly, <code>step_novel()</code> allows new values within observations to be marked as such.</p>
+<p>The next step is to take our workflow and apply it to training folds created earlier. These folds are equally-sized samples of the data used for cross-validation. Additionally, parallel processing is implemented here to make these functions finish faster by splitting the workload between multiple cores.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
@@ -1231,7 +1238,7 @@ With the ongoing housing crisis within the United States, identifying homes that
 <span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>58.71 sec elapsed</code></pre>
+<pre><code>21.89 sec elapsed</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
@@ -1258,17 +1265,17 @@ With the ongoing housing crisis within the United States, identifying homes that
 <tr class="odd">
 <td style="text-align: left;">accuracy</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">0.4374567</td>
+<td style="text-align: right;">0.4592593</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0051938</td>
+<td style="text-align: right;">0.0058163</td>
 <td style="text-align: left;">Preprocessor1_Model1</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">7.1213166</td>
+<td style="text-align: right;">6.8048941</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.2693619</td>
+<td style="text-align: right;">0.1814691</td>
 <td style="text-align: left;">Preprocessor1_Model1</td>
 </tr>
 </tbody>
@@ -1277,6 +1284,7 @@ With the ongoing housing crisis within the United States, identifying homes that
 
 </div>
 </div>
+<p>The results show the accuracy and the log loss of this first iteration of the model. When testing this model</p>
 <section id="knn-hyperparameter-tuning" class="level4">
 <h4 class="anchored" data-anchor-id="knn-hyperparameter-tuning">KNN Hyperparameter Tuning</h4>
 <div class="cell">
@@ -1313,7 +1321,7 @@ With the ongoing housing crisis within the United States, identifying homes that
 <span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>83.61 sec elapsed</code></pre>
+<pre><code>43.34 sec elapsed</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
@@ -1344,9 +1352,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: left;">rectangular</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">14.070131</td>
+<td style="text-align: right;">13.939702</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.2111564</td>
+<td style="text-align: right;">0.2725882</td>
 <td style="text-align: left;">Preprocessor1_Model01</td>
 </tr>
 <tr class="even">
@@ -1354,9 +1362,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: left;">rectangular</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">2.443535</td>
+<td style="text-align: right;">2.340890</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.1017002</td>
+<td style="text-align: right;">0.1286148</td>
 <td style="text-align: left;">Preprocessor1_Model02</td>
 </tr>
 <tr class="odd">
@@ -1364,9 +1372,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: left;">biweight</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">8.983615</td>
+<td style="text-align: right;">8.612682</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.2363015</td>
+<td style="text-align: right;">0.2136734</td>
 <td style="text-align: left;">Preprocessor1_Model03</td>
 </tr>
 <tr class="even">
@@ -1374,9 +1382,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: left;">cos</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">4.601297</td>
+<td style="text-align: right;">4.323337</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.1833428</td>
+<td style="text-align: right;">0.1441992</td>
 <td style="text-align: left;">Preprocessor1_Model04</td>
 </tr>
 <tr class="odd">
@@ -1384,9 +1392,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: left;">epanechnikov</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">2.794215</td>
+<td style="text-align: right;">2.715343</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.1350353</td>
+<td style="text-align: right;">0.1260497</td>
 <td style="text-align: left;">Preprocessor1_Model05</td>
 </tr>
 <tr class="even">
@@ -1394,9 +1402,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: left;">gaussian</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">20.281784</td>
+<td style="text-align: right;">19.970974</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.1834828</td>
+<td style="text-align: right;">0.1967470</td>
 <td style="text-align: left;">Preprocessor1_Model06</td>
 </tr>
 <tr class="odd">
@@ -1404,9 +1412,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: left;">inv</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">7.107043</td>
+<td style="text-align: right;">6.707338</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.2682954</td>
+<td style="text-align: right;">0.1792180</td>
 <td style="text-align: left;">Preprocessor1_Model07</td>
 </tr>
 <tr class="even">
@@ -1414,9 +1422,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: left;">rank</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">3.536819</td>
+<td style="text-align: right;">3.458882</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.1617572</td>
+<td style="text-align: right;">0.1619217</td>
 <td style="text-align: left;">Preprocessor1_Model08</td>
 </tr>
 <tr class="odd">
@@ -1424,9 +1432,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: left;">triangular</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">5.332739</td>
+<td style="text-align: right;">4.840541</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.1961713</td>
+<td style="text-align: right;">0.1411399</td>
 <td style="text-align: left;">Preprocessor1_Model09</td>
 </tr>
 <tr class="even">
@@ -1434,9 +1442,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: left;">triweight</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">3.695964</td>
+<td style="text-align: right;">3.598011</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.1475893</td>
+<td style="text-align: right;">0.1526824</td>
 <td style="text-align: left;">Preprocessor1_Model10</td>
 </tr>
 </tbody>
@@ -1499,8 +1507,8 @@ With the ongoing housing crisis within the United States, identifying homes that
 <span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(longitude) <span class="sc">|&gt;</span></span>
 <span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_impute_median</span>(<span class="fu">all_numeric_predictors</span>()) <span class="sc">|&gt;</span></span>
 <span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_impute_mode</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">|&gt;</span></span>
-<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_novel</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">|&gt;</span></span>
-<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_nominal_predictors</span>())</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_log</span>(lotSizeSqFt, <span class="at">base =</span> <span class="fu">exp</span>(<span class="dv">10</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_novel</span>(<span class="fu">all_nominal_predictors</span>())</span>
 <span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>dt_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
 <span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(dt_spec) <span class="sc">|&gt;</span></span>
@@ -1527,7 +1535,7 @@ With the ongoing housing crisis within the United States, identifying homes that
 <span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>40.39 sec elapsed</code></pre>
+<pre><code>22.4 sec elapsed</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
@@ -1609,7 +1617,7 @@ With the ongoing housing crisis within the United States, identifying homes that
 <span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>119.88 sec elapsed</code></pre>
+<pre><code>93.93 sec elapsed</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
@@ -1643,9 +1651,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: right;">11</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">3.815354</td>
+<td style="text-align: right;">3.790964</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.1393556</td>
+<td style="text-align: right;">0.1402275</td>
 <td style="text-align: left;">Preprocessor1_Model1</td>
 <td style="text-align: right;">0</td>
 </tr>
@@ -1655,9 +1663,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: right;">40</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.592616</td>
+<td style="text-align: right;">1.598687</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0487305</td>
+<td style="text-align: right;">0.0492888</td>
 <td style="text-align: left;">Preprocessor1_Model2</td>
 <td style="text-align: right;">0</td>
 </tr>
@@ -1679,9 +1687,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: right;">21</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">2.134575</td>
+<td style="text-align: right;">2.122288</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0625819</td>
+<td style="text-align: right;">0.0604718</td>
 <td style="text-align: left;">Preprocessor1_Model4</td>
 <td style="text-align: right;">0</td>
 </tr>
@@ -1698,7 +1706,7 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: right;">0</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">0.0000261</td>
+<td style="text-align: right;">0.0000214</td>
 <td style="text-align: right;">4</td>
 <td style="text-align: right;">40</td>
 <td style="text-align: left;">mn_log_loss</td>
@@ -1711,109 +1719,109 @@ With the ongoing housing crisis within the United States, identifying homes that
 </tr>
 <tr class="odd">
 <td style="text-align: right;">0.0000000</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">39</td>
-<td style="text-align: left;">mn_log_loss</td>
-<td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.321894</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0225490</td>
-<td style="text-align: left;">Iter2</td>
-<td style="text-align: right;">2</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">0.0000854</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">36</td>
-<td style="text-align: left;">mn_log_loss</td>
-<td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.433253</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0056484</td>
-<td style="text-align: left;">Iter3</td>
 <td style="text-align: right;">3</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">0.0000000</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">11</td>
+<td style="text-align: right;">40</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
 <td style="text-align: right;">1.326211</td>
 <td style="text-align: right;">10</td>
 <td style="text-align: right;">0.0061174</td>
+<td style="text-align: left;">Iter2</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.0475638</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">39</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">1.375323</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0044054</td>
+<td style="text-align: left;">Iter3</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">38</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">1.392454</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0238612</td>
 <td style="text-align: left;">Iter4</td>
 <td style="text-align: right;">4</td>
 </tr>
 <tr class="even">
+<td style="text-align: right;">0.0002199</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">1.980774</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0873721</td>
+<td style="text-align: left;">Iter5</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="odd">
 <td style="text-align: right;">0.0000000</td>
 <td style="text-align: right;">4</td>
-<td style="text-align: right;">18</td>
+<td style="text-align: right;">40</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
 <td style="text-align: right;">1.314992</td>
 <td style="text-align: right;">10</td>
 <td style="text-align: right;">0.0158065</td>
-<td style="text-align: left;">Iter5</td>
-<td style="text-align: right;">5</td>
+<td style="text-align: left;">Iter6</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.0000004</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">2.192205</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0983115</td>
+<td style="text-align: left;">Iter7</td>
+<td style="text-align: right;">7</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">0.0964720</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: right;">35</td>
+<td style="text-align: right;">0.0000014</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">26</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
 <td style="text-align: right;">1.433253</td>
 <td style="text-align: right;">10</td>
 <td style="text-align: right;">0.0056484</td>
-<td style="text-align: left;">Iter6</td>
-<td style="text-align: right;">6</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">0.0000000</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: right;">30</td>
-<td style="text-align: left;">mn_log_loss</td>
-<td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.530939</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0439166</td>
-<td style="text-align: left;">Iter7</td>
-<td style="text-align: right;">7</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">0.0000071</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">35</td>
-<td style="text-align: left;">mn_log_loss</td>
-<td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.374168</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0040759</td>
 <td style="text-align: left;">Iter8</td>
 <td style="text-align: right;">8</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">0.0000000</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">38</td>
+<td style="text-align: right;">0.0000012</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">14</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.314992</td>
+<td style="text-align: right;">1.433253</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0158065</td>
+<td style="text-align: right;">0.0056484</td>
 <td style="text-align: left;">Iter9</td>
 <td style="text-align: right;">9</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">0.0000039</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">19</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">21</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.335114</td>
+<td style="text-align: right;">1.326211</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0384075</td>
+<td style="text-align: right;">0.0061174</td>
 <td style="text-align: left;">Iter10</td>
 <td style="text-align: right;">10</td>
 </tr>
@@ -1962,7 +1970,7 @@ With the ongoing housing crisis within the United States, identifying homes that
 <span id="cb57-15"><a href="#cb57-15" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>35.44 sec elapsed</code></pre>
+<pre><code>25.94 sec elapsed</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
@@ -1989,17 +1997,17 @@ With the ongoing housing crisis within the United States, identifying homes that
 <tr class="odd">
 <td style="text-align: left;">accuracy</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">0.5465337</td>
+<td style="text-align: right;">0.5449626</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0053283</td>
+<td style="text-align: right;">0.0055784</td>
 <td style="text-align: left;">Preprocessor1_Model1</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.1071843</td>
+<td style="text-align: right;">1.1074580</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0082499</td>
+<td style="text-align: right;">0.0085029</td>
 <td style="text-align: left;">Preprocessor1_Model1</td>
 </tr>
 </tbody>
@@ -2044,7 +2052,7 @@ With the ongoing housing crisis within the United States, identifying homes that
 <span id="cb61-17"><a href="#cb61-17" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>221.86 sec elapsed</code></pre>
+<pre><code>127.44 sec elapsed</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
@@ -2077,9 +2085,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: right;">19</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.450326</td>
+<td style="text-align: right;">1.449412</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0023237</td>
+<td style="text-align: right;">0.0021647</td>
 <td style="text-align: left;">Preprocessor1_Model01</td>
 </tr>
 <tr class="even">
@@ -2088,9 +2096,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: right;">15</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.204851</td>
+<td style="text-align: right;">1.203118</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0056439</td>
+<td style="text-align: right;">0.0058220</td>
 <td style="text-align: left;">Preprocessor1_Model02</td>
 </tr>
 <tr class="odd">
@@ -2099,9 +2107,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: right;">36</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.114486</td>
+<td style="text-align: right;">1.114156</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0069159</td>
+<td style="text-align: right;">0.0068726</td>
 <td style="text-align: left;">Preprocessor1_Model03</td>
 </tr>
 <tr class="even">
@@ -2110,9 +2118,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: right;">2</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.061801</td>
+<td style="text-align: right;">1.060560</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0079310</td>
+<td style="text-align: right;">0.0080224</td>
 <td style="text-align: left;">Preprocessor1_Model04</td>
 </tr>
 <tr class="odd">
@@ -2121,9 +2129,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: right;">33</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.071706</td>
+<td style="text-align: right;">1.073117</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0077497</td>
+<td style="text-align: right;">0.0078017</td>
 <td style="text-align: left;">Preprocessor1_Model05</td>
 </tr>
 <tr class="even">
@@ -2132,9 +2140,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: right;">12</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.062693</td>
+<td style="text-align: right;">1.058018</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0078553</td>
+<td style="text-align: right;">0.0085491</td>
 <td style="text-align: left;">Preprocessor1_Model06</td>
 </tr>
 <tr class="odd">
@@ -2143,9 +2151,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: right;">29</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">6.171313</td>
+<td style="text-align: right;">6.434908</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.2448732</td>
+<td style="text-align: right;">0.1556869</td>
 <td style="text-align: left;">Preprocessor1_Model07</td>
 </tr>
 <tr class="even">
@@ -2154,9 +2162,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: right;">8</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.097370</td>
+<td style="text-align: right;">1.098911</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0180631</td>
+<td style="text-align: right;">0.0193521</td>
 <td style="text-align: left;">Preprocessor1_Model08</td>
 </tr>
 <tr class="odd">
@@ -2165,9 +2173,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: right;">40</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.083756</td>
+<td style="text-align: right;">1.080231</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0080446</td>
+<td style="text-align: right;">0.0084518</td>
 <td style="text-align: left;">Preprocessor1_Model09</td>
 </tr>
 <tr class="even">
@@ -2176,9 +2184,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: right;">5</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.088982</td>
+<td style="text-align: right;">1.098404</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0089846</td>
+<td style="text-align: right;">0.0152327</td>
 <td style="text-align: left;">Preprocessor1_Model10</td>
 </tr>
 <tr class="odd">
@@ -2187,9 +2195,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: right;">26</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.084384</td>
+<td style="text-align: right;">1.084796</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0090676</td>
+<td style="text-align: right;">0.0087623</td>
 <td style="text-align: left;">Preprocessor1_Model11</td>
 </tr>
 <tr class="even">
@@ -2198,9 +2206,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: right;">22</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.093947</td>
+<td style="text-align: right;">1.093860</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0121543</td>
+<td style="text-align: right;">0.0122488</td>
 <td style="text-align: left;">Preprocessor1_Model12</td>
 </tr>
 </tbody>

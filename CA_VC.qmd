@@ -504,7 +504,7 @@ In R, a model needs 3 elements to start functioning: a specification to choose t
 
 ### KNN Model
 
-A K-nearest neighbors model, or KNN for short, 
+A K-nearest neighbors model, or KNN for short, estimates new predictions based on the status of other observations nearest to it.  
 
 ```{r knn setup}
 #| code-fold: show
@@ -518,24 +518,23 @@ knn_rec <- recipe(priceRange ~ ., data = train) |>
   step_rm(description) |>
   step_rm(latitude) |>
   step_rm(longitude) |>
-  step_log(lotSizeSqFt, base = exp(10)) |>
   step_impute_median(all_numeric_predictors()) |>
   step_impute_mode(all_nominal_predictors()) |>
-  step_other(city) |>
-  step_other(homeType) |>
-  step_novel(all_nominal_predictors()) |>
-  step_unknown(all_nominal_predictors())
+  step_log(lotSizeSqFt, base = exp(10)) |>
+  step_other(city, threshold =  0.05)|>
+  step_other(homeType, threshold = 0.05) |>
+  step_novel(all_nominal_predictors())
 
 knn_wf <- workflow() |>
   add_model(knn_spec) |>
   add_recipe(knn_rec)
 ```
 
-In the recipe, I added some steps for our data before running the model. `step_rm` removes variables from being used in the model. I excluded `id` and `description` at this point since they are each specific to one observation. Having them used to predict price range would cause egregious overfitting. I also removed latitude and longitude from the model since I wasn't sure how to process the two. 
+In the recipe, I added some steps for our data before running the model. `step_rm()` removes variables from being used in the model. I excluded `id` and `description` at this point since they are each specific to one observation. Having them used to predict price range would cause egregious overfitting. I also removed latitude and longitude from the model as well since they've been excluded from analysis thus far. The impute steps for both nominal (categorical) and numerical data will replace any missing values in an observation with either the mode or median of the data, respectively.
 
-From that base recipe, I added some more steps after iterating. I added a step to transform the variable for lot size logarithmically since that aided in its visualization in the EDA. `step_other` was added for both city and homeType variables since they largely comprised one value with a handful of others. This step allows the model to sort the rest of the values into "other" to compare to the majority.
+From that base recipe, I added some more steps after iterating. I added a step to transform the variable for lot size logarithmically since that aided in its visualization in the EDA. `step_other()` was added for both city and homeType variables since they largely comprised one value and a handful of others created a small minority. This step allows the model to sort the rest of the values into "other" to compare to the majority. Lastly, `step_novel()` allows new values within observations to be marked as such. 
 
-This next step takes our workflow and applies it to training folds created earlier. These folds are equally-sized samples of the data used for cross-validation. Additionally, parallel processing is implemented here to make these functions finish faster by splitting the workload between multiple cores.
+The next step is to take our workflow and apply it to training folds created earlier. These folds are equally-sized samples of the data used for cross-validation. Additionally, parallel processing is implemented here to make these functions finish faster by splitting the workload between multiple cores.
 
 ```{r knn metrics}
 #| code-fold: show
@@ -565,7 +564,7 @@ knn_results |>
   kbl()
 ```
 
-The results show the accuracy and the log loss of this first iteration of the model. 
+The results show the accuracy and the log loss of this first iteration of the model. When testing this model 
 
 #### KNN Hyperparameter Tuning
 
@@ -646,7 +645,6 @@ knnsub <- knn_best_fit %>%
 write.csv(knnsub, "knnSub2.csv", row.names = FALSE)
 ```
 
-
 ### Decision Tree Model
 
 ```{r dt setup}
@@ -661,13 +659,10 @@ dt_rec <- recipe(priceRange ~ ., data = train) |>
   step_rm(description) |>
   step_rm(latitude) |>
   step_rm(longitude) |>
-  step_log(lotSizeSqFt, base = exp(10)) |>
   step_impute_median(all_numeric_predictors()) |>
   step_impute_mode(all_nominal_predictors()) |>
-  step_other(city) |>
-  step_other(homeType) |>
-  step_novel(all_nominal_predictors()) |>
-  step_unknown(all_nominal_predictors())
+  step_log(lotSizeSqFt, base = exp(10)) |>
+  step_novel(all_nominal_predictors())
 
 dt_wf <- workflow() |>
   add_model(dt_spec) |>
