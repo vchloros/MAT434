@@ -504,7 +504,7 @@ In R, a model needs 3 elements to start functioning: a specification to choose t
 
 ### KNN Model
 
-A K-nearest neighbors model, or KNN for short, estimates new predictions based on the status of other observations nearest to it.  
+A K-nearest neighbors model, or KNN for short, estimates new predictions based on the status of other observations nearest to it. In this case, the model will predict the price range of houses based on the how "close" it is to other observations. 
 
 ```{r knn setup}
 #| code-fold: show
@@ -530,7 +530,7 @@ knn_wf <- workflow() |>
   add_recipe(knn_rec)
 ```
 
-In the recipe, I added some steps for our data before running the model. `step_rm()` removes variables from being used in the model. I excluded `id` and `description` at this point since they are each specific to one observation. Having them used to predict price range would cause egregious overfitting. I also removed latitude and longitude from the model as well since they've been excluded from analysis thus far. The impute steps for both nominal (categorical) and numerical data will replace any missing values in an observation with either the mode or median of the data, respectively.
+In the recipe, I added some steps for our data before running the model. `step_rm()` removes variables from being used in the model. I excluded `id` and `description` at this point since they are each specific to one observation. Having them used to predict price range would cause egregious overfitting. I also removed `latitude` and `longitude` from the model as well since they've been excluded from analysis thus far. The impute steps for both nominal (categorical) and numerical data will replace any missing values in an observation with either the mode or median of the data, respectively.
 
 From that base recipe, I added some more steps after iterating. I added a step to transform the variable for lot size logarithmically since that aided in its visualization in the EDA. `step_other()` was added for both city and homeType variables since they largely comprised one value and a handful of others created a small minority. This step allows the model to sort the rest of the values into "other" to compare to the majority. Lastly, `step_novel()` allows new values within observations to be marked as such. 
 
@@ -564,7 +564,7 @@ knn_results |>
   kbl()
 ```
 
-The results show the accuracy and the log loss of this first iteration of the model. When testing this model 
+The results show the accuracy and the log loss of this first iteration of the model. When testing this model, adding the logarithmic step created the most noticeable change in log loss, the metric used to judge each model. Other models 
 
 #### KNN Hyperparameter Tuning
 
