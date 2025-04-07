@@ -6,6 +6,8 @@ author:
     affiliations: 
       - name: Southern New Hampshire University
 format: html
+toc: true
+toc-title: Contents
 editor: visual
 date: 2/4/2025
 date-modified: today
@@ -32,7 +34,6 @@ unregister <- function() {
   rm(list=ls(name=env), pos=env)
 }
 ```
-
 
 ## Statement of Purpose
 
@@ -495,16 +496,15 @@ Similarly to school rating, lot size does correlate to price range. The higher p
 
 Concluding the EDA, the majority of variables present will be useful in predicting price range, especially those with very distinct variation like presence of a spa, average school rating, and lot size. Some variables, particularly city and home type, are poorly represented in the data apart from one major category, so I would hesitate to include them within the later model.
 
-
 ## Model Construction and Interpretation
 
-The next segment of this workbook focuses on constructing models and identifying the best for prediction price range. 
+The next segment of this workbook focuses on constructing models and identifying the best for prediction price range.
 
-In R, a model needs 3 elements to start functioning: a specification to choose the type of model your using, a recipe to apply rules to how your model handles the data you input, and a workflow that combines the recipe and specification. For this project, I compared the performance of 3 different models, k-nearest neighbors, decision trees, and random forests. 
+In R, a model needs 3 elements to start functioning: a specification to choose the type of model your using, a recipe to apply rules to how your model handles the data you input, and a workflow that combines the recipe and specification. For this project, I compared the performance of 3 different models, k-nearest neighbors, decision trees, and random forests.
 
 ### KNN Model
 
-A K-nearest neighbors model, or KNN for short, estimates new predictions based on the status of other observations nearest to it. In this case, the model will predict the price range of houses based on the how "close" it is to other observations. 
+A K-nearest neighbors model, or KNN for short, estimates new predictions based on the status of other observations nearest to it. In this case, the model will predict the price range of houses based on the how "close" it is to other observations.
 
 ```{r knn setup}
 #| code-fold: show
@@ -532,7 +532,7 @@ knn_wf <- workflow() |>
 
 In the recipe, I added some steps for our data before running the model. `step_rm()` removes variables from being used in the model. I excluded `id` and `description` at this point since they are each specific to one observation. Having them used to predict price range would cause egregious overfitting. I also removed `latitude` and `longitude` from the model as well since they've been excluded from analysis thus far. The impute steps for both nominal (categorical) and numerical data will replace any missing values in an observation with either the mode or median of the data, respectively.
 
-From that base recipe, I added some more steps after iterating. I added a step to transform the variable for lot size logarithmically since that aided in its visualization in the EDA. `step_other()` was added for both city and homeType variables since they largely comprised one value and a handful of others created a small minority. This step allows the model to sort the rest of the values into "other" to compare to the majority. Lastly, `step_novel()` allows new values within observations to be marked as such. 
+From that base recipe, I added some more steps after iterating. I added a step to transform the variable for lot size logarithmically since that aided in its visualization in the EDA. `step_other()` was added for both city and homeType variables since they largely comprised one value and a handful of others created a small minority. This step allows the model to sort the rest of the values into "other" to compare to the majority. Lastly, `step_novel()` allows new values within observations to be marked as such.
 
 The next step is to take our workflow and apply it to training folds created earlier. These folds are equally-sized samples of the data used for cross-validation. Additionally, parallel processing is implemented here to make these functions finish faster by splitting the workload between multiple cores.
 
@@ -564,9 +564,15 @@ knn_results |>
   kbl()
 ```
 
-The results show the accuracy and the log loss of this first iteration of the model. When testing this model, adding the logarithmic step created the most noticeable change in log loss, the metric used to judge each model. Other models 
+The results show the accuracy and the log loss of this first iteration of the model with a finalized recipe. With the above steps in place, the output is an accuracy value of 45.9% and a log loss of 6.805. Since log loss is the metric used to evaluate each model, that is the figure I consulted when tweaking recipe steps. When testing this model, adding `step_novel()` to the recipe (beyond the imputing and removing steps) lowered the log loss from 7.346 to 7.174 (difference of 0.172). Adding `step_other()` made a small improvement, lowering log loss again from 7.174 to 7.104 (difference of 0.070). Lastly, the most significant addition was the scaling of `step_log()` which lowered the figure from 7.104 to 6.805 (difference of 0.299).
+
+I'll continue to use the series of steps for future models while checking to make sure that each improves log loss with its addition.
 
 #### KNN Hyperparameter Tuning
+
+When making models, there are a number of factors internally that are used to evaluate data. In this nearest neighbors model, these include `neighbors` which determines how many neighbors "vote" on the prediction of a new observation and `weight_func` which determines how distances between observations are interpreted. Both parameters have a default value, but using tuning, we can instruct R to run the model with many iterations to test different parameters and evaluate their performance.
+
+To prepare for this, I'll change to specification to include a call for tuning each parameter and then update the workflow.
 
 ```{r prep for tuning}
 #| code-fold: show
@@ -580,12 +586,13 @@ knn_wf <- workflow() |>
   add_recipe(knn_rec)
 ```
 
+The next step is to tune the model. This can be done by either `tune_grid()` or `tune_bayes()`. Using a grid is often much faster, but using bayes allows for the function to "check" itself and iterate off of the performance of the last result. For this analysis, I used the grid function for the KNN tuning for the sake of time. 
 
 ```{r knn tune}
 #| code-fold: show
 #| warning: false
 
-#Elapsed time in RStudio: 40 secs
+#Elapsed time in RStudio: ~50 secs
 
 n_cores <- parallel::detectCores()
 cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
@@ -598,6 +605,7 @@ knn_tune_results <- knn_wf %>%
     resamples = train_folds,
     metrics = metric_set(mn_log_loss),
     initial = 5,
+    grid = 15,
     control = control_bayes(parallel_over = "everything")
   )
 
@@ -610,6 +618,8 @@ knn_tune_results %>%
   collect_metrics() |>
   kbl()
 ```
+
+Each row here is a set of parameters the model tried and its metrics. We can fit the best model to our data and see how it performed. 
 
 #### KNN Fitting
 
@@ -625,6 +635,28 @@ knn_best_wf <- knn_wf %>%
 knn_best_fit <- knn_best_wf %>%
   fit(train)
 ```
+
+```{r}
+#| code-fold: show
+
+knn_log_loss <- knn_best_fit |>
+  augment(train) |>
+  mutate(priceRange = as.factor(priceRange)) |>
+  mn_log_loss(priceRange, starts_with(".pred"), - .pred_class)
+
+knn_accuracy_metric <- knn_best_fit |>
+  augment(train) |>
+  mutate(priceRange = as.factor(priceRange)) |>
+  accuracy(priceRange, .pred_class)
+
+knn_log_loss |>
+  bind_rows(knn_accuracy_metric) |>
+  kbl()
+```
+
+Here it is! The final log loss for this knn model is 0.608 while the accuracy is 81.72%. This is a pretty great figure after a lot of testing and retesting, but there are still other models to try. 
+
+This next codeblock is used to export this model's predictions based on a data set given by my professor. These predictions are ranked compared to those of my classmates, and can be found [here](https://www.kaggle.com/competitions/mat-434-zillow-classification-challenge-sp-25/leaderboard).
 
 #### Exporting KNN Predictions
 
@@ -642,10 +674,12 @@ knnsub <- knn_best_fit %>%
   ) %>%
   select(id, starts_with ("prob"))
 
-write.csv(knnsub, "knnSub2.csv", row.names = FALSE)
+write.csv(knnsub, "CA_output/knnSub3.csv", row.names = FALSE)
 ```
 
 ### Decision Tree Model
+
+
 
 ```{r dt setup}
 #| code-fold: show
@@ -660,14 +694,18 @@ dt_rec <- recipe(priceRange ~ ., data = train) |>
   step_rm(latitude) |>
   step_rm(longitude) |>
   step_impute_median(all_numeric_predictors()) |>
-  step_impute_mode(all_nominal_predictors()) |>
-  step_log(lotSizeSqFt, base = exp(10)) |>
-  step_novel(all_nominal_predictors())
+  step_impute_mode(all_nominal_predictors()) 
+  #step_log(lotSizeSqFt, base = exp(10)) |>
+  #step_other(city, threshold =  0.05)|>
+  #step_other(homeType, threshold = 0.05) |>
+  #step_novel(all_nominal_predictors())
 
 dt_wf <- workflow() |>
   add_model(dt_spec) |>
   add_recipe(dt_rec)
 ```
+
+I used the same steps as I used in the nearest neighbor model. 
 
 ```{r dt metrics}
 #| code-fold: show
@@ -696,7 +734,13 @@ dt_results |>
   collect_metrics() |>
   kbl()
 ```
-
+```{r}
+dt_step_iterations <- data.frame(
+  step_added = c("base", "log", "other", "novel"),
+  accuracy = c(),
+  log_loss = c()
+)
+```
 
 
 #### DT Tuning
@@ -712,7 +756,6 @@ dt_wf <- workflow() |>
   add_model(dt_spec) |>
   add_recipe(dt_rec)
 ```
-
 
 ```{r dt tune}
 #| code-fold: show
@@ -758,7 +801,6 @@ dt_best_fit <- dt_best_wf %>%
   fit(train)
 ```
 
-
 ```{r training performance}
 #| code-fold: show
 
@@ -801,9 +843,8 @@ dtsub <- dt_best_fit %>%
   ) %>%
   select(id, starts_with ("prob"))
 
-write.csv(dtsub, "DTSub2.csv", row.names = FALSE)
+write.csv(dtsub, "CA_output/DTSub3.csv", row.names = FALSE)
 ```
-
 
 ### Random Forest
 
@@ -858,7 +899,6 @@ rf_results |>
   kbl()
 ```
 
-
 #### RF Tuning
 
 ```{r}
@@ -872,7 +912,6 @@ rf_wf <- workflow() |>
   add_model(rf_spec) |>
   add_recipe(rf_rec)
 ```
-
 
 ```{r}
 #| code-fold: show
@@ -903,7 +942,6 @@ rf_tune_results |>
   collect_metrics() |>
   kbl()
 ```
-
 
 ```{r}
 #| code-fold: show
@@ -936,4 +974,3 @@ rfsub <- rf_fit %>%
 
 write.csv(rfsub, "RFSub1.csv", row.names = FALSE)
 ```
-
