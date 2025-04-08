@@ -619,7 +619,7 @@ knn_tune_results %>%
   kbl()
 ```
 
-Each row here is a set of parameters the model tried and its metrics. We can fit the best model to our data and see how it performed. 
+Each row here is a set of parameters the model tried and its metrics. We can fit the best model to our data and see how it performs on the test data set aside at the beginning of this analysis. 
 
 #### KNN Fitting
 
@@ -640,12 +640,12 @@ knn_best_fit <- knn_best_wf %>%
 #| code-fold: show
 
 knn_log_loss <- knn_best_fit |>
-  augment(train) |>
+  augment(test) |>
   mutate(priceRange = as.factor(priceRange)) |>
   mn_log_loss(priceRange, starts_with(".pred"), - .pred_class)
 
 knn_accuracy_metric <- knn_best_fit |>
-  augment(train) |>
+  augment(test) |>
   mutate(priceRange = as.factor(priceRange)) |>
   accuracy(priceRange, .pred_class)
 
@@ -654,7 +654,7 @@ knn_log_loss |>
   kbl()
 ```
 
-Here it is! The final log loss for this knn model is 0.608 while the accuracy is 81.72%. This is a pretty great figure after a lot of testing and retesting, but there are still other models to try. 
+Here it is! The final log loss for this knn model is 2.417 while the accuracy is 48.54%.  
 
 This next codeblock is used to export this model's predictions based on a data set given by my professor. These predictions are ranked compared to those of my classmates, and can be found [here](https://www.kaggle.com/competitions/mat-434-zillow-classification-challenge-sp-25/leaderboard).
 
@@ -679,7 +679,7 @@ write.csv(knnsub, "CA_output/knnSub3.csv", row.names = FALSE)
 
 ### Decision Tree Model
 
-
+A decision tree takes different metrics from variables within the data and creates a series of yes/no questions that lead a given observation to be categorized. This model also allows us to visualize the end result, allowing for a plot that shows how the model is working.
 
 ```{r dt setup}
 #| code-fold: show
@@ -694,24 +694,22 @@ dt_rec <- recipe(priceRange ~ ., data = train) |>
   step_rm(latitude) |>
   step_rm(longitude) |>
   step_impute_median(all_numeric_predictors()) |>
-  step_impute_mode(all_nominal_predictors()) 
-  #step_log(lotSizeSqFt, base = exp(10)) |>
-  #step_other(city, threshold =  0.05)|>
-  #step_other(homeType, threshold = 0.05) |>
-  #step_novel(all_nominal_predictors())
+  step_impute_mode(all_nominal_predictors()) |>
+  step_log(lotSizeSqFt, base = exp(10)) |>
+  step_other(city, threshold =  0.05)|>
+  step_other(homeType, threshold = 0.05) |>
+  step_novel(all_nominal_predictors())
 
 dt_wf <- workflow() |>
   add_model(dt_spec) |>
   add_recipe(dt_rec)
 ```
 
-I used the same steps as I used in the nearest neighbor model. 
-
 ```{r dt metrics}
 #| code-fold: show
 #| warning: false
 
-# Elapsed time in RStudio: 20 secs
+# Elapsed time in RStudio: ~20 secs
 
 n_cores <- parallel::detectCores()
 cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
@@ -734,14 +732,10 @@ dt_results |>
   collect_metrics() |>
   kbl()
 ```
-```{r}
-dt_step_iterations <- data.frame(
-  step_added = c("base", "log", "other", "novel"),
-  accuracy = c(),
-  log_loss = c()
-)
-```
 
+Based on the above iterations of the model, it's clear that decision trees started out much better than knn when comparing log loss. The knn started with a log loss of 7.346 with the base steps while the decision tree started with a log loss of 1.361. Unlike knn, the decision tree's metrics did not change with the addition of more steps. I kept them in for consistency, but this lack of change did confuse me.
+
+For this tuning block, I had three available parameters: `min_n` which is the minimum number of observations required to create a new branching in the tree, `tree_depth` or how deep the tree can extend, and `cost_complexity` which dictates a penalty to extending the tree further. While all of these tuned, there should be a middle ground for the model where the min_n can lead to enough splits before the cost exceeds the benefit. I'm also using `tune_bayes()` at this juncture to iterate on the already preferable performance. 
 
 #### DT Tuning
 
@@ -773,6 +767,7 @@ dt_tune_results <- dt_wf %>%
     resamples = train_folds,
     metrics = metric_set(mn_log_loss),
     initial = 5,
+    iter = 15,
     control = control_bayes(parallel_over = "everything")
   )
 
@@ -787,6 +782,8 @@ dt_tune_results %>%
 ```
 
 #### DT Fitting
+
+Again, we'll fit the best results to the data and see what the result is.
 
 ```{r model fitting}
 #| code-fold: show
@@ -804,20 +801,22 @@ dt_best_fit <- dt_best_wf %>%
 ```{r training performance}
 #| code-fold: show
 
-log_loss <- dt_best_fit |>
-  augment(train) |>
+dt_log_loss <- dt_best_fit |>
+  augment(test) |>
   mutate(priceRange = as.factor(priceRange)) |>
   mn_log_loss(priceRange, starts_with(".pred"), - .pred_class)
 
-accuracy_metric <- dt_best_fit |>
-  augment(train) |>
+dt_accuracy_metric <- dt_best_fit |>
+  augment(test) |>
   mutate(priceRange = as.factor(priceRange)) |>
   accuracy(priceRange, .pred_class)
 
-log_loss |>
-  bind_rows(accuracy_metric) |>
+dt_log_loss |>
+  bind_rows(dt_accuracy_metric) |>
   kbl()
 ```
+
+This final result is an improvement over the knn model in terms of log loss (1.290 compared to 2.417), but actually performs a bit worse in terms of accuracy (43.03% to 48.54%). 
 
 #### DT Plot
 
@@ -857,13 +856,15 @@ rf_spec <- rand_forest() |>
   
 rf_rec <- recipe(priceRange ~ ., data = train) |>
   step_rm(id) |>
-  step_rm(description) |>  
+  step_rm(description) |>
   step_rm(latitude) |>
   step_rm(longitude) |>
   step_impute_median(all_numeric_predictors()) |>
   step_impute_mode(all_nominal_predictors()) |>
-  step_novel(all_nominal_predictors()) |>
-  step_dummy(all_nominal_predictors())
+  step_log(lotSizeSqFt, base = exp(10)) |>
+  step_other(city, threshold =  0.1)|>
+  step_other(homeType, threshold = 0.1) |>
+  step_novel(all_nominal_predictors())
   
 rf_wf <- workflow() |>
   add_model(rf_spec) |>
@@ -898,6 +899,18 @@ rf_results |>
   collect_metrics() |>
   kbl()
 ```
+
+```{r}
+rf_starts <- data.frame(
+  steps = c("base", "novel", "other 0.05", "other 0.10", "log"),
+  accuracy = c(0.5526529, 0.5507713,	0.5524935, 0.555008, 	0.5493572),
+  log_loss = c(1.0613658, 1.0660283,	1.0664596, 1.061050,	1.0651181)
+)
+
+rf_starts |>
+  kbl()
+```
+
 
 #### RF Tuning
 
