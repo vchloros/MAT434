@@ -3,10 +3,14 @@ title: "FinalProject"
 author: "Vinny Chloros"
 format: html
 editor: visual
+toc: true
+toc-title: Contents
+date: 4/2/2025
+date-modified: today
+date-format: long
+theme: superhero
+code-fold: show
 ---
-## Statement of Purpose
-
-
 
 ```{r}
 #| message: false
@@ -21,6 +25,26 @@ library(ranger)
 
 data <- read_csv("codon_usage.csv")
 
+data <- data |>
+  mutate(
+    DNAtype = case_when(
+      DNAtype == 0 ~ "genomic",
+      DNAtype == 1 ~ "mitochondrial",
+      DNAtype == 2 ~ "chloroplast",
+      DNAtype == 3 ~ "cyanelle",
+      DNAtype == 4 ~ "plastid",
+      DNAtype == 5 ~ "nucleomorph",
+      DNAtype == 6 ~ "secondary_endosymbiont",
+      DNAtype == 7 ~ "chromoplast",
+      DNAtype == 8 ~ "leucoplast",
+      DNAtype == 9 ~ "NA",
+      DNAtype == 10 ~ "proplastid",
+      DNAtype == 11 ~ "apicoplast",
+      DNAtype == 12 ~ "kinetoplast",
+      TRUE ~ "unknown"
+    )
+  )
+
 unregister <- function() {
   env <- foreach:::.foreachGlobals
   rm(list=ls(name=env), pos=env)
@@ -30,29 +54,51 @@ set.seed(20250402)
 ```
 
 ```{r}
-# figure out how to rename DNAtype values
-```
-
-
-```{r}
 split <- initial_split(data, strata = Kingdom)
 
 train <- training(split)
 test <- testing(split)
 ```
 
+## Statement of Purpose
+
+Codons are vital to our understanding of amino acids and protein production within living organisms. The codons used for certain proteins vary in both prescence and frequency between different organisms and, on a larger scale, between taxa. By analyzing and predicting the relationship between codon frequency and the organization of different organisms, insights can be formed about how codons differ between groups and what changes might have occurred throughout evolutionary history in terms of genetic variation and protein building.
+
+## Introduction
+
+A codon is a collection of 3 nucleotides (A, C, G, or U) within a genetic sequence. Different codons call for the production of amino acids which build proteins. The order of codons determine the order of amino acid production and subsequently the form and function of the resulting protein. There are 64 different combinations possible with 4 nucleotides in 3 positions, but there are only around 20 amino acids that are produced from these combinations. Many codons, especially those with the same nucleotides in the first or second position, will produce the same amino acid. 
+
 ## EDA
 
-```{r}
-train |>
-  ggplot() +
-  geom_bar(aes(x = Kingdom))
-```
+### Single Variables
 
 ```{r}
 train |>
   ggplot() +
-  geom_bar(aes(x = DNAtype))
+  geom_bar(aes(x = Kingdom)) 
+#  geom_text(
+#    aes(
+#      y = after_stat(count + 2),
+#      label = after_stat(count)
+#    ),
+#    stat = "count"
+#  )
+
+train |>
+  count(Kingdom) |>
+  kbl()
+```
+The data set features 11 different groups titled kingdoms: archaea (arc), bacteria (bct), invertbrates (inv), mammals (mam), bacteriophages (phg), plasmid (plm), plants (pln), primates (pri), rodents (rod), viruses (vrl), and vertebrates (vrt). Note that these categories don't represent actual kingdoms, of which there are only 7. Groups like primates and rodents are orders and are included within both mammals and vertebrates. Similarly, bacteriophages are a type of virus and thus would typically be classified as such. It seems like Kingdom as a category is simply used to describe large groups that species are classified by rather than actual biological kingdoms. 
+
+```{r}
+train |>
+  ggplot() +
+  geom_bar(aes(x = DNAtype)) +
+  coord_flip()
+
+train |>
+  count(DNAtype) |>
+  kbl()
 ```
 
 ```{r}
@@ -62,12 +108,37 @@ train |>
   scale_x_log10()
 ```
 
+Since there are 64 different codons within the data, I isolated a few to serve as examples for distribution. There below are phenylalanine (UUU), 
+
 ```{r}
 #how to facet wrap with different rows here
 
 train |>
   ggplot() +
-  geom_histogram(aes(x = UUU)) +
-  facet_wrap(~ Kingdom, scales = "free")
+  geom_histogram(aes(x = UUU))
+
+train |>
+  ggplot() +
+  geom_histogram(aes(x = CGU))
+
+train |>
+  ggplot() +
+  geom_histogram(aes(x = AUG))
+```
+
+### Multiple Variables
+
+```{r}
+train |>
+  ggplot(aes(Kingdom, DNAtype)) +
+  geom_count(aes(color = after_stat(n), size = after_stat(n))) +
+  guides(color = 'legend') +
+  scale_color_gradient(low = "blue", high = "red")
+```
+
+```{r}
+train |>
+  ggplot(aes(Kingdom, Ncodons)) +
+  geom_col()
 ```
 
