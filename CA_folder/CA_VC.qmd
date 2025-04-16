@@ -12,6 +12,7 @@ editor: visual
 date: 2/4/2025
 date-modified: today
 date-format: long
+title-block-banner: true
 theme: superhero
 code-fold: true
 ---
@@ -58,7 +59,7 @@ train |>
   
 ```
 
-</br> The initial data set featured 7498 observations with 16 total variables. It was split in two sections: 6371 observations for training data and 1127 observations for testing the eventual model with a strata created to ensure that different price ranges were proportionally represented between the two sets.
+The initial data set featured 7498 observations with 16 total variables. It was split in two sections: 6371 observations for training data and 1127 observations for testing the eventual model with a strata created to ensure that different price ranges were proportionally represented between the two sets.
 
 ## Exploratory Data Analysis (EDA)
 
@@ -532,7 +533,7 @@ knn_wf <- workflow() |>
 
 In the recipe, I added some steps for our data before running the model. `step_rm()` removes variables from being used in the model. I excluded `id` and `description` at this point since they are each specific to one observation. Having them used to predict price range would cause egregious overfitting. I also removed `latitude` and `longitude` from the model as well since they've been excluded from analysis thus far. The impute steps for both nominal (categorical) and numerical data will replace any missing values in an observation with either the mode or median of the data, respectively.
 
-From that base recipe, I added some more steps after iterating. I added a step to transform the variable for lot size logarithmically since that aided in its visualization in the EDA. `step_other()` was added for both city and homeType variables since they largely comprised one value and a handful of others created a small minority. This step allows the model to sort the rest of the values into "other" to compare to the majority. Lastly, `step_novel()` allows new values within observations to be marked as such.
+From that base recipe, I added some more steps after iterating. I added a step to transform the variable for lot size logarithmically since that aided in its visualization in the EDA. `step_other()` was added for both `city` and `homeType` variables since they largely comprised one value and a handful of others created a small minority. This step allows the model to sort the rest of the values into "other" to compare to the majority. Lastly, `step_novel()` allows new values within observations to be marked as such.
 
 The next step is to take our workflow and apply it to training folds created earlier. These folds are equally-sized samples of the data used for cross-validation. Additionally, parallel processing is implemented here to make these functions finish faster by splitting the workload between multiple cores.
 
@@ -540,7 +541,7 @@ The next step is to take our workflow and apply it to training folds created ear
 #| code-fold: show
 #| warning: false
 
-# Elapsed time in RStudio: 25 secs
+# Elapsed time in RStudio: ~25 secs
 
 n_cores <- parallel::detectCores()
 cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
@@ -586,7 +587,7 @@ knn_wf <- workflow() |>
   add_recipe(knn_rec)
 ```
 
-The next step is to tune the model. This can be done by either `tune_grid()` or `tune_bayes()`. Using a grid is often much faster, but using bayes allows for the function to "check" itself and iterate off of the performance of the last result. For this analysis, I used the grid function for the KNN tuning for the sake of time. 
+The next step is to tune the model. This can be done by either `tune_grid()` or `tune_bayes()`. Using a grid is often much faster, but using bayes allows for the function to "check" itself and iterate off of the performance of the last result. For this analysis, I used the grid function for the KNN tuning for the sake of time.
 
 ```{r knn tune}
 #| code-fold: show
@@ -619,9 +620,11 @@ knn_tune_results %>%
   kbl()
 ```
 
-Each row here is a set of parameters the model tried and its metrics. We can fit the best model to our data and see how it performs on the test data set aside at the beginning of this analysis. 
+Each row here is a set of parameters the model tried and its metrics. We can fit the best model to our data and evaluate its performance on the both the training data and the testing data that was set aside at the beginning of this analysis.
 
 #### KNN Fitting
+
+##### Training Fit
 
 ```{r knn fitting}
 #| code-fold: show
@@ -634,6 +637,41 @@ knn_best_wf <- knn_wf %>%
 
 knn_best_fit <- knn_best_wf %>%
   fit(train)
+```
+
+```{r}
+#| code-fold: show
+
+knn_log_loss <- knn_best_fit |>
+  augment(train) |>
+  mutate(priceRange = as.factor(priceRange)) |>
+  mn_log_loss(priceRange, starts_with(".pred"), - .pred_class)
+
+knn_accuracy_metric <- knn_best_fit |>
+  augment(train) |>
+  mutate(priceRange = as.factor(priceRange)) |>
+  accuracy(priceRange, .pred_class)
+
+knn_log_loss |>
+  bind_rows(knn_accuracy_metric) |>
+  kbl()
+```
+
+Here, the model is fit to the training data. Accuracy describes how often each observation was sorted into the correct price range, and log loss represents the model's certainty in its placements. When reviewing the metrics, we want accuracy to be high and log loss to be low. Here, the knn model predicted price range with an accuracy of 81.73% and had a log loss of 0.61, both rounded.
+
+##### Test Fit
+
+```{r knn fitting}
+#| code-fold: show
+
+knn_best_params <- knn_tune_results %>%
+  select_best(metric = "mn_log_loss")
+
+knn_best_wf <- knn_wf %>%
+  finalize_workflow(knn_best_params)
+
+knn_best_fit <- knn_best_wf %>%
+  fit(test)
 ```
 
 ```{r}
@@ -654,11 +692,13 @@ knn_log_loss |>
   kbl()
 ```
 
-Here it is! The final log loss for this knn model is 2.417 while the accuracy is 48.54%.  
+While using the testing data, the model had an accuracy of 83.32% and a log loss of 0.63. The accuracy was slightly higher compared to the training data but the log loss was slightly higher as well. The similarity of the two is a good sign; if there were an egregious amount of overfitting, training would have inflated metrics compared to the testing data.
+
+#### Exporting KNN Predictions
 
 This next codeblock is used to export this model's predictions based on a data set given by my professor. These predictions are ranked compared to those of my classmates, and can be found [here](https://www.kaggle.com/competitions/mat-434-zillow-classification-challenge-sp-25/leaderboard).
 
-#### Exporting KNN Predictions
+***ADD KAGGLE RESULTS***
 
 ```{r knn export}
 #| code-fold: show
@@ -674,7 +714,7 @@ knnsub <- knn_best_fit %>%
   ) %>%
   select(id, starts_with ("prob"))
 
-write.csv(knnsub, "CA_output/knnSub3.csv", row.names = FALSE)
+write.csv(knnsub, "CA_output/knnSub4.csv", row.names = FALSE)
 ```
 
 ### Decision Tree Model
@@ -733,11 +773,24 @@ dt_results |>
   kbl()
 ```
 
-Based on the above iterations of the model, it's clear that decision trees started out much better than knn when comparing log loss. The knn started with a log loss of 7.346 with the base steps while the decision tree started with a log loss of 1.361. Unlike knn, the decision tree's metrics did not change with the addition of more steps. I kept them in for consistency, but this lack of change did confuse me.
+Below, I've taken the metrics for different step recipes and compared them. For each listed stop, that recipe has both the step listed and all the steps that come before it. For the step listed "other", it has `step_other()` as well as `step_novel()` and the base steps like imputing.
 
-For this tuning block, I had three available parameters: `min_n` which is the minimum number of observations required to create a new branching in the tree, `tree_depth` or how deep the tree can extend, and `cost_complexity` which dictates a penalty to extending the tree further. While all of these tuned, there should be a middle ground for the model where the min_n can lead to enough splits before the cost exceeds the benefit. I'm also using `tune_bayes()` at this juncture to iterate on the already preferable performance. 
+```{r}
+dt_starts <- data.frame(
+  steps = c("base", "novel", "other 0.05", "log"),
+  accuracy = c(0.4098234, 0.4098234,	0.4098234, 0.4098234),
+  log_loss = c(1.3605792, 1.3605792,	1.3605792,	1.3605792)
+)
+
+dt_starts |>
+  kbl()
+```
+
+Based on the above iterations of the model, it's clear that decision trees started out much better than knn when comparing log loss. The knn started with a log loss of 7.346 with the base steps while the decision tree started with a log loss of 1.361. Unlike knn, the decision tree's metrics did not change with the addition of more steps. I kept them in for consistency, but I was curious why there wasn't a dramatic difference like what was seen with the knn model.
 
 #### DT Tuning
+
+For this tuning block, I had three available parameters: `min_n` which is the minimum number of observations required to create a new branching in the tree, `tree_depth` or how deep the tree can extend, and `cost_complexity` which dictates a penalty to extending the tree further. While all of these tuned, there should be a middle ground for the model where the min_n can lead to enough splits before the cost exceeds the benefit. I'm also using `tune_bayes()` at this juncture to iterate on the already preferable performance.
 
 ```{r}
 #| code-fold: show
@@ -754,7 +807,7 @@ dt_wf <- workflow() |>
 ```{r dt tune}
 #| code-fold: show
 #| warning: false
-#Elapsed time in RStudio: 2 mins
+#Elapsed time in RStudio: ~2 mins
 
 n_cores <- parallel::detectCores()
 cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
@@ -785,6 +838,8 @@ dt_tune_results %>%
 
 Again, we'll fit the best results to the data and see what the result is.
 
+##### Train Fit
+
 ```{r model fitting}
 #| code-fold: show
 
@@ -798,7 +853,42 @@ dt_best_fit <- dt_best_wf %>%
   fit(train)
 ```
 
-```{r training performance}
+```{r dt training performance}
+#| code-fold: show
+
+dt_log_loss <- dt_best_fit |>
+  augment(train) |>
+  mutate(priceRange = as.factor(priceRange)) |>
+  mn_log_loss(priceRange, starts_with(".pred"), - .pred_class)
+
+dt_accuracy_metric <- dt_best_fit |>
+  augment(train) |>
+  mutate(priceRange = as.factor(priceRange)) |>
+  accuracy(priceRange, .pred_class)
+
+dt_log_loss |>
+  bind_rows(dt_accuracy_metric) |>
+  kbl()
+```
+
+Here, the test data shows an accuracy of 44.78% and a log loss of 1.28. This is a stark contrast from the metrics of the fitted knn model, which had an accuracy of 81.73% and a log loss of 0.61. In comparison, it looks like the decision tree model is performing worse than the knn.
+
+##### Test Fit
+
+```{r dt test model fitting}
+#| code-fold: show
+
+dt_best_params <- dt_tune_results %>%
+  select_best(metric = "mn_log_loss")
+
+dt_best_wf <- dt_wf %>%
+  finalize_workflow(dt_best_params)
+
+dt_best_fit <- dt_best_wf %>%
+  fit(test)
+```
+
+```{r dt testing performance}
 #| code-fold: show
 
 dt_log_loss <- dt_best_fit |>
@@ -816,9 +906,13 @@ dt_log_loss |>
   kbl()
 ```
 
-This final result is an improvement over the knn model in terms of log loss (1.290 compared to 2.417), but actually performs a bit worse in terms of accuracy (43.03% to 48.54%). 
+For the testing data, the accuracy was 47.03% and the log loss was 1.21. Again, this performance is worse than that of the knn model. 
+
+It seems like, unlike the knn model, the decision tree model experienced limited improvement with additional steps, testing, and tuning. Its initial log loss rating of 1.36 was only improved down to 1.21 while the knn model had the much more impressive dive from 6.81 (with all steps included) down to 0.63. 
 
 #### DT Plot
+
+A benefit of using decision trees is being able to visualize how the model is sorting the data. Below is a tree figure showing each "question" the model is posing for a given observation. Based on a yes or no answer, the tree starts to sort the observation.
 
 ```{r}
 dt_best_fit |>
@@ -827,6 +921,8 @@ dt_best_fit |>
 ```
 
 #### Exporting DT Predictions
+
+***ADD KAGGLE RESULTS***
 
 ```{r}
 #| code-fold: show
@@ -847,6 +943,8 @@ write.csv(dtsub, "CA_output/DTSub3.csv", row.names = FALSE)
 
 ### Random Forest
 
+A random forest is an ensemble, or a collection of models used to produce predictions. It will make a series of independent decision trees and use them together to make the final predictions. I'll take the steps from previous models and see if they contribute to the performance of the model.
+
 ```{r}
 #| code-fold: show
 
@@ -861,9 +959,9 @@ rf_rec <- recipe(priceRange ~ ., data = train) |>
   step_rm(longitude) |>
   step_impute_median(all_numeric_predictors()) |>
   step_impute_mode(all_nominal_predictors()) |>
-  step_log(lotSizeSqFt, base = exp(10)) |>
-  step_other(city, threshold =  0.1)|>
-  step_other(homeType, threshold = 0.1) |>
+  #step_log(lotSizeSqFt, base = exp(10))
+  step_other(city, threshold =  0.05)|>
+  step_other(homeType, threshold = 0.05) |>
   step_novel(all_nominal_predictors())
   
 rf_wf <- workflow() |>
@@ -902,22 +1000,25 @@ rf_results |>
 
 ```{r}
 rf_starts <- data.frame(
-  steps = c("base", "novel", "other 0.05", "other 0.10", "log"),
-  accuracy = c(0.5526529, 0.5507713,	0.5524935, 0.555008, 	0.5493572),
-  log_loss = c(1.0613658, 1.0660283,	1.0664596, 1.061050,	1.0651181)
+  steps = c("base", "novel", "other 0.05", "log"),
+  accuracy = c(0.549041, 0.5528097,	0.5534388, 0.5583059),
+  log_loss = c(1.061382, 1.0600678,	1.0599585,	1.0608243)
 )
 
 rf_starts |>
   kbl()
 ```
 
+From some testing, it seems like each additional step improves on log loss (and accuracy to a lesser extent) until adding the `step_log()` function. Since it seems to harm the performance of the model, I'll be excluding the logarithmic scaling from the random trees.
 
 #### RF Tuning
+
+For tunable parameters, this random forest model has two: `trees`, the number of trees included in the ensemble, and `min_n`, the minimum number of observations required to make a new branch within a given tree. 
 
 ```{r}
 #| code-fold: show
 
-rf_spec <- rand_forest(min_n = tune(), mtry = tune(), trees = tune()) |>
+rf_spec <- rand_forest(min_n = tune(), trees = tune()) |>
   set_engine("ranger") |>
   set_mode("classification")
 
@@ -930,7 +1031,7 @@ rf_wf <- workflow() |>
 #| code-fold: show
 #| warning: false
 
-#Elapsed time in RStudio: 2 mins
+#Elapsed time in RStudio: ~3 mins
 
 n_cores <- parallel::detectCores()
 cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
@@ -938,12 +1039,13 @@ doParallel::registerDoParallel(cl)
 
 tictoc::tic()
 
-rf_tune_results <- rf_wf |>
-  tune_grid(
+rf_tune_results <- rf_wf %>%
+  tune_bayes(
     resamples = train_folds,
-    grid = 12,
     metrics = metric_set(mn_log_loss),
-    control = control_grid(parallel_over = "everything")
+    initial = 5,
+    iter = 15,
+    control = control_bayes(parallel_over = "everything")
   )
 
 tictoc::toc()
@@ -956,6 +1058,8 @@ rf_tune_results |>
   kbl()
 ```
 
+##### Training Performance
+
 ```{r}
 #| code-fold: show
 
@@ -967,6 +1071,59 @@ rf_best_wf <- rf_wf %>%
 
 rf_fit <- rf_best_wf |>
   fit(train)
+```
+
+```{r rf training performance}
+#| code-fold: show
+
+rf_log_loss <- rf_fit |>
+  augment(train) |>
+  mutate(priceRange = as.factor(priceRange)) |>
+  mn_log_loss(priceRange, starts_with(".pred"), - .pred_class)
+
+rf_accuracy_metric <- rf_fit |>
+  augment(train) |>
+  mutate(priceRange = as.factor(priceRange)) |>
+  accuracy(priceRange, .pred_class)
+
+rf_log_loss |>
+  bind_rows(rf_accuracy_metric) |>
+  kbl()
+```
+
+Once fit, it seems like the random forest model has the best metrics so far. Accuracy is at 97.66% while 
+
+##### Testing Performance
+
+```{r}
+#| code-fold: show
+
+rf_best_params <- rf_tune_results %>%
+  select_best(metric = "mn_log_loss")
+
+rf_best_wf <- rf_wf %>%
+  finalize_workflow(rf_best_params)
+
+rf_fit <- rf_best_wf |>
+  fit(test)
+```
+
+```{r rf testing performance}
+#| code-fold: show
+
+rf_log_loss <- rf_fit |>
+  augment(test) |>
+  mutate(priceRange = as.factor(priceRange)) |>
+  mn_log_loss(priceRange, starts_with(".pred"), - .pred_class)
+
+rf_accuracy_metric <- rf_fit |>
+  augment(test) |>
+  mutate(priceRange = as.factor(priceRange)) |>
+  accuracy(priceRange, .pred_class)
+
+rf_log_loss |>
+  bind_rows(rf_accuracy_metric) |>
+  kbl()
 ```
 
 #### Exporting RF Predictions
