@@ -624,9 +624,7 @@ Each row here is a set of parameters the model tried and its metrics. We can fit
 
 #### KNN Fitting
 
-##### Training Fit
-
-```{r knn fitting}
+```{r knn train fitting}
 #| code-fold: show
 
 knn_best_params <- knn_tune_results %>%
@@ -657,22 +655,9 @@ knn_log_loss |>
   kbl()
 ```
 
-Here, the model is fit to the training data. Accuracy describes how often each observation was sorted into the correct price range, and log loss represents the model's certainty in its placements. When reviewing the metrics, we want accuracy to be high and log loss to be low. Here, the knn model predicted price range with an accuracy of 81.73% and had a log loss of 0.61, both rounded.
+Here, the model is fit to the training data. Accuracy describes how often each observation was sorted into the correct price range, and log loss represents the model's certainty in its placements. When reviewing the metrics, we want accuracy to be high and log loss to be low. Here, the knn model predicted price range with an accuracy of 81.73% and had a log loss of 0.61.
 
-##### Test Fit
-
-```{r knn fitting}
-#| code-fold: show
-
-knn_best_params <- knn_tune_results %>%
-  select_best(metric = "mn_log_loss")
-
-knn_best_wf <- knn_wf %>%
-  finalize_workflow(knn_best_params)
-
-knn_best_fit <- knn_best_wf %>%
-  fit(test)
-```
+Next, we can test the fitted model on the test data:
 
 ```{r}
 #| code-fold: show
@@ -692,13 +677,13 @@ knn_log_loss |>
   kbl()
 ```
 
-While using the testing data, the model had an accuracy of 83.32% and a log loss of 0.63. The accuracy was slightly higher compared to the training data but the log loss was slightly higher as well. The similarity of the two is a good sign; if there were an egregious amount of overfitting, training would have inflated metrics compared to the testing data.
+In comparison, the model seems to be doing poorly on the test data. It has an accuracy of only 48.554% and a log loss value of 2.42.
 
 #### Exporting KNN Predictions
 
 This next codeblock is used to export this model's predictions based on a data set given by my professor. These predictions are ranked compared to those of my classmates, and can be found [here](https://www.kaggle.com/competitions/mat-434-zillow-classification-challenge-sp-25/leaderboard).
 
-***ADD KAGGLE RESULTS***
+Despite its impressive performance in this analysis, the knn model routinely got log loss scores between 41 and 44, much higher than expected based on these trials. 
 
 ```{r knn export}
 #| code-fold: show
@@ -836,9 +821,7 @@ dt_tune_results %>%
 
 #### DT Fitting
 
-Again, we'll fit the best results to the data and see what the result is.
-
-##### Train Fit
+Again, we'll fit the best results to the data and see what the result is:
 
 ```{r model fitting}
 #| code-fold: show
@@ -871,22 +854,7 @@ dt_log_loss |>
   kbl()
 ```
 
-Here, the test data shows an accuracy of 44.78% and a log loss of 1.28. This is a stark contrast from the metrics of the fitted knn model, which had an accuracy of 81.73% and a log loss of 0.61. In comparison, it looks like the decision tree model is performing worse than the knn.
-
-##### Test Fit
-
-```{r dt test model fitting}
-#| code-fold: show
-
-dt_best_params <- dt_tune_results %>%
-  select_best(metric = "mn_log_loss")
-
-dt_best_wf <- dt_wf %>%
-  finalize_workflow(dt_best_params)
-
-dt_best_fit <- dt_best_wf %>%
-  fit(test)
-```
+Here, the training data shows an accuracy of 44.78% and a log loss of 1.28. In comparison to the knn model's training metrics, the knn model seems to be performing much worse. 
 
 ```{r dt testing performance}
 #| code-fold: show
@@ -906,9 +874,7 @@ dt_log_loss |>
   kbl()
 ```
 
-For the testing data, the accuracy was 47.03% and the log loss was 1.21. Again, this performance is worse than that of the knn model. 
-
-It seems like, unlike the knn model, the decision tree model experienced limited improvement with additional steps, testing, and tuning. Its initial log loss rating of 1.36 was only improved down to 1.21 while the knn model had the much more impressive dive from 6.81 (with all steps included) down to 0.63. 
+For the testing data, the accuracy was 43.03% and the log loss was 1.29. Unlike the knn model, the training and testing metrics for the decision tree model were very similar. This might suggest that the decision trees are demonstrating their true performance while the knn model may have experienced some overfitting with the training data.
 
 #### DT Plot
 
@@ -917,12 +883,12 @@ A benefit of using decision trees is being able to visualize how the model is so
 ```{r}
 dt_best_fit |>
   extract_fit_engine() |>
-  rpart.plot::rpart.plot(roundint = FALSE)
+  rpart.plot::rpart.plot()
 ```
 
 #### Exporting DT Predictions
 
-***ADD KAGGLE RESULTS***
+In the Kaggle competition, the decision trees performed very well compared to the metrics produced here. It produced a log loss of around 6.6. 
 
 ```{r}
 #| code-fold: show
@@ -1013,7 +979,7 @@ From some testing, it seems like each additional step improves on log loss (and 
 
 #### RF Tuning
 
-For tunable parameters, this random forest model has two: `trees`, the number of trees included in the ensemble, and `min_n`, the minimum number of observations required to make a new branch within a given tree. 
+For tunable parameters, this random forest model has two: `trees`, the number of trees included in the ensemble, and `min_n`, the minimum number of observations required to make a new branch within a given tree.
 
 ```{r}
 #| code-fold: show
@@ -1058,7 +1024,7 @@ rf_tune_results |>
   kbl()
 ```
 
-##### Training Performance
+#### RF Fitting
 
 ```{r}
 #| code-fold: show
@@ -1091,22 +1057,7 @@ rf_log_loss |>
   kbl()
 ```
 
-Once fit, it seems like the random forest model has the best metrics so far. Accuracy is at 97.66% while 
-
-##### Testing Performance
-
-```{r}
-#| code-fold: show
-
-rf_best_params <- rf_tune_results %>%
-  select_best(metric = "mn_log_loss")
-
-rf_best_wf <- rf_wf %>%
-  finalize_workflow(rf_best_params)
-
-rf_fit <- rf_best_wf |>
-  fit(test)
-```
+Once fit, it seems like the random forest model has the best metrics so far. Accuracy is at 97.66% while log loss has a value of 0.42. That's better than both the knn model (81.73%, 0.61) and the decision tree model (44.78%, 1.28).
 
 ```{r rf testing performance}
 #| code-fold: show
@@ -1126,7 +1077,11 @@ rf_log_loss |>
   kbl()
 ```
 
+For the testing results, the random forest had an accuracy rating of 99.56 and a log loss value of 0.40. These are really great results and are similar to those of the training data.
+
 #### Exporting RF Predictions
+
+In the Kaggle competition, this model got a score of 8.65, a litte worse than the decision tree's score but much better than the knn model. Again, the discrepancy between the trails within this analysis is confusing and I wonder what causes those results to differ so widely. 
 
 ```{r}
 #| code-fold: show
@@ -1142,5 +1097,5 @@ rfsub <- rf_fit %>%
   ) %>%
   select(id, starts_with ("prob"))
 
-write.csv(rfsub, "RFSub1.csv", row.names = FALSE)
+write.csv(rfsub, "CA_output/RFSub1.csv", row.names = FALSE)
 ```

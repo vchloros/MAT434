@@ -76,53 +76,76 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </head>
 
-<body class="fullcontent">
+<body>
 
-<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Zillow Competition Assignment</h1>
-</div>
-
-
-<div class="quarto-title-meta-author">
-  <div class="quarto-title-meta-heading">Author</div>
-  <div class="quarto-title-meta-heading">Affiliation</div>
-  
-    <div class="quarto-title-meta-contents">
-    <p class="author">Vinny Chloros </p>
-  </div>
-    <div class="quarto-title-meta-contents">
-        <p class="affiliation">
-            Southern New Hampshire University
-          </p>
-      </div>
-    </div>
-
-<div class="quarto-title-meta">
-
-      
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">February 4, 2025</p>
-    </div>
-  </div>
-  
-    <div>
-    <div class="quarto-title-meta-heading">Modified</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date-modified">April 5, 2025</p>
-    </div>
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Zillow Competition Assignment</h1>
+                      </div>
   </div>
     
-  </div>
-  
+  <div class="quarto-title-meta-author">
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-heading">Affiliation</div>
+    
+      <div class="quarto-title-meta-contents">
+      <p class="author">Vinny Chloros </p>
+    </div>
+      <div class="quarto-title-meta-contents">
+          <p class="affiliation">
+              Southern New Hampshire University
+            </p>
+        </div>
+      </div>
 
-</header>
+  <div class="quarto-title-meta">
+
+        
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">February 4, 2025</p>
+      </div>
+    </div>
+    
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">April 16, 2025</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul>
+  <li><a href="#statement-of-purpose" id="toc-statement-of-purpose" class="nav-link active" data-scroll-target="#statement-of-purpose">Statement of Purpose</a></li>
+  <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup">Setup</a></li>
+  <li><a href="#exploratory-data-analysis-eda" id="toc-exploratory-data-analysis-eda" class="nav-link" data-scroll-target="#exploratory-data-analysis-eda">Exploratory Data Analysis (EDA)</a>
+  <ul class="collapse">
+  <li><a href="#categorical-variables" id="toc-categorical-variables" class="nav-link" data-scroll-target="#categorical-variables">Categorical Variables</a></li>
+  <li><a href="#numerical-variables" id="toc-numerical-variables" class="nav-link" data-scroll-target="#numerical-variables">Numerical Variables</a></li>
+  <li><a href="#multiple-variables" id="toc-multiple-variables" class="nav-link" data-scroll-target="#multiple-variables">Multiple Variables</a></li>
+  </ul></li>
+  <li><a href="#model-construction-and-interpretation" id="toc-model-construction-and-interpretation" class="nav-link" data-scroll-target="#model-construction-and-interpretation">Model Construction and Interpretation</a>
+  <ul class="collapse">
+  <li><a href="#knn-model" id="toc-knn-model" class="nav-link" data-scroll-target="#knn-model">KNN Model</a></li>
+  <li><a href="#decision-tree-model" id="toc-decision-tree-model" class="nav-link" data-scroll-target="#decision-tree-model">Decision Tree Model</a></li>
+  <li><a href="#random-forest" id="toc-random-forest" class="nav-link" data-scroll-target="#random-forest">Random Forest</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
 
 <div class="cell">
 <details>
@@ -306,7 +329,7 @@ With the ongoing housing crisis within the United States, identifying homes that
 
 </div>
 </div>
-<p><br> The initial data set featured 7498 observations with 16 total variables. It was split in two sections: 6371 observations for training data and 1127 observations for testing the eventual model with a strata created to ensure that different price ranges were proportionally represented between the two sets.</p>
+<p>The initial data set featured 7498 observations with 16 total variables. It was split in two sections: 6371 observations for training data and 1127 observations for testing the eventual model with a strata created to ensure that different price ranges were proportionally represented between the two sets.</p>
 </section>
 <section id="exploratory-data-analysis-eda" class="level2">
 <h2 class="anchored" data-anchor-id="exploratory-data-analysis-eda">Exploratory Data Analysis (EDA)</h2>
@@ -1190,7 +1213,7 @@ With the ongoing housing crisis within the United States, identifying homes that
 <p>In R, a model needs 3 elements to start functioning: a specification to choose the type of model your using, a recipe to apply rules to how your model handles the data you input, and a workflow that combines the recipe and specification. For this project, I compared the performance of 3 different models, k-nearest neighbors, decision trees, and random forests.</p>
 <section id="knn-model" class="level3">
 <h3 class="anchored" data-anchor-id="knn-model">KNN Model</h3>
-<p>A K-nearest neighbors model, or KNN for short, estimates new predictions based on the status of other observations nearest to it.</p>
+<p>A K-nearest neighbors model, or KNN for short, estimates new predictions based on the status of other observations nearest to it. In this case, the model will predict the price range of houses based on the how “close” it is to other observations.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
@@ -1215,13 +1238,13 @@ With the ongoing housing crisis within the United States, identifying homes that
 <span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(knn_rec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>In the recipe, I added some steps for our data before running the model. <code>step_rm()</code> removes variables from being used in the model. I excluded <code>id</code> and <code>description</code> at this point since they are each specific to one observation. Having them used to predict price range would cause egregious overfitting. I also removed latitude and longitude from the model as well since they’ve been excluded from analysis thus far. The impute steps for both nominal (categorical) and numerical data will replace any missing values in an observation with either the mode or median of the data, respectively.</p>
-<p>From that base recipe, I added some more steps after iterating. I added a step to transform the variable for lot size logarithmically since that aided in its visualization in the EDA. <code>step_other()</code> was added for both city and homeType variables since they largely comprised one value and a handful of others created a small minority. This step allows the model to sort the rest of the values into “other” to compare to the majority. Lastly, <code>step_novel()</code> allows new values within observations to be marked as such.</p>
+<p>In the recipe, I added some steps for our data before running the model. <code>step_rm()</code> removes variables from being used in the model. I excluded <code>id</code> and <code>description</code> at this point since they are each specific to one observation. Having them used to predict price range would cause egregious overfitting. I also removed <code>latitude</code> and <code>longitude</code> from the model as well since they’ve been excluded from analysis thus far. The impute steps for both nominal (categorical) and numerical data will replace any missing values in an observation with either the mode or median of the data, respectively.</p>
+<p>From that base recipe, I added some more steps after iterating. I added a step to transform the variable for lot size logarithmically since that aided in its visualization in the EDA. <code>step_other()</code> was added for both <code>city</code> and <code>homeType</code> variables since they largely comprised one value and a handful of others created a small minority. This step allows the model to sort the rest of the values into “other” to compare to the majority. Lastly, <code>step_novel()</code> allows new values within observations to be marked as such.</p>
 <p>The next step is to take our workflow and apply it to training folds created earlier. These folds are equally-sized samples of the data used for cross-validation. Additionally, parallel processing is implemented here to make these functions finish faster by splitting the workload between multiple cores.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Elapsed time in RStudio: 25 secs</span></span>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Elapsed time in RStudio: ~25 secs</span></span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>n_cores <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>()</span>
 <span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">makeCluster</span>(n_cores <span class="sc">-</span> <span class="dv">1</span>, <span class="at">type =</span> <span class="st">"PSOCK"</span>)</span>
@@ -1238,7 +1261,7 @@ With the ongoing housing crisis within the United States, identifying homes that
 <span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>21.89 sec elapsed</code></pre>
+<pre><code>25.13 sec elapsed</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
@@ -1284,9 +1307,12 @@ With the ongoing housing crisis within the United States, identifying homes that
 
 </div>
 </div>
-<p>The results show the accuracy and the log loss of this first iteration of the model. When testing this model</p>
+<p>The results show the accuracy and the log loss of this first iteration of the model with a finalized recipe. With the above steps in place, the output is an accuracy value of 45.9% and a log loss of 6.805. Since log loss is the metric used to evaluate each model, that is the figure I consulted when tweaking recipe steps. When testing this model, adding <code>step_novel()</code> to the recipe (beyond the imputing and removing steps) lowered the log loss from 7.346 to 7.174 (difference of 0.172). Adding <code>step_other()</code> made a small improvement, lowering log loss again from 7.174 to 7.104 (difference of 0.070). Lastly, the most significant addition was the scaling of <code>step_log()</code> which lowered the figure from 7.104 to 6.805 (difference of 0.299).</p>
+<p>I’ll continue to use the series of steps for future models while checking to make sure that each improves log loss with its addition.</p>
 <section id="knn-hyperparameter-tuning" class="level4">
 <h4 class="anchored" data-anchor-id="knn-hyperparameter-tuning">KNN Hyperparameter Tuning</h4>
+<p>When making models, there are a number of factors internally that are used to evaluate data. In this nearest neighbors model, these include <code>neighbors</code> which determines how many neighbors “vote” on the prediction of a new observation and <code>weight_func</code> which determines how distances between observations are interpreted. Both parameters have a default value, but using tuning, we can instruct R to run the model with many iterations to test different parameters and evaluate their performance.</p>
+<p>To prepare for this, I’ll change to specification to include a call for tuning each parameter and then update the workflow.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
@@ -1299,10 +1325,11 @@ With the ongoing housing crisis within the United States, identifying homes that
 <span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(knn_rec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+<p>The next step is to tune the model. This can be done by either <code>tune_grid()</code> or <code>tune_bayes()</code>. Using a grid is often much faster, but using bayes allows for the function to “check” itself and iterate off of the performance of the last result. For this analysis, I used the grid function for the KNN tuning for the sake of time.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Elapsed time in RStudio: 40 secs</span></span>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Elapsed time in RStudio: ~50 secs</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>n_cores <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>()</span>
 <span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">makeCluster</span>(n_cores <span class="sc">-</span> <span class="dv">1</span>, <span class="at">type =</span> <span class="st">"PSOCK"</span>)</span>
@@ -1315,13 +1342,14 @@ With the ongoing housing crisis within the United States, identifying homes that
 <span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">resamples =</span> train_folds,</span>
 <span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">metrics =</span> <span class="fu">metric_set</span>(mn_log_loss),</span>
 <span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">initial =</span> <span class="dv">5</span>,</span>
-<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">control =</span> <span class="fu">control_bayes</span>(<span class="at">parallel_over =</span> <span class="st">"everything"</span>)</span>
-<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">grid =</span> <span class="dv">15</span>,</span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">control =</span> <span class="fu">control_bayes</span>(<span class="at">parallel_over =</span> <span class="st">"everything"</span>)</span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>43.34 sec elapsed</code></pre>
+<pre><code>45.39 sec elapsed</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
@@ -1348,104 +1376,154 @@ With the ongoing housing crisis within the United States, identifying homes that
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">rectangular</td>
-<td style="text-align: left;">mn_log_loss</td>
-<td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">13.939702</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0.2725882</td>
-<td style="text-align: left;">Preprocessor1_Model01</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">15</td>
-<td style="text-align: left;">rectangular</td>
-<td style="text-align: left;">mn_log_loss</td>
-<td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">2.340890</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0.1286148</td>
-<td style="text-align: left;">Preprocessor1_Model02</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">4</td>
+<td style="text-align: right;">5</td>
 <td style="text-align: left;">biweight</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">8.612682</td>
+<td style="text-align: right;">7.024560</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.2136734</td>
-<td style="text-align: left;">Preprocessor1_Model03</td>
+<td style="text-align: right;">0.1862354</td>
+<td style="text-align: left;">Preprocessor1_Model01</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">8</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">biweight</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">4.082448</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.1427487</td>
+<td style="text-align: left;">Preprocessor1_Model02</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2</td>
 <td style="text-align: left;">cos</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">4.323337</td>
+<td style="text-align: right;">14.016048</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.1441992</td>
+<td style="text-align: right;">0.2722968</td>
+<td style="text-align: left;">Preprocessor1_Model03</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">13</td>
+<td style="text-align: left;">cos</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">2.721452</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.1260376</td>
 <td style="text-align: left;">Preprocessor1_Model04</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">13</td>
+<td style="text-align: right;">6</td>
 <td style="text-align: left;">epanechnikov</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">2.715343</td>
+<td style="text-align: right;">5.602211</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.1260497</td>
+<td style="text-align: right;">0.1669289</td>
 <td style="text-align: left;">Preprocessor1_Model05</td>
 </tr>
 <tr class="even">
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">epanechnikov</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">3.498266</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.1610536</td>
+<td style="text-align: left;">Preprocessor1_Model06</td>
+</tr>
+<tr class="odd">
 <td style="text-align: right;">1</td>
-<td style="text-align: left;">gaussian</td>
+<td style="text-align: left;">rectangular</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
 <td style="text-align: right;">19.970974</td>
 <td style="text-align: right;">10</td>
 <td style="text-align: right;">0.1967470</td>
-<td style="text-align: left;">Preprocessor1_Model06</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">5</td>
-<td style="text-align: left;">inv</td>
-<td style="text-align: left;">mn_log_loss</td>
-<td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">6.707338</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0.1792180</td>
 <td style="text-align: left;">Preprocessor1_Model07</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">10</td>
-<td style="text-align: left;">rank</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">rectangular</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">3.458882</td>
+<td style="text-align: right;">3.152432</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.1619217</td>
+<td style="text-align: right;">0.1577625</td>
 <td style="text-align: left;">Preprocessor1_Model08</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">7</td>
+<td style="text-align: right;">8</td>
 <td style="text-align: left;">triangular</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">4.840541</td>
+<td style="text-align: right;">4.329747</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.1411399</td>
+<td style="text-align: right;">0.1439553</td>
 <td style="text-align: left;">Preprocessor1_Model09</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">11</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">triangular</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">2.384170</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.1279262</td>
+<td style="text-align: left;">Preprocessor1_Model10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4</td>
 <td style="text-align: left;">triweight</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">3.598011</td>
+<td style="text-align: right;">8.897388</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.1526824</td>
-<td style="text-align: left;">Preprocessor1_Model10</td>
+<td style="text-align: right;">0.2182313</td>
+<td style="text-align: left;">Preprocessor1_Model11</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">triweight</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">3.301942</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.1388404</td>
+<td style="text-align: left;">Preprocessor1_Model12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">14</td>
+<td style="text-align: left;">gaussian</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">2.475857</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.1273584</td>
+<td style="text-align: left;">Preprocessor1_Model13</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">inv</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">10.453893</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.2572646</td>
+<td style="text-align: left;">Preprocessor1_Model14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">rank</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">4.761061</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.1401940</td>
+<td style="text-align: left;">Preprocessor1_Model15</td>
 </tr>
 </tbody>
 </table>
@@ -1453,6 +1531,7 @@ With the ongoing housing crisis within the United States, identifying homes that
 
 </div>
 </div>
+<p>Each row here is a set of parameters the model tried and its metrics. We can fit the best model to our data and evaluate its performance on the both the training data and the testing data that was set aside at the beginning of this analysis.</p>
 </section>
 <section id="knn-fitting" class="level4">
 <h4 class="anchored" data-anchor-id="knn-fitting">KNN Fitting</h4>
@@ -1469,82 +1548,176 @@ With the ongoing housing crisis within the United States, identifying homes that
 <span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-</section>
-<section id="exporting-knn-predictions" class="level4">
-<h4 class="anchored" data-anchor-id="exporting-knn-predictions">Exporting KNN Predictions</h4>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>knnsub <span class="ot">&lt;-</span> knn_best_fit <span class="sc">%&gt;%</span></span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(comp) <span class="sc">%&gt;%</span></span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_A =</span> <span class="st">".pred_0-250000"</span>,</span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_B =</span> <span class="st">".pred_250000-350000"</span>,</span>
-<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_C =</span> <span class="st">".pred_350000-450000"</span>,</span>
-<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_D =</span> <span class="st">".pred_450000-650000"</span>,</span>
-<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_E =</span> <span class="st">".pred_650000+"</span></span>
-<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, <span class="fu">starts_with</span> (<span class="st">"prob"</span>))</span>
-<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(knnsub, <span class="st">"knnSub2.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>knn_log_loss <span class="ot">&lt;-</span> knn_best_fit <span class="sc">|&gt;</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(train) <span class="sc">|&gt;</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">priceRange =</span> <span class="fu">as.factor</span>(priceRange)) <span class="sc">|&gt;</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mn_log_loss</span>(priceRange, <span class="fu">starts_with</span>(<span class="st">".pred"</span>), <span class="sc">-</span> .pred_class)</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>knn_accuracy_metric <span class="ot">&lt;-</span> knn_best_fit <span class="sc">|&gt;</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(train) <span class="sc">|&gt;</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">priceRange =</span> <span class="fu">as.factor</span>(priceRange)) <span class="sc">|&gt;</span></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">accuracy</span>(priceRange, .pred_class)</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>knn_log_loss <span class="sc">|&gt;</span></span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(knn_accuracy_metric) <span class="sc">|&gt;</span></span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">.metric</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">.estimator</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">.estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">0.6079496</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">accuracy</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">0.8172971</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>Here, the model is fit to the training data. Accuracy describes how often each observation was sorted into the correct price range, and log loss represents the model’s certainty in its placements. When reviewing the metrics, we want accuracy to be high and log loss to be low. Here, the knn model predicted price range with an accuracy of 81.73% and had a log loss of 0.61.</p>
+<p>Next, we can test the fitted model on the test data:</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>knn_log_loss <span class="ot">&lt;-</span> knn_best_fit <span class="sc">|&gt;</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(test) <span class="sc">|&gt;</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">priceRange =</span> <span class="fu">as.factor</span>(priceRange)) <span class="sc">|&gt;</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mn_log_loss</span>(priceRange, <span class="fu">starts_with</span>(<span class="st">".pred"</span>), <span class="sc">-</span> .pred_class)</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>knn_accuracy_metric <span class="ot">&lt;-</span> knn_best_fit <span class="sc">|&gt;</span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(test) <span class="sc">|&gt;</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">priceRange =</span> <span class="fu">as.factor</span>(priceRange)) <span class="sc">|&gt;</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">accuracy</span>(priceRange, .pred_class)</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>knn_log_loss <span class="sc">|&gt;</span></span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(knn_accuracy_metric) <span class="sc">|&gt;</span></span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">.metric</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">.estimator</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">.estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">2.4165247</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">accuracy</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">0.4853594</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>In comparison, the model seems to be doing poorly on the test data. It has an accuracy of only 48.554% and a log loss value of 2.42.</p>
+</section>
+<section id="exporting-knn-predictions" class="level4">
+<h4 class="anchored" data-anchor-id="exporting-knn-predictions">Exporting KNN Predictions</h4>
+<p>This next codeblock is used to export this model’s predictions based on a data set given by my professor. These predictions are ranked compared to those of my classmates, and can be found <a href="https://www.kaggle.com/competitions/mat-434-zillow-classification-challenge-sp-25/leaderboard">here</a>.</p>
+<p>Despite its impressive performance in this analysis, the knn model routinely got log loss scores between 41 and 44, much higher than expected based on these trials.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>knnsub <span class="ot">&lt;-</span> knn_best_fit <span class="sc">%&gt;%</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(comp) <span class="sc">%&gt;%</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_A =</span> <span class="st">".pred_0-250000"</span>,</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_B =</span> <span class="st">".pred_250000-350000"</span>,</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_C =</span> <span class="st">".pred_350000-450000"</span>,</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_D =</span> <span class="st">".pred_450000-650000"</span>,</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_E =</span> <span class="st">".pred_650000+"</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, <span class="fu">starts_with</span> (<span class="st">"prob"</span>))</span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(knnsub, <span class="st">"CA_output/knnSub4.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
 </section>
 <section id="decision-tree-model" class="level3">
 <h3 class="anchored" data-anchor-id="decision-tree-model">Decision Tree Model</h3>
+<p>A decision tree takes different metrics from variables within the data and creates a series of yes/no questions that lead a given observation to be categorized. This model also allows us to visualize the end result, allowing for a plot that shows how the model is working.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>dt_spec <span class="ot">&lt;-</span> <span class="fu">decision_tree</span>() <span class="sc">|&gt;</span></span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"rpart"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>dt_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(priceRange <span class="sc">~</span> ., <span class="at">data =</span> train) <span class="sc">|&gt;</span></span>
-<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(id) <span class="sc">|&gt;</span></span>
-<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(description) <span class="sc">|&gt;</span></span>
-<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(latitude) <span class="sc">|&gt;</span></span>
-<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(longitude) <span class="sc">|&gt;</span></span>
-<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_impute_median</span>(<span class="fu">all_numeric_predictors</span>()) <span class="sc">|&gt;</span></span>
-<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_impute_mode</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">|&gt;</span></span>
-<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_log</span>(lotSizeSqFt, <span class="at">base =</span> <span class="fu">exp</span>(<span class="dv">10</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_novel</span>(<span class="fu">all_nominal_predictors</span>())</span>
-<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>dt_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
-<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(dt_spec) <span class="sc">|&gt;</span></span>
-<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(dt_rec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>dt_spec <span class="ot">&lt;-</span> <span class="fu">decision_tree</span>() <span class="sc">|&gt;</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"rpart"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>dt_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(priceRange <span class="sc">~</span> ., <span class="at">data =</span> train) <span class="sc">|&gt;</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(id) <span class="sc">|&gt;</span></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(description) <span class="sc">|&gt;</span></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(latitude) <span class="sc">|&gt;</span></span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(longitude) <span class="sc">|&gt;</span></span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_impute_median</span>(<span class="fu">all_numeric_predictors</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_impute_mode</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_log</span>(lotSizeSqFt, <span class="at">base =</span> <span class="fu">exp</span>(<span class="dv">10</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_other</span>(city, <span class="at">threshold =</span>  <span class="fl">0.05</span>)<span class="sc">|&gt;</span></span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_other</span>(homeType, <span class="at">threshold =</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_novel</span>(<span class="fu">all_nominal_predictors</span>())</span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a>dt_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
+<span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(dt_spec) <span class="sc">|&gt;</span></span>
+<span id="cb46-19"><a href="#cb46-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(dt_rec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Elapsed time in RStudio: 20 secs</span></span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>n_cores <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>()</span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">makeCluster</span>(n_cores <span class="sc">-</span> <span class="dv">1</span>, <span class="at">type =</span> <span class="st">"PSOCK"</span>)</span>
-<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>doParallel<span class="sc">::</span><span class="fu">registerDoParallel</span>(cl)</span>
-<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">tic</span>()</span>
-<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>dt_results <span class="ot">&lt;-</span> dt_wf <span class="sc">|&gt;</span></span>
-<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit_resamples</span>(</span>
-<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">resamples =</span> train_folds,</span>
-<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">metrics =</span> <span class="fu">metric_set</span>(accuracy, mn_log_loss)</span>
-<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Elapsed time in RStudio: ~20 secs</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>n_cores <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>()</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">makeCluster</span>(n_cores <span class="sc">-</span> <span class="dv">1</span>, <span class="at">type =</span> <span class="st">"PSOCK"</span>)</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>doParallel<span class="sc">::</span><span class="fu">registerDoParallel</span>(cl)</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">tic</span>()</span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>dt_results <span class="ot">&lt;-</span> dt_wf <span class="sc">|&gt;</span></span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit_resamples</span>(</span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">resamples =</span> train_folds,</span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">metrics =</span> <span class="fu">metric_set</span>(accuracy, mn_log_loss)</span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>22.4 sec elapsed</code></pre>
+<pre><code>22.95 sec elapsed</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>doParallel<span class="sc">::</span><span class="fu">stopImplicitCluster</span>()</span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unregister</span>()</span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>dt_results <span class="sc">|&gt;</span></span>
-<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() <span class="sc">|&gt;</span></span>
-<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>doParallel<span class="sc">::</span><span class="fu">stopImplicitCluster</span>()</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unregister</span>()</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>dt_results <span class="sc">|&gt;</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() <span class="sc">|&gt;</span></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table data-quarto-postprocess="true" class="table table-sm table-striped small">
@@ -1581,52 +1754,104 @@ With the ongoing housing crisis within the United States, identifying homes that
 
 </div>
 </div>
+<p>Below, I’ve taken the metrics for different step recipes and compared them. For each listed stop, that recipe has both the step listed and all the steps that come before it. For the step listed “other”, it has <code>step_other()</code> as well as <code>step_novel()</code> and the base steps like imputing.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>dt_starts <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">steps =</span> <span class="fu">c</span>(<span class="st">"base"</span>, <span class="st">"novel"</span>, <span class="st">"other 0.05"</span>, <span class="st">"log"</span>),</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">accuracy =</span> <span class="fu">c</span>(<span class="fl">0.4098234</span>, <span class="fl">0.4098234</span>,    <span class="fl">0.4098234</span>, <span class="fl">0.4098234</span>),</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">log_loss =</span> <span class="fu">c</span>(<span class="fl">1.3605792</span>, <span class="fl">1.3605792</span>,    <span class="fl">1.3605792</span>,  <span class="fl">1.3605792</span>)</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>dt_starts <span class="sc">|&gt;</span></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">steps</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">accuracy</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">log_loss</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">base</td>
+<td style="text-align: right;">0.4098234</td>
+<td style="text-align: right;">1.360579</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">novel</td>
+<td style="text-align: right;">0.4098234</td>
+<td style="text-align: right;">1.360579</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">other 0.05</td>
+<td style="text-align: right;">0.4098234</td>
+<td style="text-align: right;">1.360579</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">log</td>
+<td style="text-align: right;">0.4098234</td>
+<td style="text-align: right;">1.360579</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>Based on the above iterations of the model, it’s clear that decision trees started out much better than knn when comparing log loss. The knn started with a log loss of 7.346 with the base steps while the decision tree started with a log loss of 1.361. Unlike knn, the decision tree’s metrics did not change with the addition of more steps. I kept them in for consistency, but I was curious why there wasn’t a dramatic difference like what was seen with the knn model.</p>
 <section id="dt-tuning" class="level4">
 <h4 class="anchored" data-anchor-id="dt-tuning">DT Tuning</h4>
+<p>For this tuning block, I had three available parameters: <code>min_n</code> which is the minimum number of observations required to create a new branching in the tree, <code>tree_depth</code> or how deep the tree can extend, and <code>cost_complexity</code> which dictates a penalty to extending the tree further. While all of these tuned, there should be a middle ground for the model where the min_n can lead to enough splits before the cost exceeds the benefit. I’m also using <code>tune_bayes()</code> at this juncture to iterate on the already preferable performance.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>dt_spec <span class="ot">&lt;-</span> <span class="fu">decision_tree</span>(<span class="at">min_n =</span> <span class="fu">tune</span>(), <span class="at">tree_depth =</span> <span class="fu">tune</span>(), <span class="at">cost_complexity =</span> <span class="fu">tune</span>()) <span class="sc">|&gt;</span></span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"rpart"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>dt_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(dt_spec) <span class="sc">|&gt;</span></span>
-<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(dt_rec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>dt_spec <span class="ot">&lt;-</span> <span class="fu">decision_tree</span>(<span class="at">min_n =</span> <span class="fu">tune</span>(), <span class="at">tree_depth =</span> <span class="fu">tune</span>(), <span class="at">cost_complexity =</span> <span class="fu">tune</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"rpart"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>dt_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(dt_spec) <span class="sc">|&gt;</span></span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(dt_rec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Elapsed time in RStudio: 2 mins</span></span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>n_cores <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>()</span>
-<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">makeCluster</span>(n_cores <span class="sc">-</span> <span class="dv">1</span>, <span class="at">type =</span> <span class="st">"PSOCK"</span>)</span>
-<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>doParallel<span class="sc">::</span><span class="fu">registerDoParallel</span>(cl)</span>
-<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">tic</span>()</span>
-<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>dt_tune_results <span class="ot">&lt;-</span> dt_wf <span class="sc">%&gt;%</span></span>
-<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tune_bayes</span>(</span>
-<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">resamples =</span> train_folds,</span>
-<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">metrics =</span> <span class="fu">metric_set</span>(mn_log_loss),</span>
-<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">initial =</span> <span class="dv">5</span>,</span>
-<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">control =</span> <span class="fu">control_bayes</span>(<span class="at">parallel_over =</span> <span class="st">"everything"</span>)</span>
-<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Elapsed time in RStudio: ~2 mins</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>n_cores <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>()</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">makeCluster</span>(n_cores <span class="sc">-</span> <span class="dv">1</span>, <span class="at">type =</span> <span class="st">"PSOCK"</span>)</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>doParallel<span class="sc">::</span><span class="fu">registerDoParallel</span>(cl)</span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">tic</span>()</span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>dt_tune_results <span class="ot">&lt;-</span> dt_wf <span class="sc">%&gt;%</span></span>
+<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tune_bayes</span>(</span>
+<span id="cb52-11"><a href="#cb52-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">resamples =</span> train_folds,</span>
+<span id="cb52-12"><a href="#cb52-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">metrics =</span> <span class="fu">metric_set</span>(mn_log_loss),</span>
+<span id="cb52-13"><a href="#cb52-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">initial =</span> <span class="dv">5</span>,</span>
+<span id="cb52-14"><a href="#cb52-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">iter =</span> <span class="dv">15</span>,</span>
+<span id="cb52-15"><a href="#cb52-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">control =</span> <span class="fu">control_bayes</span>(<span class="at">parallel_over =</span> <span class="st">"everything"</span>)</span>
+<span id="cb52-16"><a href="#cb52-16" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb52-17"><a href="#cb52-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-18"><a href="#cb52-18" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>93.93 sec elapsed</code></pre>
+<pre><code>114.46 sec elapsed</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>doParallel<span class="sc">::</span><span class="fu">stopImplicitCluster</span>()</span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unregister</span>()</span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>dt_tune_results <span class="sc">%&gt;%</span></span>
-<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() <span class="sc">|&gt;</span></span>
-<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>doParallel<span class="sc">::</span><span class="fu">stopImplicitCluster</span>()</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unregister</span>()</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>dt_tune_results <span class="sc">%&gt;%</span></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() <span class="sc">|&gt;</span></span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table data-quarto-postprocess="true" class="table table-sm table-striped small">
@@ -1651,9 +1876,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: right;">11</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">3.790964</td>
+<td style="text-align: right;">3.833396</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.1402275</td>
+<td style="text-align: right;">0.1314641</td>
 <td style="text-align: left;">Preprocessor1_Model1</td>
 <td style="text-align: right;">0</td>
 </tr>
@@ -1663,9 +1888,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: right;">40</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.598687</td>
+<td style="text-align: right;">1.598903</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0492888</td>
+<td style="text-align: right;">0.0492369</td>
 <td style="text-align: left;">Preprocessor1_Model2</td>
 <td style="text-align: right;">0</td>
 </tr>
@@ -1687,9 +1912,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: right;">21</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">2.122288</td>
+<td style="text-align: right;">2.111007</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0604718</td>
+<td style="text-align: right;">0.0683634</td>
 <td style="text-align: left;">Preprocessor1_Model4</td>
 <td style="text-align: right;">0</td>
 </tr>
@@ -1706,9 +1931,9 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: right;">0</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">0.0000214</td>
+<td style="text-align: right;">0.0000012</td>
 <td style="text-align: right;">4</td>
-<td style="text-align: right;">40</td>
+<td style="text-align: right;">39</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
 <td style="text-align: right;">1.314992</td>
@@ -1718,112 +1943,124 @@ With the ongoing housing crisis within the United States, identifying homes that
 <td style="text-align: right;">1</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">0.0000000</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">40</td>
+<td style="text-align: right;">0.0000002</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">11</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.326211</td>
+<td style="text-align: right;">6.070288</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0061174</td>
+<td style="text-align: right;">0.1338528</td>
 <td style="text-align: left;">Iter2</td>
 <td style="text-align: right;">2</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">0.0475638</td>
+<td style="text-align: right;">0.0001345</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">34</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">1.374168</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0040759</td>
+<td style="text-align: left;">Iter3</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.0002683</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">2.216304</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.1080592</td>
+<td style="text-align: left;">Iter4</td>
 <td style="text-align: right;">4</td>
-<td style="text-align: right;">39</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.0966247</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">33</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">1.433253</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0056484</td>
+<td style="text-align: left;">Iter5</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.0000551</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">2.037760</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0833120</td>
+<td style="text-align: left;">Iter6</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">36</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">1.433253</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0056484</td>
+<td style="text-align: left;">Iter7</td>
+<td style="text-align: right;">7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">1.374168</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0040759</td>
+<td style="text-align: left;">Iter8</td>
+<td style="text-align: right;">8</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.0000099</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">37</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">2.135557</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0840943</td>
+<td style="text-align: left;">Iter9</td>
+<td style="text-align: right;">9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.0404537</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">35</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
 <td style="text-align: right;">1.375323</td>
 <td style="text-align: right;">10</td>
 <td style="text-align: right;">0.0044054</td>
-<td style="text-align: left;">Iter3</td>
-<td style="text-align: right;">3</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">0.0000000</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">38</td>
-<td style="text-align: left;">mn_log_loss</td>
-<td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.392454</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0238612</td>
-<td style="text-align: left;">Iter4</td>
-<td style="text-align: right;">4</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">0.0002199</td>
-<td style="text-align: right;">15</td>
-<td style="text-align: right;">40</td>
-<td style="text-align: left;">mn_log_loss</td>
-<td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.980774</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0873721</td>
-<td style="text-align: left;">Iter5</td>
-<td style="text-align: right;">5</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">0.0000000</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">40</td>
-<td style="text-align: left;">mn_log_loss</td>
-<td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.314992</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0158065</td>
-<td style="text-align: left;">Iter6</td>
-<td style="text-align: right;">6</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">0.0000004</td>
-<td style="text-align: right;">11</td>
-<td style="text-align: right;">31</td>
-<td style="text-align: left;">mn_log_loss</td>
-<td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">2.192205</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0983115</td>
-<td style="text-align: left;">Iter7</td>
-<td style="text-align: right;">7</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">0.0000014</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">26</td>
-<td style="text-align: left;">mn_log_loss</td>
-<td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.433253</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0056484</td>
-<td style="text-align: left;">Iter8</td>
-<td style="text-align: right;">8</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">0.0000012</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">14</td>
-<td style="text-align: left;">mn_log_loss</td>
-<td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.433253</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0056484</td>
-<td style="text-align: left;">Iter9</td>
-<td style="text-align: right;">9</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">0.0000000</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">21</td>
-<td style="text-align: left;">mn_log_loss</td>
-<td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.326211</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0061174</td>
 <td style="text-align: left;">Iter10</td>
 <td style="text-align: right;">10</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.0944974</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">34</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">1.433253</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0056484</td>
+<td style="text-align: left;">Iter11</td>
+<td style="text-align: right;">11</td>
 </tr>
 </tbody>
 </table>
@@ -1834,35 +2071,36 @@ With the ongoing housing crisis within the United States, identifying homes that
 </section>
 <section id="dt-fitting" class="level4">
 <h4 class="anchored" data-anchor-id="dt-fitting">DT Fitting</h4>
+<p>Again, we’ll fit the best results to the data and see what the result is:</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>dt_best_params <span class="ot">&lt;-</span> dt_tune_results <span class="sc">%&gt;%</span></span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">"mn_log_loss"</span>)</span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>dt_best_wf <span class="ot">&lt;-</span> dt_wf <span class="sc">%&gt;%</span></span>
-<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(dt_best_params)</span>
-<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>dt_best_fit <span class="ot">&lt;-</span> dt_best_wf <span class="sc">%&gt;%</span></span>
-<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>dt_best_params <span class="ot">&lt;-</span> dt_tune_results <span class="sc">%&gt;%</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">"mn_log_loss"</span>)</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>dt_best_wf <span class="ot">&lt;-</span> dt_wf <span class="sc">%&gt;%</span></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(dt_best_params)</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>dt_best_fit <span class="ot">&lt;-</span> dt_best_wf <span class="sc">%&gt;%</span></span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>log_loss <span class="ot">&lt;-</span> dt_best_fit <span class="sc">|&gt;</span></span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(train) <span class="sc">|&gt;</span></span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">priceRange =</span> <span class="fu">as.factor</span>(priceRange)) <span class="sc">|&gt;</span></span>
-<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mn_log_loss</span>(priceRange, <span class="fu">starts_with</span>(<span class="st">".pred"</span>), <span class="sc">-</span> .pred_class)</span>
-<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>accuracy_metric <span class="ot">&lt;-</span> dt_best_fit <span class="sc">|&gt;</span></span>
-<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(train) <span class="sc">|&gt;</span></span>
-<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">priceRange =</span> <span class="fu">as.factor</span>(priceRange)) <span class="sc">|&gt;</span></span>
-<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">accuracy</span>(priceRange, .pred_class)</span>
-<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>log_loss <span class="sc">|&gt;</span></span>
-<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(accuracy_metric) <span class="sc">|&gt;</span></span>
-<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>dt_log_loss <span class="ot">&lt;-</span> dt_best_fit <span class="sc">|&gt;</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(train) <span class="sc">|&gt;</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">priceRange =</span> <span class="fu">as.factor</span>(priceRange)) <span class="sc">|&gt;</span></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mn_log_loss</span>(priceRange, <span class="fu">starts_with</span>(<span class="st">".pred"</span>), <span class="sc">-</span> .pred_class)</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>dt_accuracy_metric <span class="ot">&lt;-</span> dt_best_fit <span class="sc">|&gt;</span></span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(train) <span class="sc">|&gt;</span></span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">priceRange =</span> <span class="fu">as.factor</span>(priceRange)) <span class="sc">|&gt;</span></span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">accuracy</span>(priceRange, .pred_class)</span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a>dt_log_loss <span class="sc">|&gt;</span></span>
+<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(dt_accuracy_metric) <span class="sc">|&gt;</span></span>
+<span id="cb56-13"><a href="#cb56-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table data-quarto-postprocess="true" class="table table-sm table-striped small">
@@ -1890,96 +2128,152 @@ With the ongoing housing crisis within the United States, identifying homes that
 
 </div>
 </div>
+<p>Here, the training data shows an accuracy of 44.78% and a log loss of 1.28. In comparison to the knn model’s training metrics, the knn model seems to be performing much worse.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>dt_log_loss <span class="ot">&lt;-</span> dt_best_fit <span class="sc">|&gt;</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(test) <span class="sc">|&gt;</span></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">priceRange =</span> <span class="fu">as.factor</span>(priceRange)) <span class="sc">|&gt;</span></span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mn_log_loss</span>(priceRange, <span class="fu">starts_with</span>(<span class="st">".pred"</span>), <span class="sc">-</span> .pred_class)</span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>dt_accuracy_metric <span class="ot">&lt;-</span> dt_best_fit <span class="sc">|&gt;</span></span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(test) <span class="sc">|&gt;</span></span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">priceRange =</span> <span class="fu">as.factor</span>(priceRange)) <span class="sc">|&gt;</span></span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">accuracy</span>(priceRange, .pred_class)</span>
+<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a>dt_log_loss <span class="sc">|&gt;</span></span>
+<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(dt_accuracy_metric) <span class="sc">|&gt;</span></span>
+<span id="cb57-13"><a href="#cb57-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">.metric</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">.estimator</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">.estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">1.2901957</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">accuracy</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">0.4303461</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>For the testing data, the accuracy was 43.03% and the log loss was 1.29. Unlike the knn model, the training and testing metrics for the decision tree model were very similar. This might suggest that the decision trees are demonstrating their true performance while the knn model may have experienced some overfitting with the training data.</p>
 </section>
 <section id="dt-plot" class="level4">
 <h4 class="anchored" data-anchor-id="dt-plot">DT Plot</h4>
+<p>A benefit of using decision trees is being able to visualize how the model is sorting the data. Below is a tree figure showing each “question” the model is posing for a given observation. Based on a yes or no answer, the tree starts to sort the observation.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>dt_best_fit <span class="sc">|&gt;</span></span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_fit_engine</span>() <span class="sc">|&gt;</span></span>
-<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>  rpart.plot<span class="sc">::</span><span class="fu">rpart.plot</span>(<span class="at">roundint =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>dt_best_fit <span class="sc">|&gt;</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_fit_engine</span>() <span class="sc">|&gt;</span></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>  rpart.plot<span class="sc">::</span><span class="fu">rpart.plot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Cannot retrieve the data used to build the model (so cannot determine roundint and is.binary for the variables).
+To silence this warning:
+    Call rpart.plot with roundint=FALSE,
+    or rebuild the rpart model with model=TRUE.</code></pre>
+</div>
 <div class="cell-output-display">
-<p><img src="CA_VC_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="672"></p>
+<p><img src="CA_VC_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
 <section id="exporting-dt-predictions" class="level4">
 <h4 class="anchored" data-anchor-id="exporting-dt-predictions">Exporting DT Predictions</h4>
+<p>In the Kaggle competition, the decision trees performed very well compared to the metrics produced here. It produced a log loss of around 6.6.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>dtsub <span class="ot">&lt;-</span> dt_best_fit <span class="sc">%&gt;%</span></span>
-<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(comp) <span class="sc">%&gt;%</span></span>
-<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
-<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_A =</span> <span class="st">".pred_0-250000"</span>,</span>
-<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_B =</span> <span class="st">".pred_250000-350000"</span>,</span>
-<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_C =</span> <span class="st">".pred_350000-450000"</span>,</span>
-<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_D =</span> <span class="st">".pred_450000-650000"</span>,</span>
-<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_E =</span> <span class="st">".pred_650000+"</span></span>
-<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, <span class="fu">starts_with</span> (<span class="st">"prob"</span>))</span>
-<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(dtsub, <span class="st">"DTSub2.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>dtsub <span class="ot">&lt;-</span> dt_best_fit <span class="sc">%&gt;%</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(comp) <span class="sc">%&gt;%</span></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_A =</span> <span class="st">".pred_0-250000"</span>,</span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_B =</span> <span class="st">".pred_250000-350000"</span>,</span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_C =</span> <span class="st">".pred_350000-450000"</span>,</span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_D =</span> <span class="st">".pred_450000-650000"</span>,</span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_E =</span> <span class="st">".pred_650000+"</span></span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, <span class="fu">starts_with</span> (<span class="st">"prob"</span>))</span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(dtsub, <span class="st">"CA_output/DTSub3.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
 </section>
 <section id="random-forest" class="level3">
 <h3 class="anchored" data-anchor-id="random-forest">Random Forest</h3>
+<p>A random forest is an ensemble, or a collection of models used to produce predictions. It will make a series of independent decision trees and use them together to make the final predictions. I’ll take the steps from previous models and see if they contribute to the performance of the model.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>rf_spec <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>() <span class="sc">|&gt;</span></span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
-<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>rf_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(priceRange <span class="sc">~</span> ., <span class="at">data =</span> train) <span class="sc">|&gt;</span></span>
-<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(id) <span class="sc">|&gt;</span></span>
-<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(description) <span class="sc">|&gt;</span>  </span>
-<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(latitude) <span class="sc">|&gt;</span></span>
-<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(longitude) <span class="sc">|&gt;</span></span>
-<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_impute_median</span>(<span class="fu">all_numeric_predictors</span>()) <span class="sc">|&gt;</span></span>
-<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_impute_mode</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">|&gt;</span></span>
-<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_novel</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">|&gt;</span></span>
-<span id="cb56-13"><a href="#cb56-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_nominal_predictors</span>())</span>
-<span id="cb56-14"><a href="#cb56-14" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb56-15"><a href="#cb56-15" aria-hidden="true" tabindex="-1"></a>rf_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
-<span id="cb56-16"><a href="#cb56-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(rf_spec) <span class="sc">|&gt;</span></span>
-<span id="cb56-17"><a href="#cb56-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(rf_rec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>rf_spec <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>() <span class="sc">|&gt;</span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>rf_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(priceRange <span class="sc">~</span> ., <span class="at">data =</span> train) <span class="sc">|&gt;</span></span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(id) <span class="sc">|&gt;</span></span>
+<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(description) <span class="sc">|&gt;</span></span>
+<span id="cb61-8"><a href="#cb61-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(latitude) <span class="sc">|&gt;</span></span>
+<span id="cb61-9"><a href="#cb61-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(longitude) <span class="sc">|&gt;</span></span>
+<span id="cb61-10"><a href="#cb61-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_impute_median</span>(<span class="fu">all_numeric_predictors</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb61-11"><a href="#cb61-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_impute_mode</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb61-12"><a href="#cb61-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">#step_log(lotSizeSqFt, base = exp(10))</span></span>
+<span id="cb61-13"><a href="#cb61-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_other</span>(city, <span class="at">threshold =</span>  <span class="fl">0.05</span>)<span class="sc">|&gt;</span></span>
+<span id="cb61-14"><a href="#cb61-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_other</span>(homeType, <span class="at">threshold =</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
+<span id="cb61-15"><a href="#cb61-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_novel</span>(<span class="fu">all_nominal_predictors</span>())</span>
+<span id="cb61-16"><a href="#cb61-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb61-17"><a href="#cb61-17" aria-hidden="true" tabindex="-1"></a>rf_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
+<span id="cb61-18"><a href="#cb61-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(rf_spec) <span class="sc">|&gt;</span></span>
+<span id="cb61-19"><a href="#cb61-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(rf_rec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Elapsed time in RStudio: 25 secs</span></span>
-<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>n_cores <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>()</span>
-<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">makeCluster</span>(n_cores <span class="sc">-</span> <span class="dv">1</span>, <span class="at">type =</span> <span class="st">"PSOCK"</span>)</span>
-<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>doParallel<span class="sc">::</span><span class="fu">registerDoParallel</span>(cl)</span>
-<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">tic</span>()</span>
-<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a>rf_results <span class="ot">&lt;-</span> rf_wf <span class="sc">|&gt;</span></span>
-<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit_resamples</span>(</span>
-<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">resamples =</span> train_folds,</span>
-<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">metrics =</span> <span class="fu">metric_set</span>(accuracy, mn_log_loss)</span>
-<span id="cb57-13"><a href="#cb57-13" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb57-14"><a href="#cb57-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb57-15"><a href="#cb57-15" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Elapsed time in RStudio: 25 secs</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>n_cores <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>()</span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">makeCluster</span>(n_cores <span class="sc">-</span> <span class="dv">1</span>, <span class="at">type =</span> <span class="st">"PSOCK"</span>)</span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>doParallel<span class="sc">::</span><span class="fu">registerDoParallel</span>(cl)</span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">tic</span>()</span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a>rf_results <span class="ot">&lt;-</span> rf_wf <span class="sc">|&gt;</span></span>
+<span id="cb62-10"><a href="#cb62-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit_resamples</span>(</span>
+<span id="cb62-11"><a href="#cb62-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">resamples =</span> train_folds,</span>
+<span id="cb62-12"><a href="#cb62-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">metrics =</span> <span class="fu">metric_set</span>(accuracy, mn_log_loss)</span>
+<span id="cb62-13"><a href="#cb62-13" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb62-14"><a href="#cb62-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-15"><a href="#cb62-15" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>25.94 sec elapsed</code></pre>
+<pre><code>26.54 sec elapsed</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>doParallel<span class="sc">::</span><span class="fu">stopImplicitCluster</span>()</span>
-<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unregister</span>()</span>
-<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>rf_results <span class="sc">|&gt;</span></span>
-<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() <span class="sc">|&gt;</span></span>
-<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>doParallel<span class="sc">::</span><span class="fu">stopImplicitCluster</span>()</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unregister</span>()</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>rf_results <span class="sc">|&gt;</span></span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() <span class="sc">|&gt;</span></span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table data-quarto-postprocess="true" class="table table-sm table-striped small">
@@ -1997,17 +2291,17 @@ With the ongoing housing crisis within the United States, identifying homes that
 <tr class="odd">
 <td style="text-align: left;">accuracy</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">0.5449626</td>
+<td style="text-align: right;">0.5545368</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0055784</td>
+<td style="text-align: right;">0.0060806</td>
 <td style="text-align: left;">Preprocessor1_Model1</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.1074580</td>
+<td style="text-align: right;">1.0613074</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0085029</td>
+<td style="text-align: right;">0.0081112</td>
 <td style="text-align: left;">Preprocessor1_Model1</td>
 </tr>
 </tbody>
@@ -2016,58 +2310,108 @@ With the ongoing housing crisis within the United States, identifying homes that
 
 </div>
 </div>
-<section id="rf-tuning" class="level4">
-<h4 class="anchored" data-anchor-id="rf-tuning">RF Tuning</h4>
 <div class="cell">
-<details open="">
+<details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>rf_spec <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(<span class="at">min_n =</span> <span class="fu">tune</span>(), <span class="at">mtry =</span> <span class="fu">tune</span>(), <span class="at">trees =</span> <span class="fu">tune</span>()) <span class="sc">|&gt;</span></span>
-<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
-<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>rf_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
-<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(rf_spec) <span class="sc">|&gt;</span></span>
-<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(rf_rec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="cell">
-<details open="">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Elapsed time in RStudio: 2 mins</span></span>
-<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>n_cores <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>()</span>
-<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">makeCluster</span>(n_cores <span class="sc">-</span> <span class="dv">1</span>, <span class="at">type =</span> <span class="st">"PSOCK"</span>)</span>
-<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>doParallel<span class="sc">::</span><span class="fu">registerDoParallel</span>(cl)</span>
-<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">tic</span>()</span>
-<span id="cb61-8"><a href="#cb61-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-9"><a href="#cb61-9" aria-hidden="true" tabindex="-1"></a>rf_tune_results <span class="ot">&lt;-</span> rf_wf <span class="sc">|&gt;</span></span>
-<span id="cb61-10"><a href="#cb61-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tune_grid</span>(</span>
-<span id="cb61-11"><a href="#cb61-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">resamples =</span> train_folds,</span>
-<span id="cb61-12"><a href="#cb61-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">grid =</span> <span class="dv">12</span>,</span>
-<span id="cb61-13"><a href="#cb61-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">metrics =</span> <span class="fu">metric_set</span>(mn_log_loss),</span>
-<span id="cb61-14"><a href="#cb61-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">control =</span> <span class="fu">control_grid</span>(<span class="at">parallel_over =</span> <span class="st">"everything"</span>)</span>
-<span id="cb61-15"><a href="#cb61-15" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb61-16"><a href="#cb61-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-17"><a href="#cb61-17" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>127.44 sec elapsed</code></pre>
-</div>
-<details open="">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>doParallel<span class="sc">::</span><span class="fu">stopImplicitCluster</span>()</span>
-<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unregister</span>()</span>
-<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>rf_tune_results <span class="sc">|&gt;</span></span>
-<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() <span class="sc">|&gt;</span></span>
-<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>rf_starts <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">steps =</span> <span class="fu">c</span>(<span class="st">"base"</span>, <span class="st">"novel"</span>, <span class="st">"other 0.05"</span>, <span class="st">"log"</span>),</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">accuracy =</span> <span class="fu">c</span>(<span class="fl">0.549041</span>, <span class="fl">0.5528097</span>, <span class="fl">0.5534388</span>, <span class="fl">0.5583059</span>),</span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">log_loss =</span> <span class="fu">c</span>(<span class="fl">1.061382</span>, <span class="fl">1.0600678</span>, <span class="fl">1.0599585</span>,  <span class="fl">1.0608243</span>)</span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a>rf_starts <span class="sc">|&gt;</span></span>
+<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table data-quarto-postprocess="true" class="table table-sm table-striped small">
 <thead>
 <tr class="header">
-<th style="text-align: right;" data-quarto-table-cell-role="th">mtry</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">steps</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">accuracy</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">log_loss</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">base</td>
+<td style="text-align: right;">0.5490410</td>
+<td style="text-align: right;">1.061382</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">novel</td>
+<td style="text-align: right;">0.5528097</td>
+<td style="text-align: right;">1.060068</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">other 0.05</td>
+<td style="text-align: right;">0.5534388</td>
+<td style="text-align: right;">1.059959</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">log</td>
+<td style="text-align: right;">0.5583059</td>
+<td style="text-align: right;">1.060824</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>From some testing, it seems like each additional step improves on log loss (and accuracy to a lesser extent) until adding the <code>step_log()</code> function. Since it seems to harm the performance of the model, I’ll be excluding the logarithmic scaling from the random trees.</p>
+<section id="rf-tuning" class="level4">
+<h4 class="anchored" data-anchor-id="rf-tuning">RF Tuning</h4>
+<p>For tunable parameters, this random forest model has two: <code>trees</code>, the number of trees included in the ensemble, and <code>min_n</code>, the minimum number of observations required to make a new branch within a given tree.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>rf_spec <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(<span class="at">min_n =</span> <span class="fu">tune</span>(), <span class="at">trees =</span> <span class="fu">tune</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>rf_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(rf_spec) <span class="sc">|&gt;</span></span>
+<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(rf_rec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Elapsed time in RStudio: ~3 mins</span></span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>n_cores <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>()</span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">makeCluster</span>(n_cores <span class="sc">-</span> <span class="dv">1</span>, <span class="at">type =</span> <span class="st">"PSOCK"</span>)</span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>doParallel<span class="sc">::</span><span class="fu">registerDoParallel</span>(cl)</span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-7"><a href="#cb67-7" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">tic</span>()</span>
+<span id="cb67-8"><a href="#cb67-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-9"><a href="#cb67-9" aria-hidden="true" tabindex="-1"></a>rf_tune_results <span class="ot">&lt;-</span> rf_wf <span class="sc">%&gt;%</span></span>
+<span id="cb67-10"><a href="#cb67-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tune_bayes</span>(</span>
+<span id="cb67-11"><a href="#cb67-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">resamples =</span> train_folds,</span>
+<span id="cb67-12"><a href="#cb67-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">metrics =</span> <span class="fu">metric_set</span>(mn_log_loss),</span>
+<span id="cb67-13"><a href="#cb67-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">initial =</span> <span class="dv">5</span>,</span>
+<span id="cb67-14"><a href="#cb67-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">iter =</span> <span class="dv">15</span>,</span>
+<span id="cb67-15"><a href="#cb67-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">control =</span> <span class="fu">control_bayes</span>(<span class="at">parallel_over =</span> <span class="st">"everything"</span>)</span>
+<span id="cb67-16"><a href="#cb67-16" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb67-17"><a href="#cb67-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-18"><a href="#cb67-18" aria-hidden="true" tabindex="-1"></a>tictoc<span class="sc">::</span><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>230.33 sec elapsed</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>doParallel<span class="sc">::</span><span class="fu">stopImplicitCluster</span>()</span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unregister</span>()</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a>rf_tune_results <span class="sc">|&gt;</span></span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() <span class="sc">|&gt;</span></span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
 <th style="text-align: right;" data-quarto-table-cell-role="th">trees</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">min_n</th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">.metric</th>
@@ -2076,140 +2420,174 @@ With the ongoing housing crisis within the United States, identifying homes that
 <th style="text-align: right;" data-quarto-table-cell-role="th">n</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">std_err</th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">.config</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">.iter</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">1454</td>
-<td style="text-align: right;">19</td>
+<td style="text-align: right;">11</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.449412</td>
+<td style="text-align: right;">10.968413</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0021647</td>
-<td style="text-align: left;">Preprocessor1_Model01</td>
+<td style="text-align: right;">0.2602671</td>
+<td style="text-align: left;">Preprocessor1_Model1</td>
+<td style="text-align: right;">0</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">364</td>
-<td style="text-align: right;">15</td>
+<td style="text-align: right;">500</td>
+<td style="text-align: right;">30</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.203118</td>
+<td style="text-align: right;">1.077056</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0058220</td>
-<td style="text-align: left;">Preprocessor1_Model02</td>
+<td style="text-align: right;">0.0078090</td>
+<td style="text-align: left;">Preprocessor1_Model2</td>
+<td style="text-align: right;">0</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">727</td>
-<td style="text-align: right;">36</td>
-<td style="text-align: left;">mn_log_loss</td>
-<td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.114156</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0068726</td>
-<td style="text-align: left;">Preprocessor1_Model03</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">7</td>
-<td style="text-align: right;">1091</td>
+<td style="text-align: right;">1000</td>
 <td style="text-align: right;">2</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.060560</td>
+<td style="text-align: right;">1.060130</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0080224</td>
-<td style="text-align: left;">Preprocessor1_Model04</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">9</td>
-<td style="text-align: right;">1818</td>
-<td style="text-align: right;">33</td>
-<td style="text-align: left;">mn_log_loss</td>
-<td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.073117</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0078017</td>
-<td style="text-align: left;">Preprocessor1_Model05</td>
+<td style="text-align: right;">0.0087688</td>
+<td style="text-align: left;">Preprocessor1_Model3</td>
+<td style="text-align: right;">0</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">11</td>
-<td style="text-align: right;">2000</td>
-<td style="text-align: right;">12</td>
-<td style="text-align: left;">mn_log_loss</td>
-<td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.058018</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0085491</td>
-<td style="text-align: left;">Preprocessor1_Model06</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">14</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">29</td>
-<td style="text-align: left;">mn_log_loss</td>
-<td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">6.434908</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0.1556869</td>
-<td style="text-align: left;">Preprocessor1_Model07</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">16</td>
-<td style="text-align: right;">182</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: left;">mn_log_loss</td>
-<td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.098911</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0193521</td>
-<td style="text-align: left;">Preprocessor1_Model08</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">18</td>
-<td style="text-align: right;">909</td>
+<td style="text-align: right;">1500</td>
 <td style="text-align: right;">40</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.080231</td>
+<td style="text-align: right;">1.084610</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0084518</td>
-<td style="text-align: left;">Preprocessor1_Model09</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">20</td>
-<td style="text-align: right;">1273</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: left;">mn_log_loss</td>
-<td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.098404</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0152327</td>
-<td style="text-align: left;">Preprocessor1_Model10</td>
+<td style="text-align: right;">0.0077247</td>
+<td style="text-align: left;">Preprocessor1_Model4</td>
+<td style="text-align: right;">0</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">22</td>
-<td style="text-align: right;">1636</td>
-<td style="text-align: right;">26</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: right;">21</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.084796</td>
+<td style="text-align: right;">1.068479</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0087623</td>
-<td style="text-align: left;">Preprocessor1_Model11</td>
+<td style="text-align: right;">0.0082250</td>
+<td style="text-align: left;">Preprocessor1_Model5</td>
+<td style="text-align: right;">0</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">25</td>
-<td style="text-align: right;">546</td>
-<td style="text-align: right;">22</td>
+<td style="text-align: right;">1965</td>
+<td style="text-align: right;">21</td>
 <td style="text-align: left;">mn_log_loss</td>
 <td style="text-align: left;">multiclass</td>
-<td style="text-align: right;">1.093860</td>
+<td style="text-align: right;">1.068567</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0122488</td>
-<td style="text-align: left;">Preprocessor1_Model12</td>
+<td style="text-align: right;">0.0079347</td>
+<td style="text-align: left;">Iter1</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">930</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">1.060846</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0087092</td>
+<td style="text-align: left;">Iter2</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1471</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">1.072078</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0078132</td>
+<td style="text-align: left;">Iter3</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1992</td>
+<td style="text-align: right;">35</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">1.080848</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0077447</td>
+<td style="text-align: left;">Iter4</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">659</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">1.076509</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0078918</td>
+<td style="text-align: left;">Iter5</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1571</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">1.063667</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0083358</td>
+<td style="text-align: left;">Iter6</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1976</td>
+<td style="text-align: right;">38</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">1.082370</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0077830</td>
+<td style="text-align: left;">Iter7</td>
+<td style="text-align: right;">7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1238</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">1.062133</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0082646</td>
+<td style="text-align: left;">Iter8</td>
+<td style="text-align: right;">8</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1771</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">1.063875</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0074784</td>
+<td style="text-align: left;">Iter9</td>
+<td style="text-align: right;">9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1523</td>
+<td style="text-align: right;">33</td>
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">1.078329</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0078463</td>
+<td style="text-align: left;">Iter10</td>
+<td style="text-align: right;">10</td>
 </tr>
 </tbody>
 </table>
@@ -2217,37 +2595,129 @@ With the ongoing housing crisis within the United States, identifying homes that
 
 </div>
 </div>
+</section>
+<section id="rf-fitting" class="level4">
+<h4 class="anchored" data-anchor-id="rf-fitting">RF Fitting</h4>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>rf_best_params <span class="ot">&lt;-</span> rf_tune_results <span class="sc">%&gt;%</span></span>
-<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">"mn_log_loss"</span>)</span>
-<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>rf_best_wf <span class="ot">&lt;-</span> rf_wf <span class="sc">%&gt;%</span></span>
-<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(rf_best_params)</span>
-<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a>rf_fit <span class="ot">&lt;-</span> rf_best_wf <span class="sc">|&gt;</span></span>
-<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>rf_best_params <span class="ot">&lt;-</span> rf_tune_results <span class="sc">%&gt;%</span></span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="at">metric =</span> <span class="st">"mn_log_loss"</span>)</span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>rf_best_wf <span class="ot">&lt;-</span> rf_wf <span class="sc">%&gt;%</span></span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(rf_best_params)</span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a>rf_fit <span class="ot">&lt;-</span> rf_best_wf <span class="sc">|&gt;</span></span>
+<span id="cb70-8"><a href="#cb70-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>rf_log_loss <span class="ot">&lt;-</span> rf_fit <span class="sc">|&gt;</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(train) <span class="sc">|&gt;</span></span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">priceRange =</span> <span class="fu">as.factor</span>(priceRange)) <span class="sc">|&gt;</span></span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mn_log_loss</span>(priceRange, <span class="fu">starts_with</span>(<span class="st">".pred"</span>), <span class="sc">-</span> .pred_class)</span>
+<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-6"><a href="#cb71-6" aria-hidden="true" tabindex="-1"></a>rf_accuracy_metric <span class="ot">&lt;-</span> rf_fit <span class="sc">|&gt;</span></span>
+<span id="cb71-7"><a href="#cb71-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(train) <span class="sc">|&gt;</span></span>
+<span id="cb71-8"><a href="#cb71-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">priceRange =</span> <span class="fu">as.factor</span>(priceRange)) <span class="sc">|&gt;</span></span>
+<span id="cb71-9"><a href="#cb71-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">accuracy</span>(priceRange, .pred_class)</span>
+<span id="cb71-10"><a href="#cb71-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-11"><a href="#cb71-11" aria-hidden="true" tabindex="-1"></a>rf_log_loss <span class="sc">|&gt;</span></span>
+<span id="cb71-12"><a href="#cb71-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(rf_accuracy_metric) <span class="sc">|&gt;</span></span>
+<span id="cb71-13"><a href="#cb71-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">.metric</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">.estimator</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">.estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">0.3848359</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">accuracy</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">0.9839900</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>Once fit, it seems like the random forest model has the best metrics so far. Accuracy is at 97.66% while log loss has a value of 0.42. That’s better than both the knn model (81.73%, 0.61) and the decision tree model (44.78%, 1.28).</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>rf_log_loss <span class="ot">&lt;-</span> rf_fit <span class="sc">|&gt;</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(test) <span class="sc">|&gt;</span></span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">priceRange =</span> <span class="fu">as.factor</span>(priceRange)) <span class="sc">|&gt;</span></span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mn_log_loss</span>(priceRange, <span class="fu">starts_with</span>(<span class="st">".pred"</span>), <span class="sc">-</span> .pred_class)</span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a>rf_accuracy_metric <span class="ot">&lt;-</span> rf_fit <span class="sc">|&gt;</span></span>
+<span id="cb72-7"><a href="#cb72-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(test) <span class="sc">|&gt;</span></span>
+<span id="cb72-8"><a href="#cb72-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">priceRange =</span> <span class="fu">as.factor</span>(priceRange)) <span class="sc">|&gt;</span></span>
+<span id="cb72-9"><a href="#cb72-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">accuracy</span>(priceRange, .pred_class)</span>
+<span id="cb72-10"><a href="#cb72-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb72-11"><a href="#cb72-11" aria-hidden="true" tabindex="-1"></a>rf_log_loss <span class="sc">|&gt;</span></span>
+<span id="cb72-12"><a href="#cb72-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(rf_accuracy_metric) <span class="sc">|&gt;</span></span>
+<span id="cb72-13"><a href="#cb72-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">.metric</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">.estimator</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">.estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">mn_log_loss</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">1.0609088</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">accuracy</td>
+<td style="text-align: left;">multiclass</td>
+<td style="text-align: right;">0.5403727</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>For the testing results, the random forest had an accuracy rating of 99.56 and a log loss value of 0.40. These are really great results and are similar to those of the training data.</p>
 </section>
 <section id="exporting-rf-predictions" class="level4">
 <h4 class="anchored" data-anchor-id="exporting-rf-predictions">Exporting RF Predictions</h4>
+<p>In the Kaggle competition, this model got a score of 8.65, a litte worse than the decision tree’s score but much better than the knn model. Again, the discrepancy between the trails within this analysis is confusing and I wonder what causes those results to differ so widely.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>rfsub <span class="ot">&lt;-</span> rf_fit <span class="sc">%&gt;%</span></span>
-<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(comp) <span class="sc">%&gt;%</span></span>
-<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
-<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_A =</span> <span class="st">".pred_0-250000"</span>,</span>
-<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_B =</span> <span class="st">".pred_250000-350000"</span>,</span>
-<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_C =</span> <span class="st">".pred_350000-450000"</span>,</span>
-<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_D =</span> <span class="st">".pred_450000-650000"</span>,</span>
-<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_E =</span> <span class="st">".pred_650000+"</span></span>
-<span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb65-10"><a href="#cb65-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, <span class="fu">starts_with</span> (<span class="st">"prob"</span>))</span>
-<span id="cb65-11"><a href="#cb65-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb65-12"><a href="#cb65-12" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(rfsub, <span class="st">"RFSub1.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>rfsub <span class="ot">&lt;-</span> rf_fit <span class="sc">%&gt;%</span></span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(comp) <span class="sc">%&gt;%</span></span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_A =</span> <span class="st">".pred_0-250000"</span>,</span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_B =</span> <span class="st">".pred_250000-350000"</span>,</span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_C =</span> <span class="st">".pred_350000-450000"</span>,</span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_D =</span> <span class="st">".pred_450000-650000"</span>,</span>
+<span id="cb73-8"><a href="#cb73-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob_E =</span> <span class="st">".pred_650000+"</span></span>
+<span id="cb73-9"><a href="#cb73-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb73-10"><a href="#cb73-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, <span class="fu">starts_with</span> (<span class="st">"prob"</span>))</span>
+<span id="cb73-11"><a href="#cb73-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-12"><a href="#cb73-12" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(rfsub, <span class="st">"CA_output/RFSub1.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
