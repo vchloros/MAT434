@@ -1,13 +1,19 @@
 ---
-title: "FinalProject"
-author: "Vinny Chloros"
+title: "Predicting Codon Usage Across Taxa"
+author: 
+  - name: Vinny Chloros
+    email: vinny.chloros@snhu.edu
+    affiliations: 
+      - name: Southern New Hampshire University
 format: html
 editor: visual
+bibliography: codon_references.bib
 toc: true
 toc-title: Contents
 date: 4/2/2025
 date-modified: today
 date-format: long
+title-block-banner: true
 theme: superhero
 code-fold: show
 ---
@@ -15,6 +21,7 @@ code-fold: show
 ```{r}
 #| message: false
 #| warning: false
+#| code-fold: true
 
 library(tidyverse)
 library(tidymodels)
@@ -25,6 +32,15 @@ library(ranger)
 
 data <- read_csv("codon_usage.csv")
 
+unregister <- function() {
+  env <- foreach:::.foreachGlobals
+  rm(list=ls(name=env), pos=env)
+}
+
+set.seed(20250402)
+```
+
+```{r}
 data <- data |>
   mutate(
     DNAtype = case_when(
@@ -45,15 +61,6 @@ data <- data |>
     )
   )
 
-unregister <- function() {
-  env <- foreach:::.foreachGlobals
-  rm(list=ls(name=env), pos=env)
-}
-
-set.seed(20250402)
-```
-
-```{r}
 split <- initial_split(data, strata = Kingdom)
 
 train <- training(split)
@@ -66,29 +73,31 @@ Codons are vital to our understanding of amino acids and protein production with
 
 ## Introduction
 
-A codon is a collection of 3 nucleotides (A, C, G, or U) within a genetic sequence. Different codons call for the production of amino acids which build proteins. The order of codons determine the order of amino acid production and subsequently the form and function of the resulting protein. There are 64 different combinations possible with 4 nucleotides in 3 positions, but there are only around 20 amino acids that are produced from these combinations. Many codons, especially those with the same nucleotides in the first or second position, will produce the same amino acid. 
+A codon is a collection of 3 nucleotides (A, C, G, or U for RNA) within a genetic sequence. Different codons call for the production of amino acids which build proteins. The order of codons determine the order of amino acid production and subsequently the form and function of the resulting protein. There are 64 different combinations possible with 4 nucleotides in 3 positions, but there are only around 20 amino acids that are commonly produced from these combinations.
 
-## EDA
+::: column-inset-shaded
+![](codon_img.png){fig-align="center" width="80%"}
+:::
+
+Many codons, especially those with the same nucleotides in the first or second position, will produce the same amino acid. 
+
+## Exploratory Data Analysis
 
 ### Single Variables
 
 ```{r}
+
 train |>
   ggplot() +
-  geom_bar(aes(x = Kingdom)) 
-#  geom_text(
-#    aes(
-#      y = after_stat(count + 2),
-#      label = after_stat(count)
-#    ),
-#    stat = "count"
-#  )
+  geom_bar(aes(x = Kingdom))
+
 
 train |>
   count(Kingdom) |>
   kbl()
 ```
-The data set features 11 different groups titled kingdoms: archaea (arc), bacteria (bct), invertbrates (inv), mammals (mam), bacteriophages (phg), plasmid (plm), plants (pln), primates (pri), rodents (rod), viruses (vrl), and vertebrates (vrt). Note that these categories don't represent actual kingdoms, of which there are only 7. Groups like primates and rodents are orders and are included within both mammals and vertebrates. Similarly, bacteriophages are a type of virus and thus would typically be classified as such. It seems like Kingdom as a category is simply used to describe large groups that species are classified by rather than actual biological kingdoms. 
+
+The data set features 11 different groups titled kingdoms: archaea (arc), bacteria (bct), invertbrates (inv), mammals (mam), bacteriophages (phg), plasmid (plm), plants (pln), primates (pri), rodents (rod), viruses (vrl), and vertebrates (vrt). Note that these categories don't represent actual kingdoms, of which there are only 7. Groups like primates and rodents are orders and are included within both mammals and vertebrates. Similarly, bacteriophages are a type of virus and thus would typically be classified as such. It seems like Kingdom as a category is simply used to describe large groups that species are classified by rather than actual biological kingdoms.
 
 ```{r}
 train |>
@@ -100,6 +109,8 @@ train |>
   count(DNAtype) |>
   kbl()
 ```
+By a wide margin, it seems like genomic data is the most prevalent source of codons in the data set, followed by mitochondrial and chloroplast DNA. Most organisms have a primary genome while most eukaryotes (multi-cellular organisms) have mitochondiral DNA, explaining the frequency of these groups. Plants are another group included in this analysis, and alongside mitochondria, they also have chloroplasts that hold unique DNA.
+
 
 ```{r}
 train |>
@@ -108,10 +119,14 @@ train |>
   scale_x_log10()
 ```
 
-Since there are 64 different codons within the data, I isolated a few to serve as examples for distribution. There below are phenylalanine (UUU), 
+
+Since there are 64 different codons within the data, I isolated a few to serve as examples for distribution. These are UUU, CGU, AUG, and UAG. AUG and UAG are of particular interest because they are start and stop codons, respectively. AUG indicates the beginning of a protein-making sequence while UAG ends the process of translating RNA to call for amino acids. 
 
 ```{r}
-#how to facet wrap with different rows here
+#| message: false
+#| warning: false
+#| column: screen-inset-shaded
+#| layout-nrow: 2
 
 train |>
   ggplot() +
@@ -124,7 +139,12 @@ train |>
 train |>
   ggplot() +
   geom_histogram(aes(x = AUG))
+
+train |>
+  ggplot() +
+  geom_histogram(aes(x = UAG))
 ```
+From this sample, we can see that there is a fair amount 
 
 ### Multiple Variables
 
@@ -142,3 +162,7 @@ train |>
   geom_col()
 ```
 
+## References
+
+::: {#refs}
+:::
