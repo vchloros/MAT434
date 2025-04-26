@@ -69,27 +69,35 @@ test <- testing(split)
 
 ## Statement of Purpose
 
-Codons are vital to our understanding of amino acids and protein production within living organisms. The codons used for certain proteins vary in both prescence and frequency between different organisms and, on a larger scale, between taxa. By analyzing and predicting the relationship between codon frequency and the organization of different organisms, insights can be formed about how codons differ between groups and what changes might have occurred throughout evolutionary history in terms of genetic variation and protein building.
+Codons are vital to our understanding of amino acids and protein production within living organisms. The codons used for certain proteins vary in both presence and frequency between different organisms and, on a larger scale, between taxa. By analyzing and predicting the relationship between codon frequency and the organization of different organisms, insights can be formed about how codons differ between groups and what changes might have occurred throughout evolutionary history in terms of genetic variation and protein building.
 
 ## Introduction
 
 A codon is a collection of 3 nucleotides (A, C, G, or U for RNA) within a genetic sequence. Different codons call for the production of amino acids which build proteins. The order of codons determine the order of amino acid production and subsequently the form and function of the resulting protein. There are 64 different combinations possible with 4 nucleotides in 3 positions, but there are only around 20 amino acids that are commonly produced from these combinations.
 
-::: column-inset-shaded
-![](codon_img.png){fig-align="center" width="80%"}
-:::
+:::{.column-body-outset-right}
 
-Many codons, especially those with the same nucleotides in the first or second position, will produce the same amino acid. 
+![Table of amino acid production based on nucleotide position](codon_img.png){fig-align="center" width="80%"}
+
+Above is a table showing what amino acids are produced based of the position of different nucleotides throughout the a codon [@openstax]. Many codons, especially those with the same nucleotides in the first or second position, will produce the same amino acid.
+
+Since proteins utilize long strings of amino acids and have an incredible amount of variation, codons can different in how often they appear within a genome. Based on differing usage between taxa, variation between frequency could be correlated to evolutionary divergence. For instance, a codon with a very small frequency in an ancestral taxa might display increased prevalence in descedents.
+
+:::
 
 ## Exploratory Data Analysis
 
 ### Single Variables
 
 ```{r}
-
 train |>
   ggplot() +
-  geom_bar(aes(x = Kingdom))
+  geom_bar(aes(x = Kingdom)) +
+  labs(
+    title = "Count of Codons Between Kingdoms",
+    x = "Kingdom",
+    y = "Count"
+  )
 
 
 train |>
@@ -103,7 +111,12 @@ The data set features 11 different groups titled kingdoms: archaea (arc), bacter
 train |>
   ggplot() +
   geom_bar(aes(x = DNAtype)) +
-  coord_flip()
+  coord_flip() +
+  labs(
+    title = "Count of DNA types",
+    x = "Count",
+    y = "DNA Type"
+  )
 
 train |>
   count(DNAtype) |>
@@ -116,9 +129,17 @@ By a wide margin, it seems like genomic data is the most prevalent source of cod
 train |>
   ggplot() +
   geom_histogram(aes(x = Ncodons)) +
-  scale_x_log10()
-```
+  scale_x_log10() +
+  labs(
+    title = "Number of Codons in all Samples",
+    x = "Number of Codons",
+    y = "Count"
+  )
 
+train$Ncodons |>
+  summary()
+```
+The total number of codons for each organism varies throughout the data set. Most are between 1,000 and 10,000 codons, but some exceed this average range by a wide margin; the observation with the highest number of codons has over 30,000,000.
 
 Since there are 64 different codons within the data, I isolated a few to serve as examples for distribution. These are UUU, CGU, AUG, and UAG. AUG and UAG are of particular interest because they are start and stop codons, respectively. AUG indicates the beginning of a protein-making sequence while UAG ends the process of translating RNA to call for amino acids. 
 
@@ -130,21 +151,41 @@ Since there are 64 different codons within the data, I isolated a few to serve a
 
 train |>
   ggplot() +
-  geom_histogram(aes(x = UUU))
+  geom_histogram(aes(x = UUU)) +
+  labs(
+    title = "UUU Frequency",
+    x = "Usage Frequency",
+    y = "Count"
+  )
 
 train |>
   ggplot() +
-  geom_histogram(aes(x = CGU))
+  geom_histogram(aes(x = CGU)) +
+  labs(
+    title = "CGU Frequency",
+    x = "Usage Frequency",
+    y = "Count"
+  )
 
 train |>
   ggplot() +
-  geom_histogram(aes(x = AUG))
+  geom_histogram(aes(x = AUG)) +
+  labs(
+    title = "AUG Frequency",
+    x = "Usage Frequency",
+    y = "Count"
+  )
 
 train |>
   ggplot() +
-  geom_histogram(aes(x = UAG))
+  geom_histogram(aes(x = UAG)) +
+  labs(
+    title = "UAG Frequency",
+    x = "Usage Frequency",
+    y = "Count"
+  )
 ```
-From this sample, we can see that there is a fair amount 
+From this sample, we can see that there is a fair amount of variation between different codons and their usage frequency. For the codon UUU, it seems to have a
 
 ### Multiple Variables
 
@@ -153,16 +194,372 @@ train |>
   ggplot(aes(Kingdom, DNAtype)) +
   geom_count(aes(color = after_stat(n), size = after_stat(n))) +
   guides(color = 'legend') +
-  scale_color_gradient(low = "blue", high = "red")
+  scale_color_gradient(low = "blue", high = "red") +
+  labs(
+    title = "Codon Count by DNA Type and Kingdom",
+    x = "DNA Type",
+    y = "Kingdom"
+  )
 ```
 
 ```{r}
 train |>
-  ggplot(aes(Kingdom, Ncodons)) +
-  geom_col()
+  ggplot() +
+  geom_histogram(aes(x = Ncodons)) +
+  scale_x_log10() +
+  facet_wrap(~ Kingdom) +
+  labs(
+    title = "Number of Codons in all Samples",
+    x = "Number of Codons",
+    y = "Count"
+  )
+```
+```{r}
+train |>
+  ggplot() +
+  geom_histogram(aes(x = AUG)) +
+  labs(
+    title = "AUG Frequency",
+    x = "Usage Frequency",
+    y = "Count"
+  ) +
+  facet_wrap(~ DNAtype)
+
+train |>
+  ggplot() +
+  geom_histogram(aes(x = UAG)) +
+  labs(
+    title = "UAG Frequency",
+    x = "Usage Frequency",
+    y = "Count"
+  ) +
+  facet_wrap(~ DNAtype)
 ```
 
-## References
 
-::: {#refs}
-:::
+```{r}
+train |>
+  ggplot() +
+  geom_histogram(aes(x = AUG)) +
+  labs(
+    title = "AUG Frequency",
+    x = "Usage Frequency",
+    y = "Count"
+  ) +
+  facet_wrap(~ Kingdom)
+
+train |>
+  ggplot() +
+  geom_histogram(aes(x = UAG)) +
+  labs(
+    title = "UAG Frequency",
+    x = "Usage Frequency",
+    y = "Count"
+  ) +
+  facet_wrap(~ Kingdom)
+```
+
+
+## Model Building
+
+```{r}
+train_folds <- vfold_cv(train, v = 10, strata = Kingdom)
+```
+
+### KNN
+
+For the first model, 
+
+```{r}
+knn_spec <- nearest_neighbor() |>
+  set_engine("kknn") |>
+  set_mode("classification")
+
+knn_rec <- recipe(Kingdom ~ ., data = train) |>
+  step_rm(SpeciesID, SpeciesName) |>
+  step_impute_median(all_numeric_predictors()) |>
+  step_impute_mode(all_nominal_predictors()) |>
+  step_log(Ncodons, base = exp(10)) |>
+  step_dummy(all_nominal_predictors())
+
+knn_wf <- workflow() |>
+  add_model(knn_spec) |>
+  add_recipe(knn_rec)
+```
+
+```{r}
+#| warning: false
+#Estimated time: ~30 secs
+
+n_cores <- parallel::detectCores()
+cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
+doParallel::registerDoParallel(cl)
+
+tictoc::tic()
+
+knn_results <- knn_wf |>
+  fit_resamples(
+    resamples = train_folds,
+    metrics = metric_set(accuracy, mn_log_loss)
+  )
+
+tictoc::toc()
+
+doParallel::stopImplicitCluster()
+unregister()
+
+knn_results |>
+  collect_metrics() |>
+  kbl()
+```
+
+#### Tuning
+
+```{r}
+knn_spec <- nearest_neighbor(neighbors = tune(), weight_func = tune()) |>
+  set_engine("kknn") |>
+  set_mode("classification")
+
+knn_wf <- workflow() |>
+  add_model(knn_spec) |>
+  add_recipe(knn_rec)
+```
+
+```{r}
+#| warning: false
+# Estimated time: ~2 mins
+
+n_cores <- parallel::detectCores()
+cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
+doParallel::registerDoParallel(cl)
+
+tictoc::tic()
+
+knn_tune_results <- knn_wf %>%
+  tune_grid(
+    resamples = train_folds,
+    metrics = metric_set(mn_log_loss),
+    initial = 5,
+    grid = 15,
+    control = control_bayes(parallel_over = "everything")
+  )
+
+tictoc::toc()
+
+doParallel::stopImplicitCluster()
+unregister()
+
+knn_tune_results %>%
+  collect_metrics() |>
+  kbl()
+```
+
+#### Fitting
+
+```{r knn train fitting}
+#| #warning: false
+
+knn_best_params <- knn_tune_results %>%
+  select_best(metric = "mn_log_loss")
+
+knn_best_wf <- knn_wf %>%
+  finalize_workflow(knn_best_params)
+
+knn_best_fit <- knn_best_wf %>%
+  fit(train)
+```
+
+```{r}
+#| warning: false
+
+knn_log_loss <- knn_best_fit |>
+  augment(train) |>
+  mutate(Kingdom = as.factor(Kingdom)) |>
+  mn_log_loss(Kingdom, starts_with(".pred"), - .pred_class)
+
+knn_accuracy_metric <- knn_best_fit |>
+  augment(train) |>
+  mutate(Kingdom = as.factor(Kingdom)) |>
+  accuracy(Kingdom, .pred_class)
+
+knn_log_loss |>
+  bind_rows(knn_accuracy_metric) |>
+  kbl()
+```
+
+As shown by these metrics, the tuned version of the knn model heavily improved upon the initial metrics. The accuracy of the predictions is at 99.64% and the log loss is down to 0.06, implying that the model is both predicting correctly the majority of the time and also very certain about those predictions. 
+
+To further test the knn model, I tested it against the test data that was set aside at the beginning of the analysis and see how the model handles data it hasn't seen before. 
+
+#### Testing
+
+```{r}
+#| code-fold: show
+#| warning: false
+
+knn_log_loss <- knn_best_fit |>
+  augment(test) |>
+  mutate(Kingdom = as.factor(Kingdom)) |>
+  mn_log_loss(Kingdom, starts_with(".pred"), - .pred_class)
+
+knn_accuracy_metric <- knn_best_fit |>
+  augment(test) |>
+  mutate(Kingdom = as.factor(Kingdom)) |>
+  accuracy(Kingdom, .pred_class)
+
+knn_log_loss |>
+  bind_rows(knn_accuracy_metric) |>
+  kbl()
+```
+
+When given the test data, the tuned knn model performed very well. The accuracy was 93.13% and the log loss value was 0.47. Although not as confident as it was with the training data, it still retained a high accuarcy with modest confidence in its predictions. 
+
+### DT
+
+In comparison to the KNN model, I expect the decision tree to have more difficulty in assessing individual codon frequencies and accurately predicting the the Kingdom categories from there. While the KNN model can compare individual data points along multiple axis (through multi-dimensional spaces, in many iterations), the tree structure might be a limitation in how the model "thinks" through its predictions; numeric values in particular are limited to certain ranges with the model "asking" if a given range is at or below a certain threshold. 
+
+```{r dt setup}
+#| code-fold: show
+
+dt_spec <- decision_tree() |>
+  set_engine("rpart") |>
+  set_mode("classification")
+
+dt_rec <- recipe(Kingdom ~ ., data = train) |>
+  step_rm(SpeciesID, SpeciesName) |>
+  step_impute_median(all_numeric_predictors()) |>
+  step_impute_mode(all_nominal_predictors())|>
+  step_log(Ncodons, base = exp(10)) |>
+  step_dummy(all_nominal_predictors())
+
+dt_wf <- workflow() |>
+  add_model(dt_spec) |>
+  add_recipe(dt_rec)
+```
+
+```{r dt metrics}
+#| code-fold: show
+#| warning: false
+
+# Elapsed time in RStudio: ~25 secs
+
+n_cores <- parallel::detectCores()
+cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
+doParallel::registerDoParallel(cl)
+
+tictoc::tic()
+
+dt_results <- dt_wf |>
+  fit_resamples(
+    resamples = train_folds,
+    metrics = metric_set(accuracy, mn_log_loss)
+  )
+
+tictoc::toc()
+
+doParallel::stopImplicitCluster()
+unregister()
+
+dt_results |>
+  collect_metrics() |>
+  kbl()
+```
+
+Based on these first metrics, it seems like the decision tree model is performing worse than the knn model. Here, the accuracy is 65.28% while the log loss is 1.43.
+
+#### Tuning
+
+```{r}
+#| code-fold: show
+
+dt_spec <- decision_tree(min_n = tune(), tree_depth = tune(), cost_complexity = tune()) |>
+  set_engine("rpart") |>
+  set_mode("classification")
+
+dt_wf <- workflow() |>
+  add_model(dt_spec) |>
+  add_recipe(dt_rec)
+```
+
+```{r dt tune}
+#| code-fold: show
+#| warning: false
+#Elapsed time in RStudio: ~1 min
+
+n_cores <- parallel::detectCores()
+cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
+doParallel::registerDoParallel(cl)
+
+tictoc::tic()
+
+dt_tune_results <- dt_wf %>%
+  tune_grid(
+    resamples = train_folds,
+    metrics = metric_set(mn_log_loss),
+    initial = 5,
+    grid = 15,
+    control = control_bayes(parallel_over = "everything")
+  )
+
+tictoc::toc()
+
+doParallel::stopImplicitCluster()
+unregister()
+
+dt_tune_results %>%
+  collect_metrics() |>
+  kbl()
+```
+
+#### Fitting
+
+```{r model fitting}
+#| code-fold: show
+
+dt_best_params <- dt_tune_results %>%
+  select_best(metric = "mn_log_loss")
+
+dt_best_wf <- dt_wf %>%
+  finalize_workflow(dt_best_params)
+
+dt_best_fit <- dt_best_wf %>%
+  fit(train)
+```
+
+```{r dt training performance}
+#| code-fold: show
+
+dt_log_loss <- dt_best_fit |>
+  augment(train) |>
+  mutate(Kingdom = as.factor(Kingdom)) |>
+  mn_log_loss(Kingdom, starts_with(".pred"), - .pred_class)
+
+dt_accuracy_metric <- dt_best_fit |>
+  augment(train) |>
+  mutate(Kingdom = as.factor(Kingdom)) |>
+  accuracy(Kingdom, .pred_class)
+
+dt_log_loss |>
+  bind_rows(dt_accuracy_metric) |>
+  kbl()
+```
+
+Once tuned & fit, the model performs a fair bit better compared to the initial un-tuned version. The accuracy is now 88.29% and the log loss is 0.70. While not as good as the knn model's metrics, these results aren't terrible. 
+
+#### Testing
+
+### Boosted Trees
+
+As another attempt, I wanted to see if a tree ensemble would perform significantly better than a single tree. 
+
+#### Tuning
+
+#### Fitting
+
+### 4th Model
+
+#### Tuning
+
+#### Fitting
+
+## Conclusions
