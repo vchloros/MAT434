@@ -29,6 +29,8 @@ library(kableExtra)
 library(patchwork)
 library(parsnip)
 library(ranger)
+library(discrim)
+library(kernlab)
 
 data <- read_csv("codon_usage.csv")
 
@@ -73,19 +75,22 @@ Codons are vital to our understanding of amino acids and protein production with
 
 ## Introduction
 
-A codon is a collection of 3 nucleotides (A, C, G, or U for RNA) within a genetic sequence. Different codons call for the production of amino acids which build proteins. The order of codons determine the order of amino acid production and subsequently the form and function of the resulting protein. There are 64 different combinations possible with 4 nucleotides in 3 positions, but there are only around 20 amino acids that are commonly produced from these combinations.
+A codon is a collection of 3 nucleotides (A, C, G, or U for RNA) within a genetic sequence. Different codons call for the production of amino acids which build proteins. The order of codons determine the order of amino acid production and, subsequently, the form and function of the resulting protein. There are 64 different combinations possible with 4 nucleotides in 3 positions, but there are only around 20 amino acids that are commonly produced from these combinations.
 
 :::{.column-body-outset-right}
 
 ![Table of amino acid production based on nucleotide position](codon_img.png){fig-align="center" width="80%"}
-
-Above is a table showing what amino acids are produced based of the position of different nucleotides throughout the a codon [@openstax]. Many codons, especially those with the same nucleotides in the first or second position, will produce the same amino acid.
-
-Since proteins utilize long strings of amino acids and have an incredible amount of variation, codons can different in how often they appear within a genome. Based on differing usage between taxa, variation between frequency could be correlated to evolutionary divergence. For instance, a codon with a very small frequency in an ancestral taxa might display increased prevalence in descedents.
-
 :::
 
+Above is a table showing what amino acids are produced based of the position of different nucleotides throughout the a codon [@openstax]. Some codons, especially those with the same nucleotides in the first or second position, will produce the same amino acid.
+
+Since proteins utilize long strings of amino acids and have an incredible amount of variation, codons can differ in how often they appear within a genome. Based on differing usage between taxa, variation between frequency could be correlated to evolutionary divergence. For instance, a codon with a very small frequency in an ancestral taxa might display increased prevalence in descendant. From there, one could infer how that increased frequency came to be. For instance, maybe the protein it is a part of was vital to a new trait and became more prevalent due to natural selection. 
+
+By making predictions through classification models, we can observe if and how the models distinguish different taxa through this codon data. From there, further investigations can be conducted to identify individual codons that are most associated with particular taxa and serve as the primary indicator of different groups. 
+
 ## Exploratory Data Analysis
+
+This data set has 69 total variables: Kingdom, DNAtype, SpeciesID, Ncodons, SpeciesName, and 64 unique codons. Each codon variable contains its frequency across different species. The first 5 variables are categorical while the codon frequencies for the other 64 are all numerical. In investigating these variables and later model building, SpeciesID and SpeciesName will be excluded since each value is unique to an observation and would hinder later predictions.
 
 ### Single Variables
 
@@ -98,7 +103,6 @@ train |>
     x = "Kingdom",
     y = "Count"
   )
-
 
 train |>
   count(Kingdom) |>
@@ -122,10 +126,24 @@ train |>
   count(DNAtype) |>
   kbl()
 ```
-By a wide margin, it seems like genomic data is the most prevalent source of codons in the data set, followed by mitochondrial and chloroplast DNA. Most organisms have a primary genome while most eukaryotes (multi-cellular organisms) have mitochondiral DNA, explaining the frequency of these groups. Plants are another group included in this analysis, and alongside mitochondria, they also have chloroplasts that hold unique DNA.
+By a wide margin, it seems like genomic data is the most prevalent source of codons in the data set, followed by mitochondrial and chloroplast DNA. Most organisms have a primary genome while most eukaryotes (multicellular organisms) have mitochondiral DNA, explaining the frequency of these groups. Plants are another group included in this analysis, and alongside mitochondria, they also have chloroplasts that hold unique DNA. Plastids are common forms of "extra" DNA that certain bacteria are known to uptake and incorporate into their larger genome, so it makes sense that these are also present, although limited in number. Other forms of genetic information are rare in most organisms and therefore take up a very small proportion of the data.
 
+::: {.callout-note}
+In this data, the codons are using U, or Uracil, as one of their nucleotides which is specific to RNA. Despite that, the categories here are called DNAtype. This is because, through *transcription*, DNA in an organism is taken and used to create RNA that is later *translated* into proteins. Even though they are different steps in the process, they convey the same information.
+:::
 
 ```{r}
+train |>
+  filter(!DNAtype %in% c("genomic", "chloroplast", "mitochondrial", "plastid")) |>
+  select(SpeciesName) |>
+  kbl()
+```
+
+Based on a small peak at some of smaller DNA types within the data, it seems like most of these instances were extracted from microbes. Instances like the cyanelle, kinetoplast, and apicoplast seem to be organelles that, similar to mitochondria, have their own genetic information seperate from the primary genome [@kinetoplast; @apicoplast]. 
+
+```{r}
+#| warning: false
+
 train |>
   ggplot() +
   geom_histogram(aes(x = Ncodons)) +
@@ -139,9 +157,10 @@ train |>
 train$Ncodons |>
   summary()
 ```
-The total number of codons for each organism varies throughout the data set. Most are between 1,000 and 10,000 codons, but some exceed this average range by a wide margin; the observation with the highest number of codons has over 30,000,000.
+The total number of codons for each organism varies throughout the data set. Most are between 1,500 and 10,000 codons, but some exceed this average range by a wide margin; the observation with the highest number of codons has over 30,000,000.
 
-Since there are 64 different codons within the data, I isolated a few to serve as examples for distribution. These are UUU, CGU, AUG, and UAG. AUG and UAG are of particular interest because they are start and stop codons, respectively. AUG indicates the beginning of a protein-making sequence while UAG ends the process of translating RNA to call for amino acids. 
+
+Since there are 64 different codons within the data, I isolated a few to serve as examples for distribution in this section of the analysis. These are UUU, CGU, AUG, and UAG. AUG and UAG are of particular interest because they are start and stop codons, respectively. AUG indicates the beginning of a protein-making sequence while UAG ends the process of translating RNA to call for amino acids. 
 
 ```{r}
 #| message: false
@@ -185,11 +204,53 @@ train |>
     y = "Count"
   )
 ```
-From this sample, we can see that there is a fair amount of variation between different codons and their usage frequency. For the codon UUU, it seems to have a
+From this sample, we can see that there is a fair amount of variation between different codons and their usage frequency. For the codon UUU, most of it's distributions are between 0 and 0.05 with much fewer instances landing near 0.20 or beyond. CGU has a smaller frequency, typically between 0 and 0.02 with the largest being only just beyond 0.06. 
+
+AUG was far more common with frequencies largely between 0 and 0.075, but a much smaller amount of frequencies actually being 0 compared to the other two codons. Since it is the marker in most sequences to start a protein, it follows that it would be very common throughout different genomes. Similarly, one would expect UAG to have high frequencies, but in actuality, most instances of UAG have frequencies of 0 and span between 0 and 0.005. This value might be puzzling at first, but unlike AUG which is the universal start codon, there are actually 3 possible stop codons that might differ in frequency. 
+
+```{r}
+#| message: false
+#| warning: false
+#| column: screen-inset-shaded
+#| layout-nrow: 2
+
+train |>
+  ggplot() +
+  geom_histogram(aes(x = UAG)) +
+  labs(
+    title = "UAG Frequency",
+    x = "Usage Frequency",
+    y = "Count"
+  )
+
+train |>
+  ggplot() +
+  geom_histogram(aes(x = UUA)) +
+  labs(
+    title = "UUA Frequency",
+    x = "Usage Frequency",
+    y = "Count"
+  )
+
+train |>
+  ggplot() +
+  geom_histogram(aes(x = UGA)) +
+  labs(
+    title = "UGA Frequency",
+    x = "Usage Frequency",
+    y = "Count"
+  )
+```
+
+Both of the other stop codons vary from UAG. UUA seems to be the most commonly used across the data set with a frequency distribution largely between 0 and 0.05. The maximum, however, extends to just under 0.15. UGA in comparison, seems to have the majority of its frequencies at 0 with a small outgroup resting between 0.015 and 0.03. 
 
 ### Multiple Variables
 
 ```{r}
+#| message: false
+#| warning: false
+#| column: screen-inset-shaded
+
 train |>
   ggplot(aes(Kingdom, DNAtype)) +
   geom_count(aes(color = after_stat(n), size = after_stat(n))) +
@@ -202,19 +263,33 @@ train |>
   )
 ```
 
+In comparing DNAtype to Kingdom, the most common (appearing in red or reddish-purple) are genomic data in bacteria, viruses, plants, and invertebrates, and mitochondiral DNA in vertebrates. Others are scattered throughout the graph and give a good picture about what combinations are and aren't present. For instance, there are kinetoplast samples found in at least one invertebrate sample, but there are no mitochondrial DNA samples found in phages. 
+
 ```{r}
+#| message: false
+#| warning: false
+#| column: screen-inset-shaded
+
 train |>
   ggplot() +
   geom_histogram(aes(x = Ncodons)) +
   scale_x_log10() +
   facet_wrap(~ Kingdom) +
   labs(
-    title = "Number of Codons in all Samples",
+    title = "Number of Codons in All Samples",
     x = "Number of Codons",
     y = "Count"
   )
 ```
+
+The number of codons between Kingdom categories does seem to vary. Between all groups, most have a number of codons between 1000 and 100,000, as noted in the earlier graph examining codon number alone. Among all the categories, bacteria has another notable concentration of counts between 10,000,000 and 100,000,000 codons in each sequence which is not seen in any other group. 
+
 ```{r}
+#| message: false
+#| warning: false
+#| column: screen-inset-shaded
+#| layout-nrow: 2
+
 train |>
   ggplot() +
   geom_histogram(aes(x = AUG)) +
@@ -234,10 +309,36 @@ train |>
     y = "Count"
   ) +
   facet_wrap(~ DNAtype)
+
+train |>
+  ggplot() +
+  geom_histogram(aes(x = UUA)) +
+  labs(
+    title = "UUA Frequency",
+    x = "Usage Frequency",
+    y = "Count"
+  ) +
+  facet_wrap(~ DNAtype)
+
+train |>
+  ggplot() +
+  geom_histogram(aes(x = UGA)) +
+  labs(
+    title = "UGA Frequency",
+    x = "Usage Frequency",
+    y = "Count"
+  ) +
+  facet_wrap(~ DNAtype)
 ```
 
+When comparing codon frequencies between DNAtype, only mitochondrial, genomic, and chloroplast DNA are visible due to the very small number of observations in the other categories. Despite that, there are some differences visible between the categories that are present. For instance, the stop codon UUA has most of its frequencies between 0 and 0.05 in genomic DNA, between 0 and 0.03 in mitochondrial (with a smaller subset extending to 0.15), and between 0.025 and 0.05 in chloroplast DNA. 
 
 ```{r}
+#| message: false
+#| warning: false
+#| column: screen-inset-shaded
+#| layout-nrow: 2
+
 train |>
   ggplot() +
   geom_histogram(aes(x = AUG)) +
@@ -257,8 +358,31 @@ train |>
     y = "Count"
   ) +
   facet_wrap(~ Kingdom)
+
+train |>
+  ggplot() +
+  geom_histogram(aes(x = UUA)) +
+  labs(
+    title = "UUA Frequency",
+    x = "Usage Frequency",
+    y = "Count"
+  ) +
+  facet_wrap(~ Kingdom)
+
+train |>
+  ggplot() +
+  geom_histogram(aes(x = UGA)) +
+  labs(
+    title = "UGA Frequency",
+    x = "Usage Frequency",
+    y = "Count"
+  ) +
+  facet_wrap(~ Kingdom)
 ```
 
+When examining codons by Kingdom, most concentrations in frequency are present across groups with different counts due to the number of observations within each group. For instance, frequencies for AUG are typically between 0.1 and 0.3, but some, like vertebrates and mammals, have a slight positive skew that sets them apart from the rest. UUA has wider variation with some groups like viruses and vertebrates having frequencies typically between 0 and 0.05 but, in comparison, the most common frequency for bacteria by a large margin is 0. Since this handful of codons have a fair amount of variation when compared across different taxa, it wouldn't be too unexpected to see similar variation in other codons as well. 
+
+As a whole, it seems that codon frequencies have a good potential for predicting Kingdom in this data set. There are a wide amount of codons to incorporate in prediction models, and their occurrence seems to vary by Kingdom. The other factors present, Ncodons and DNAtype, will remain included as well since they also vary by Kingdom and might play a part in what codons are present.
 
 ## Model Building
 
@@ -268,7 +392,7 @@ train_folds <- vfold_cv(train, v = 10, strata = Kingdom)
 
 ### KNN
 
-For the first model, 
+For the first model, I selected a KNN model. In its predictions, the model plots out observations and associates them to the same class as its neighbors. For my analysis, I expect this model to be a good benchmark for comparing other models' metrics, but I don't expect it to perform particularly well.
 
 ```{r}
 knn_spec <- nearest_neighbor() |>
@@ -313,7 +437,11 @@ knn_results |>
   kbl()
 ```
 
+To my surprise, the initial metrics for this model actually turned out fairly well! Despite the high log loss at 1.01, the accuracy came out to 92.76%, which is higher than I expected. 
+
 #### Tuning
+
+For tuning parameters, the model will be able to change `neighbors` or the amount of neighbors used to determine a new observation's class, and `weight_func` or how distances will be computed. Since there are more than one variable, the default rectangular method will likely be surpassed by another method.
 
 ```{r}
 knn_spec <- nearest_neighbor(neighbors = tune(), weight_func = tune()) |>
@@ -356,8 +484,10 @@ knn_tune_results %>%
 
 #### Fitting
 
+Next, I'll take the best performing parameters and use them to make a final version of the model then fit it to the training data.
+
 ```{r knn train fitting}
-#| #warning: false
+#| warning: false
 
 knn_best_params <- knn_tune_results %>%
   select_best(metric = "mn_log_loss")
@@ -368,6 +498,8 @@ knn_best_wf <- knn_wf %>%
 knn_best_fit <- knn_best_wf %>%
   fit(train)
 ```
+
+Now, we'll test the model against the training data:
 
 ```{r}
 #| warning: false
@@ -387,9 +519,9 @@ knn_log_loss |>
   kbl()
 ```
 
-As shown by these metrics, the tuned version of the knn model heavily improved upon the initial metrics. The accuracy of the predictions is at 99.64% and the log loss is down to 0.06, implying that the model is both predicting correctly the majority of the time and also very certain about those predictions. 
+As shown by these metrics, the tuned version of the knn model heavily improved upon the initial metrics. The accuracy of the predictions is at 99.64% and the log loss is down to 0.06, implying that the model is both predicting correctly the majority of the time and also very certain about those predictions. However, these metrics were from the data fit to the same data its predicting, so these good metrics may be because of some overfitting. 
 
-To further test the knn model, I tested it against the test data that was set aside at the beginning of the analysis and see how the model handles data it hasn't seen before. 
+To further test the knn model, I used the fitted model against the test data that was set aside at the beginning of the analysis and see how the model handles data it hasn't seen before. 
 
 #### Testing
 
@@ -412,7 +544,7 @@ knn_log_loss |>
   kbl()
 ```
 
-When given the test data, the tuned knn model performed very well. The accuracy was 93.13% and the log loss value was 0.47. Although not as confident as it was with the training data, it still retained a high accuarcy with modest confidence in its predictions. 
+When given the test data, the tuned knn model performed very well. The accuracy was 93.13% and the log loss value was 0.47. Although not as confident as it was with the training data, it still retained a high accuracy with modest confidence in its predictions. 
 
 ### DT
 
@@ -465,9 +597,11 @@ dt_results |>
   kbl()
 ```
 
-Based on these first metrics, it seems like the decision tree model is performing worse than the knn model. Here, the accuracy is 65.28% while the log loss is 1.43.
+Based on these first metrics, it seems like the decision tree model is performing worse than the knn model. Here, the accuracy is 65.28% while the log loss is 1.43. With some tuning, there might be some improvement. 
 
 #### Tuning
+
+For tuned parameters, this decision tree model has `min_n` or the minimum number of observations required to split a node, `tree_depth` or the maximum number of splits from the root to the tip of the tree, and `cost_complexity`or how much it "costs" the model to split a node further and extend the tree. 
 
 ```{r}
 #| code-fold: show
@@ -513,7 +647,7 @@ dt_tune_results %>%
 
 #### Fitting
 
-```{r model fitting}
+```{r dt model fitting}
 #| code-fold: show
 
 dt_best_params <- dt_tune_results %>%
@@ -525,6 +659,18 @@ dt_best_wf <- dt_wf %>%
 dt_best_fit <- dt_best_wf %>%
   fit(train)
 ```
+
+After fitting the data, the tree can be visualized with the following code to see how the model is processing each observation.
+
+```{r dt plot}
+#| warning: false
+
+dt_best_fit |>
+  extract_fit_engine() |>
+  rpart.plot::rpart.plot(box.palette = list("Purples"))
+```
+
+Based on this plot, it seems that the model has to perform a lot of subdivisions to satisfyingly divide observations into each Kingdom. This might be part of why the model is not performing as well as the KNN model so far; the arrangement of this data may not be suited to a simple decision tree model.
 
 ```{r dt training performance}
 #| code-fold: show
@@ -544,22 +690,354 @@ dt_log_loss |>
   kbl()
 ```
 
-Once tuned & fit, the model performs a fair bit better compared to the initial un-tuned version. The accuracy is now 88.29% and the log loss is 0.70. While not as good as the knn model's metrics, these results aren't terrible. 
+Once tuned & fit, the model performs a fair bit better compared to the initial un-tuned version. The accuracy is now 88.29% and the log loss is 0.70. While not as good as the knn model's metrics, these results are a good improvement from the initial metrics.
 
 #### Testing
 
-### Boosted Trees
+```{r dt testing performance}
+#| code-fold: show
 
-As another attempt, I wanted to see if a tree ensemble would perform significantly better than a single tree. 
+dt_log_loss <- dt_best_fit |>
+  augment(test) |>
+  mutate(Kingdom = as.factor(Kingdom)) |>
+  mn_log_loss(Kingdom, starts_with(".pred"), - .pred_class)
+
+dt_accuracy_metric <- dt_best_fit |>
+  augment(test) |>
+  mutate(Kingdom = as.factor(Kingdom)) |>
+  accuracy(Kingdom, .pred_class)
+
+dt_log_loss |>
+  bind_rows(dt_accuracy_metric) |>
+  kbl()
+```
+
+Once introduced to the test data, as expected, the results are not as good as the training data. The accuracy has gone down to 68.00% while the log loss has increased to 1.15, meaning the model is both less accurate with its predictions on the test data and less confident about its "choices". 
+
+Overall, the decison tree model does not appear to be a good fit for this data. Between it and the knn model, the knn model is highly preferred. 
+
+### Random Trees
+
+As another attempt, I wanted to see if a tree ensemble would perform significantly better than a single tree. This model, a random forest, will use many iterations of trees to make its predictions instead of a single instance. I anticipate that it will perform better than the single decision tree, but I'm not sure if it will surpase the KNN model's performance.
+
+```{r rf setup}
+#| code-fold: show
+
+rf_spec <- rand_forest() |>
+  set_engine("ranger") |>
+  set_mode("classification")
+
+rf_rec <- recipe(Kingdom ~ ., data = train) |>
+  step_rm(SpeciesID, SpeciesName) |>
+  step_impute_median(all_numeric_predictors()) |>
+  step_impute_mode(all_nominal_predictors())|>
+  step_log(Ncodons, base = exp(10)) |>
+  step_dummy(all_nominal_predictors())
+
+rf_wf <- workflow() |>
+  add_model(rf_spec) |>
+  add_recipe(rf_rec)
+```
+
+```{r rf metrics}
+#| warning: false
+
+# Elapsed time in RStudio: ~45 secs
+
+n_cores <- parallel::detectCores()
+cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
+doParallel::registerDoParallel(cl)
+
+tictoc::tic()
+
+rf_results <- rf_wf |>
+  fit_resamples(
+    resamples = train_folds,
+    metrics = metric_set(accuracy, mn_log_loss)
+  )
+
+tictoc::toc()
+
+doParallel::stopImplicitCluster()
+unregister()
+
+rf_results |>
+  collect_metrics() |>
+  kbl()
+```
+
+From the initial metrics, this model is definitely performing better than the single decision tree with an accuracy of 89.08% and a log loss of 0.49. While the accuracy isn't as high as the knn model, the log loss is a lot lower. From here, a tuned random forest may prove to be very effective.
 
 #### Tuning
 
+For this model, the parameters to be tuned are `trees` or the number of trees included within the forest and `min_n` or the number of nodes required to split a tree. 
+
+```{r rf tune setup}
+#| code-fold: show
+
+rf_spec <- rand_forest(trees = tune(), min_n = tune()) |>
+  set_engine("ranger") |>
+  set_mode("classification")
+
+rf_wf <- workflow() |>
+  add_model(rf_spec) |>
+  add_recipe(rf_rec)
+```
+
+```{r rf tune}
+#| warning: false
+#Elapsed time in RStudio: ~11 mins
+
+n_cores <- parallel::detectCores()
+cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
+doParallel::registerDoParallel(cl)
+
+tictoc::tic()
+
+rf_tune_results <- rf_wf %>%
+  tune_grid(
+    resamples = train_folds,
+    metrics = metric_set(mn_log_loss),
+    initial = 5,
+    grid = 15,
+    control = control_bayes(parallel_over = "everything")
+  )
+
+tictoc::toc()
+
+doParallel::stopImplicitCluster()
+unregister()
+
+rf_tune_results %>%
+  collect_metrics() |>
+  kbl()
+```
+
 #### Fitting
 
-### 4th Model
+```{r rf model fitting}
+#| warning: false
+
+rf_best_params <- rf_tune_results %>%
+  select_best(metric = "mn_log_loss")
+
+rf_best_wf <- rf_wf %>%
+  finalize_workflow(rf_best_params)
+
+rf_best_fit <- rf_best_wf %>%
+  fit(train)
+```
+
+```{r rf training performance}
+
+rf_log_loss <- rf_best_fit |>
+  augment(train) |>
+  mutate(Kingdom = as.factor(Kingdom)) |>
+  mn_log_loss(Kingdom, starts_with(".pred"), - .pred_class)
+
+rf_accuracy_metric <- rf_best_fit |>
+  augment(train) |>
+  mutate(Kingdom = as.factor(Kingdom)) |>
+  accuracy(Kingdom, .pred_class)
+
+rf_log_loss |>
+  bind_rows(rf_accuracy_metric) |>
+  kbl()
+```
+
+After tuning and fitting the model to the test data, the random forest model got an accuracy score of 100% and a log loss of 0.13. Compared to both the other models in this analysis and my previous projects, this is one of the best performances I've seen! Having such a high accuracy rating with that level of confidence is a very good sign for the usefulness of this model.
+
+Let's see how the fit model fairs with the test data before reaching any conclusions.
+
+#### Testing
+
+```{r rf testing performance}
+#| code-fold: show
+
+rf_log_loss <- rf_best_fit |>
+  augment(test) |>
+  mutate(Kingdom = as.factor(Kingdom)) |>
+  mn_log_loss(Kingdom, starts_with(".pred"), - .pred_class)
+
+rf_accuracy_metric <- rf_best_fit |>
+  augment(test) |>
+  mutate(Kingdom = as.factor(Kingdom)) |>
+  accuracy(Kingdom, .pred_class)
+
+rf_log_loss |>
+  bind_rows(rf_accuracy_metric) |>
+  kbl()
+```
+
+Even with unfamiliar data, this model still performs very well. The accuracy is 90.80% and the log loss is 0.46. This figure is actually fairly similar to the tested knn model since it had an accuracy of 93.13% and a log loss of 0.47. Since the models are comparable, the preferance in using one or the other might rest on computation time since the knn model is much faster.
+
+### Support Vector Machine Model
+
+As a fourth model, I wanted to test a support vector machine model. It works a bit like the knn model, but instead of directly comparing an observation to neighbors, the model creates boundaries between groups to delineate classifications. In this case, I used a `svm_poly()` function to account for non-linear divisions of observations. Since I haven't used this model as much as the others, I'm not sure how it will perform, especially when tuned.
+
+```{r}
+svm_spec <- svm_poly() |>
+  set_engine("kernlab") |>
+  set_mode("classification")
+
+svm_rec <- recipe(Kingdom ~ ., data = train) |>
+  step_rm(SpeciesID, SpeciesName) |>
+  step_impute_median(all_numeric_predictors()) |>
+  step_impute_mode(all_nominal_predictors()) |>
+  step_log(Ncodons, base = exp(10)) |>
+  step_dummy(all_nominal_predictors())
+
+svm_wf <- workflow() |>
+  add_model(svm_spec) |>
+  add_recipe(svm_rec)
+```
+
+```{r}
+#| warning: false
+#Estimated time: ~45 secs
+
+n_cores <- parallel::detectCores()
+cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
+doParallel::registerDoParallel(cl)
+
+tictoc::tic()
+
+svm_results <- svm_wf |>
+  fit_resamples(
+    resamples = train_folds,
+    metrics = metric_set(accuracy, mn_log_loss)
+  )
+
+tictoc::toc()
+
+doParallel::stopImplicitCluster()
+unregister()
+
+svm_results |>
+  collect_metrics() |>
+  kbl()
+```
+
+As a initial untuned model, the metrics here are ok but not great. The accuracy is 88.96% but the log loss is 1.57, the highest we've seen so far. Despite the good accuracy, it seems that this model is uncertain in its predictions. Maybe some tuning will assist in raising its confidence.
 
 #### Tuning
 
+The parameters available for tuning on this model are `cost` or the penalty for placing an observation within a margin of separation, `degree` or the degree of the polynomial used, and `scale_factor` or a number used to scale the polynomial. 
+
+```{r}
+svm_spec <- svm_poly(cost = tune(), degree = tune(), scale_factor = tune()) |>
+  set_engine("kernlab") |>
+  set_mode("classification")
+
+svm_wf <- workflow() |>
+  add_model(svm_spec) |>
+  add_recipe(svm_rec)
+```
+
+```{r svm tune}
+#| warning: false
+#Elapsed time in RStudio: ~15 mins
+
+n_cores <- parallel::detectCores()
+cl <- parallel::makeCluster(n_cores - 1, type = "PSOCK")
+doParallel::registerDoParallel(cl)
+
+tictoc::tic()
+
+svm_tune_results <- svm_wf %>%
+  tune_grid(
+    resamples = train_folds,
+    metrics = metric_set(mn_log_loss),
+    initial = 5,
+    grid = 15,
+    control = control_bayes(parallel_over = "everything")
+  )
+
+tictoc::toc()
+
+doParallel::stopImplicitCluster()
+unregister()
+
+svm_tune_results %>%
+  collect_metrics() |>
+  kbl()
+```
+
 #### Fitting
+
+```{r}
+#| warning: false
+
+svm_best_params <- svm_tune_results %>%
+  select_best(metric = "mn_log_loss")
+
+svm_best_wf <- svm_wf %>%
+  finalize_workflow(svm_best_params)
+
+svm_best_fit <- svm_best_wf %>%
+  fit(train)
+```
+
+```{r svm training performance}
+
+svm_log_loss <- svm_best_fit |>
+  augment(train) |>
+  mutate(Kingdom = as.factor(Kingdom)) |>
+  mn_log_loss(Kingdom, starts_with(".pred"), - .pred_class)
+
+svm_accuracy_metric <- svm_best_fit |>
+  augment(train) |>
+  mutate(Kingdom = as.factor(Kingdom)) |>
+  accuracy(Kingdom, .pred_class)
+
+svm_log_loss |>
+  bind_rows(svm_accuracy_metric) |>
+  kbl()
+```
+
+Once tuned, the model does feature a good accuracy score of 97.07%. However, the log loss remains very high at 1.50, the highest for any tuned model so far.
+
+#### Testing
+
+```{r svm testing performance}
+#| code-fold: show
+
+svm_log_loss <- svm_best_fit |>
+  augment(test) |>
+  mutate(Kingdom = as.factor(Kingdom)) |>
+  mn_log_loss(Kingdom, starts_with(".pred"), - .pred_class)
+
+svm_accuracy_metric <- svm_best_fit |>
+  augment(test) |>
+  mutate(Kingdom = as.factor(Kingdom)) |>
+  accuracy(Kingdom, .pred_class)
+
+svm_log_loss |>
+  bind_rows(svm_accuracy_metric) |>
+  kbl()
+```
+
+Lastly, the fitted model against the test data has an accuracy of 93.10% and a log loss of 1.55. Again, despite the great accuracy, the log loss remains high and signals the lack of confidence the model has in its predictions. Compared to the rest of the model, this support vector model has similar accuracy but falls short in its log loss metrics.
 
 ## Conclusions
+
+```{r}
+model_metrics <- data.frame(
+  model = c("knn", "dt", "rf", "svm"),
+  initial_accuracy = c(0.9276, 0.6528, 0.8914, 0.8909),
+  initial_log_loss = c(1.01, 1.15, 0.48, 1.57),
+  tuned_accuracy = c(0.9964, 0.8829, 1.0000, 0.9707),
+  tuned_log_loss = c(0.06, 0.70, 0.13, 1.50),
+  tested_accuracy = c(0.9313, 0.6800, 0.9052, 0.9310),
+  tested_log_loss = c(0.47, 1.15, 0.46, 1.55),
+  estimated_tuning_time = c(120, 60, 660, 900)
+)
+
+model_metrics |>
+  kbl()
+```
+
+Overall, it seems that Kingdom within the data set can be reliably predicted through a number of models. To my surprise, many of their iterations performed extremely well and obtained scores in the 80% to 100% range. Most notably, the tuned Random Forest model had an accuracy of 100% with a vanishingly small log loss (only 0.13)! The worst performing models in this analysis was the single decision tree; it had the lowest accuracy scores of all the models included and some of the highest log loss values. Next was the support vector model. Despite the accuracy scores it achieved, its log loss scores were the highest out of all models at every iteration. Lastly, the random forest and knn models performed very similarly. Both had high accuracy scores and low log loss scores across the board, and both models scored within a few points of each other in all iterations besides the initial log loss in untuned models. It seems like either model works well for predicting Kingdom, and one's preference on relying on one over the other might be due to computation time instead since the knn model can be tuned in a fraction of the time compared to tuning a random forest model. 
+
+Overall, it seems that predicting taxa by codon data is not only possible but reliable; two different models were produced that performed well on both training and testing data. From this point, further work could be done to identify which codons contribute most strongly to classification and use that information to chart out how it differs across taxa. By tracing how it changes across different groups, one could use it to infer an evolutionary history of the codon and its usage. Additionally, one could incorporate gene data to illustrate what genes a certain codon is associated with and map out a gene tree to find similarities between the inferred codon history and the known evolutionary path of the gene. 
+
